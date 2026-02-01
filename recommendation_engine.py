@@ -304,7 +304,7 @@ def main():
         use_cases=["task_management", "email"]
     )
     
-    advanced = engine.create_user_profile(
+    engine.create_user_profile(
         user_id="user456",
         experience_level="advanced",
         use_cases=["automation", "integration"]
