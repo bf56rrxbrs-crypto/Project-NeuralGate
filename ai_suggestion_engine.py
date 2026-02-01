@@ -128,17 +128,34 @@ class AISuggestionEngine:
         # Check response times
         if "response_times" in metrics:
             avg_time = metrics["response_times"].get("average", 0)
-            if avg_time > SUGGESTION_THRESHOLDS["response_time_warning"]:
-                self.suggestions.append(Suggestion(
-                    title="Reduce response time",
-                    description=f"Average response time is {avg_time}ms. "
-                                f"Consider implementing caching, indexing, or async processing.",
-                    category=SuggestionCategory.PERFORMANCE_OPTIMIZATION,
-                    priority=SuggestionPriority.CRITICAL,
-                    impact_score=9.0,
-                    implementation_complexity="Medium to High",
-                    rationale=f"Response time ({avg_time}ms) exceeds acceptable threshold"
-                ))
+            warning_threshold = SUGGESTION_THRESHOLDS["response_time_warning"]
+            critical_threshold = SUGGESTION_THRESHOLDS["response_time_critical"]
+
+            if avg_time > critical_threshold:
+                priority = SuggestionPriority.CRITICAL
+                rationale = (
+                    f"Response time ({avg_time}ms) exceeds critical threshold "
+                    f"({critical_threshold}ms)"
+                )
+            elif avg_time > warning_threshold:
+                priority = SuggestionPriority.HIGH
+                rationale = (
+                    f"Response time ({avg_time}ms) exceeds warning threshold "
+                    f"({warning_threshold}ms)"
+                )
+            else:
+                return
+
+            self.suggestions.append(Suggestion(
+                title="Reduce response time",
+                description=f"Average response time is {avg_time}ms. "
+                            f"Consider implementing caching, indexing, or async processing.",
+                category=SuggestionCategory.PERFORMANCE_OPTIMIZATION,
+                priority=priority,
+                impact_score=9.0,
+                implementation_complexity="Medium to High",
+                rationale=rationale
+            ))
     
     def generate_feature_suggestions(self) -> List[Suggestion]:
         """Generate suggestions for new features based on AI analysis"""
