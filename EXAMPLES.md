@@ -517,7 +517,7 @@ let agent = NeuralGateAgent(configuration: NeuralGateConfiguration(
 ))
 
 print("🧠 NeuralGate AI Enhancement Analysis\n")
-print("=" * 60)
+print(String(repeating: "=", count: 60))
 
 // 1. Capability Analysis
 print("\n📊 CAPABILITY ANALYSIS\n")
@@ -595,7 +595,7 @@ if let topFeature = features.first {
 
 // 5. Summary
 print("\n\n📋 SUMMARY\n")
-print("=" * 60)
+print(String(repeating: "=", count: 60))
 print("✓ Analyzed \(capabilities.count) platform capabilities")
 print("✓ Detected \(patterns.count) usage patterns")
 print("✓ Identified \(gaps.count) improvement opportunities")

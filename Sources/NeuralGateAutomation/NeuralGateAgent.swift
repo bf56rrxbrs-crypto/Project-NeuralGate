@@ -219,29 +219,45 @@ public class NeuralGateAgent {
         predictiveAnalytics.recordTask(task)
         
         // Record for usage pattern analysis
+        let currentDate = Date()
+        let weekday = Calendar.current.component(.weekday, from: currentDate)
+        let dayOfWeek: UsagePatternAnalyzer.UsageRecord.UserContext.DayOfWeek = {
+            switch weekday {
+            case 1: return .sunday
+            case 2: return .monday
+            case 3: return .tuesday
+            case 4: return .wednesday
+            case 5: return .thursday
+            case 6: return .friday
+            case 7: return .saturday
+            default: return .monday
+            }
+        }()
+        
         let usageRecord = UsagePatternAnalyzer.UsageRecord(
-            timestamp: Date(),
+            timestamp: currentDate,
             taskCategory: task.category,
             taskPriority: task.priority,
             executionSuccess: result.status == .completed,
             executionTime: result.executionTime,
-            resourceUsage: 0.5, // Would be measured in production
+            resourceUsage: 0.3, // Conservative estimate - actual measurement requires platform APIs
             userContext: UsagePatternAnalyzer.UsageRecord.UserContext(
-                timeOfDay: UsagePatternAnalyzer.UsageRecord.UserContext.TimeOfDay.from(date: Date()),
-                dayOfWeek: .monday, // Would be determined from current date
-                deviceState: .active
+                timeOfDay: UsagePatternAnalyzer.UsageRecord.UserContext.TimeOfDay.from(date: currentDate),
+                dayOfWeek: dayOfWeek,
+                deviceState: .active // iOS app is active during task execution
             )
         )
         usageAnalyzer.recordUsage(usageRecord)
         
         // Record feature usage behavior
+        let timeOfDay = UsagePatternAnalyzer.UsageRecord.UserContext.TimeOfDay.from(date: currentDate)
         let behaviorRecord = FeatureSuggestionEngine.BehaviorRecord(
-            timestamp: Date(),
+            timestamp: currentDate,
             action: .taskCreation,
             context: FeatureSuggestionEngine.BehaviorRecord.BehaviorContext(
                 taskCategory: task.category,
-                timeOfDay: "Morning",
-                deviceState: "Active",
+                timeOfDay: timeOfDay.rawValue,
+                deviceState: "Active", // Device is active during task execution
                 frequency: 1
             ),
             satisfaction: result.status == .completed ? 0.9 : 0.3

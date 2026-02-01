@@ -38,7 +38,7 @@ public class ModelRecommendationSystem {
             case clustering = "Clustering"
             case sequenceAnalysis = "Sequence Analysis"
             case patternRecognition = "Pattern Recognition"
-            case naturallanguageProcessing = "NLP"
+            case nlp = "NLP"
             case timeSeriesForecasting = "Time Series Forecasting"
             case anomalyDetection = "Anomaly Detection"
             case optimization = "Optimization"
@@ -155,7 +155,7 @@ public class ModelRecommendationSystem {
             AIModelMetadata(
                 name: "DeepLearningClassifier",
                 type: .deepLearning,
-                capabilities: [.classification, .patternRecognition, .naturallanguageProcessing],
+                capabilities: [.classification, .patternRecognition, .nlp],
                 resourceRequirements: AIModelMetadata.ResourceRequirements(
                     memoryMB: 75,
                     cpuIntensity: .high,
