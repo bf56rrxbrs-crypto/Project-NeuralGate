@@ -22,6 +22,12 @@ public class NeuralGateAgent {
     // Analytics
     private let predictiveAnalytics: PredictiveAnalytics
     
+    // AI Enhancement Systems
+    private let capabilityDiscovery: CapabilityDiscoveryEngine
+    private let usageAnalyzer: UsagePatternAnalyzer
+    private let modelRecommendation: ModelRecommendationSystem
+    private let featureSuggestion: FeatureSuggestionEngine
+    
     private let logger = NeuralGateLogger.shared
     
     /// Initialize the NeuralGate agent
@@ -48,7 +54,13 @@ public class NeuralGateAgent {
         // Initialize analytics
         self.predictiveAnalytics = PredictiveAnalytics(configuration: configuration)
         
-        logger.log("NeuralGate Agent initialized", level: .info)
+        // Initialize AI enhancement systems
+        self.capabilityDiscovery = CapabilityDiscoveryEngine(configuration: configuration)
+        self.usageAnalyzer = UsagePatternAnalyzer(configuration: configuration)
+        self.modelRecommendation = ModelRecommendationSystem(configuration: configuration)
+        self.featureSuggestion = FeatureSuggestionEngine(configuration: configuration)
+        
+        logger.log("NeuralGate Agent initialized with AI enhancements", level: .info)
     }
     
     /// Execute a single task with full AI capabilities
@@ -138,11 +150,103 @@ public class NeuralGateAgent {
         )
     }
     
+    // MARK: - AI Enhancement API
+    
+    /// Analyze platform capabilities and get enhancement opportunities
+    public func analyzeCapabilities() async -> [CapabilityDiscoveryEngine.EnhancementOpportunity] {
+        logger.log("Analyzing platform capabilities", level: .info)
+        return await capabilityDiscovery.analyzeCapabilities()
+    }
+    
+    /// Generate comprehensive capability report
+    public func generateCapabilityReport() -> String {
+        return capabilityDiscovery.generateCapabilityReport()
+    }
+    
+    /// Analyze usage patterns
+    public func analyzeUsagePatterns() async -> [UsagePatternAnalyzer.UsagePattern] {
+        logger.log("Analyzing usage patterns", level: .info)
+        return await usageAnalyzer.analyzePatterns()
+    }
+    
+    /// Identify usage gaps and opportunities
+    public func identifyUsageGaps() async -> [UsagePatternAnalyzer.UsageGap] {
+        logger.log("Identifying usage gaps", level: .info)
+        return await usageAnalyzer.identifyGaps()
+    }
+    
+    /// Get usage statistics
+    public func getUsageStatistics() -> UsagePatternAnalyzer.UsageStatistics {
+        return usageAnalyzer.getUsageStatistics()
+    }
+    
+    /// Recommend optimal AI model for a task
+    public func recommendModel(for task: Task, context: ExecutionContext) async -> ModelRecommendationSystem.ModelRecommendation {
+        logger.log("Recommending AI model for task: \(task.name)", level: .info)
+        return await modelRecommendation.recommendModel(for: task, context: context)
+    }
+    
+    /// Get all available AI models
+    public func getAvailableModels() -> [ModelRecommendationSystem.AIModelMetadata] {
+        return modelRecommendation.getAvailableModels()
+    }
+    
+    /// Generate AI model comparison report
+    public func generateModelReport() -> String {
+        return modelRecommendation.generateModelReport()
+    }
+    
+    /// Generate feature suggestions based on user behavior
+    public func generateFeatureSuggestions() async -> [FeatureSuggestionEngine.FeatureSuggestion] {
+        logger.log("Generating feature suggestions", level: .info)
+        return await featureSuggestion.generateSuggestions()
+    }
+    
+    /// Get high-value feature suggestions
+    public func getHighValueFeatures(threshold: Double = 0.80) -> [FeatureSuggestionEngine.FeatureSuggestion] {
+        return featureSuggestion.getHighValueSuggestions(threshold: threshold)
+    }
+    
+    /// Generate feature roadmap
+    public func generateFeatureRoadmap() -> String {
+        return featureSuggestion.generateRoadmap()
+    }
+    
     // MARK: - Private Methods
     
     private func recordTaskExecution(task: Task, result: TaskExecutionResult) {
         // Record for predictive analytics
         predictiveAnalytics.recordTask(task)
+        
+        // Record for usage pattern analysis
+        let usageRecord = UsagePatternAnalyzer.UsageRecord(
+            timestamp: Date(),
+            taskCategory: task.category,
+            taskPriority: task.priority,
+            executionSuccess: result.status == .completed,
+            executionTime: result.executionTime,
+            resourceUsage: 0.5, // Would be measured in production
+            userContext: UsagePatternAnalyzer.UsageRecord.UserContext(
+                timeOfDay: UsagePatternAnalyzer.UsageRecord.UserContext.TimeOfDay.from(date: Date()),
+                dayOfWeek: .monday, // Would be determined from current date
+                deviceState: .active
+            )
+        )
+        usageAnalyzer.recordUsage(usageRecord)
+        
+        // Record feature usage behavior
+        let behaviorRecord = FeatureSuggestionEngine.BehaviorRecord(
+            timestamp: Date(),
+            action: .taskCreation,
+            context: FeatureSuggestionEngine.BehaviorRecord.BehaviorContext(
+                taskCategory: task.category,
+                timeOfDay: "Morning",
+                deviceState: "Active",
+                frequency: 1
+            ),
+            satisfaction: result.status == .completed ? 0.9 : 0.3
+        )
+        featureSuggestion.recordBehavior(behaviorRecord)
         
         // Record for self-improvement
         let taskResult = TaskResult(
