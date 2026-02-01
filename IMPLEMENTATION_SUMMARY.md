@@ -123,9 +123,9 @@
 - ✅ Improved code maintainability
 
 ### Security Scan
-✅ CodeQL analysis completed
-✅ **0 vulnerabilities found**
-✅ No security issues detected
+⚙️ Automated security scanning (e.g., CodeQL) to be configured in CI
+✅ Code reviewed with basic security considerations (no issues observed in manual review)
+ℹ️ Formal automated vulnerability scan results will be documented once CI is in place
 
 ---
 
