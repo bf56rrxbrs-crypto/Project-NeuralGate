@@ -168,7 +168,8 @@ class RecommendationEngine:
         
         # Increase score for features matching user's use cases
         for use_case in profile.primary_use_cases:
-            if use_case in feature_info["category"]:
+            feature_category = feature_info.get("category")
+            if feature_category is not None and use_case == feature_category:
                 score += 0.2
         
         # Adjust for difficulty match
