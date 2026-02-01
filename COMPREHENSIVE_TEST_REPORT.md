@@ -56,7 +56,7 @@ A comprehensive test was performed on the Project-NeuralGate repository to ident
 
 ### 1. Unreachable Code Warning
 - **File:** `Sources/NeuralGateLearning/SelfImprovementEngine.swift`
-- **Line:** 106
+- **Lines:** 91–105
 - **Issue:** The success variable was hardcoded to `true`, making the else branch unreachable
 - **Resolution:** Removed the unreachable code path and simplified the logic while maintaining the same behavior
 - **Status:** ✅ FIXED
