@@ -109,7 +109,7 @@ public class iOSIntegration {
 
 // MARK: - Siri Authorization Status
 
-enum SiriAuthStatus {
+public enum SiriAuthStatus {
     case authorized
     case denied
     case notDetermined

@@ -132,14 +132,14 @@ public class NaturalLanguageProcessor {
 
 // MARK: - Supporting Classes
 
-class IntentClassifier {
+private class IntentClassifier {
     func classify(_ text: String) -> String {
         // Placeholder for ML-based intent classification
         return "general"
     }
 }
 
-struct Entity {
+private struct Entity {
     let type: String
     let value: String
 }

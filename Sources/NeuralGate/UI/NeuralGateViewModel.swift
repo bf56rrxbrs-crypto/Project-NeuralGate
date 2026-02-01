@@ -81,7 +81,7 @@ public class NeuralGateViewModel: ObservableObject {
     
     /// Open iOS Shortcuts integration
     public func openShortcuts() {
-        _Concurrency.Task {
+        Task {
             do {
                 try await agent.integrateWithShortcut("NeuralGate")
             } catch {

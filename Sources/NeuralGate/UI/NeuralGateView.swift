@@ -83,11 +83,15 @@ public struct NeuralGateView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 12) {
                     QuickActionButton(title: "Morning Routine", icon: "sunrise.fill") {
-                        viewModel.executeWorkflow("morning-routine")
+                        Task {
+                            await viewModel.executeWorkflow("morning-routine")
+                        }
                     }
                     
                     QuickActionButton(title: "Email Digest", icon: "envelope.fill") {
-                        viewModel.executeWorkflow("email-digest")
+                        Task {
+                            await viewModel.executeWorkflow("email-digest")
+                        }
                     }
                     
                     QuickActionButton(title: "Shortcuts", icon: "link") {
