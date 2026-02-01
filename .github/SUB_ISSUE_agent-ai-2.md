@@ -60,7 +60,7 @@ Create a validation tool that:
 ## Technical Requirements
 
 ### Files to Create
-```
+```plaintext
 .github/workflows/copilot-instructions-setup.yml
 scripts/setup-copilot-instructions.sh (or .py)
 .github/templates/copilot-instructions-template.md

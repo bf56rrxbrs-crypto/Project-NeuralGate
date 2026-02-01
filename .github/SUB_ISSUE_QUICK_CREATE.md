@@ -41,7 +41,7 @@ Create automation that:
 - [ ] Documentation for usage and customization
 
 ## Technical Components
-```
+```plaintext
 .github/workflows/copilot-instructions-setup.yml
 scripts/setup-copilot-instructions.sh
 .github/templates/copilot-instructions-template.md
