@@ -57,8 +57,9 @@ public class NeuralGateAgent {
         
         let context = ExecutionContext(currentTask: task)
         
-        // Get AI decision
+        // Get AI decision (used for logging and analytics)
         let decision = try await decisionEngine.makeDecision(for: task, context: context)
+        logger.log("AI Decision: \(decision.value.rawValue) (confidence: \(decision.confidence))", level: .debug)
         
         // Get predictive suggestions
         let suggestions = predictiveAnalytics.getSuggestions(context: context)
