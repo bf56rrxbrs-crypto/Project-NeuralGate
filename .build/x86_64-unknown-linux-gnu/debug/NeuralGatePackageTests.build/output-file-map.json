@@ -1,0 +1,12 @@
+{
+  "": {
+    "swift-dependencies": "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGatePackageTests.build/master.swiftdeps"
+  },
+  "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGatePackageTests.derived/runner.swift": {
+    "dependencies": "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGatePackageTests.build/runner.d",
+    "object": "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGatePackageTests.build/runner.swift.o",
+    "swiftmodule": "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGatePackageTests.build/runner~partial.swiftmodule",
+    "swift-dependencies": "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGatePackageTests.build/runner.swiftdeps",
+    "diagnostics": "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGatePackageTests.build/runner.dia"
+  }
+}

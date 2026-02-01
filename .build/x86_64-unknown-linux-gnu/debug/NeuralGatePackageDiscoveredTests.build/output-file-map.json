@@ -1,0 +1,40 @@
+{
+  "": {
+    "swift-dependencies": "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGatePackageDiscoveredTests.build/master.swiftdeps"
+  },
+  "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGatePackageDiscoveredTests.derived/NeuralGateAITests.swift": {
+    "dependencies": "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGatePackageDiscoveredTests.build/NeuralGateAITests.d",
+    "object": "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGatePackageDiscoveredTests.build/NeuralGateAITests.swift.o",
+    "swiftmodule": "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGatePackageDiscoveredTests.build/NeuralGateAITests~partial.swiftmodule",
+    "swift-dependencies": "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGatePackageDiscoveredTests.build/NeuralGateAITests.swiftdeps",
+    "diagnostics": "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGatePackageDiscoveredTests.build/NeuralGateAITests.dia"
+  },
+  "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGatePackageDiscoveredTests.derived/NeuralGateAutomationTests.swift": {
+    "dependencies": "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGatePackageDiscoveredTests.build/NeuralGateAutomationTests.d",
+    "object": "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGatePackageDiscoveredTests.build/NeuralGateAutomationTests.swift.o",
+    "swiftmodule": "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGatePackageDiscoveredTests.build/NeuralGateAutomationTests~partial.swiftmodule",
+    "swift-dependencies": "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGatePackageDiscoveredTests.build/NeuralGateAutomationTests.swiftdeps",
+    "diagnostics": "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGatePackageDiscoveredTests.build/NeuralGateAutomationTests.dia"
+  },
+  "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGatePackageDiscoveredTests.derived/NeuralGateLearningTests.swift": {
+    "dependencies": "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGatePackageDiscoveredTests.build/NeuralGateLearningTests.d",
+    "object": "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGatePackageDiscoveredTests.build/NeuralGateLearningTests.swift.o",
+    "swiftmodule": "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGatePackageDiscoveredTests.build/NeuralGateLearningTests~partial.swiftmodule",
+    "swift-dependencies": "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGatePackageDiscoveredTests.build/NeuralGateLearningTests.swiftdeps",
+    "diagnostics": "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGatePackageDiscoveredTests.build/NeuralGateLearningTests.dia"
+  },
+  "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGatePackageDiscoveredTests.derived/NeuralGateTests.swift": {
+    "dependencies": "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGatePackageDiscoveredTests.build/NeuralGateTests.d",
+    "object": "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGatePackageDiscoveredTests.build/NeuralGateTests.swift.o",
+    "swiftmodule": "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGatePackageDiscoveredTests.build/NeuralGateTests~partial.swiftmodule",
+    "swift-dependencies": "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGatePackageDiscoveredTests.build/NeuralGateTests.swiftdeps",
+    "diagnostics": "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGatePackageDiscoveredTests.build/NeuralGateTests.dia"
+  },
+  "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGatePackageDiscoveredTests.derived/all-discovered-tests.swift": {
+    "dependencies": "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGatePackageDiscoveredTests.build/all-discovered-tests.d",
+    "object": "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGatePackageDiscoveredTests.build/all-discovered-tests.swift.o",
+    "swiftmodule": "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGatePackageDiscoveredTests.build/all-discovered-tests~partial.swiftmodule",
+    "swift-dependencies": "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGatePackageDiscoveredTests.build/all-discovered-tests.swiftdeps",
+    "diagnostics": "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGatePackageDiscoveredTests.build/all-discovered-tests.dia"
+  }
+}

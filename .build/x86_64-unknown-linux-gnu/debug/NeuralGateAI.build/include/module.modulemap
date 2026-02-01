@@ -1,0 +1,3 @@
+module NeuralGateAI {
+    header "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGateAI.build/include/NeuralGateAI-Swift.h"
+}

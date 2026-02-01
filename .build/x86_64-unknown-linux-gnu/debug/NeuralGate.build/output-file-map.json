@@ -1,0 +1,19 @@
+{
+  "": {
+    "swift-dependencies": "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGate.build/master.swiftdeps"
+  },
+  "/home/runner/work/Project-NeuralGate/Project-NeuralGate/Sources/NeuralGate/NeuralGateCore.swift": {
+    "dependencies": "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGate.build/NeuralGateCore.d",
+    "object": "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGate.build/NeuralGateCore.swift.o",
+    "swiftmodule": "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGate.build/NeuralGateCore~partial.swiftmodule",
+    "swift-dependencies": "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGate.build/NeuralGateCore.swiftdeps",
+    "diagnostics": "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGate.build/NeuralGateCore.dia"
+  },
+  "/home/runner/work/Project-NeuralGate/Project-NeuralGate/Sources/NeuralGate/TaskModel.swift": {
+    "dependencies": "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGate.build/TaskModel.d",
+    "object": "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGate.build/TaskModel.swift.o",
+    "swiftmodule": "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGate.build/TaskModel~partial.swiftmodule",
+    "swift-dependencies": "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGate.build/TaskModel.swiftdeps",
+    "diagnostics": "/home/runner/work/Project-NeuralGate/Project-NeuralGate/.build/x86_64-unknown-linux-gnu/debug/NeuralGate.build/TaskModel.dia"
+  }
+}
