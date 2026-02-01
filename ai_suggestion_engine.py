@@ -7,6 +7,7 @@ import json
 from datetime import datetime
 from typing import List, Dict, Any
 from enum import Enum
+from ai_config import SUGGESTION_THRESHOLDS
 
 
 class SuggestionCategory(Enum):
@@ -89,7 +90,7 @@ class AISuggestionEngine:
         
         # Generate suggestions for frequently used operations
         for op_type, count in operation_counts.items():
-            if count > 100:  # Threshold for optimization
+            if count > SUGGESTION_THRESHOLDS["feature_usage_high"]:
                 self.suggestions.append(Suggestion(
                     title=f"Optimize {op_type} operation",
                     description=f"The {op_type} operation is used frequently ({count} times). "
@@ -110,7 +111,7 @@ class AISuggestionEngine:
             pain_points[category] = pain_points.get(category, 0) + 1
         
         for category, count in pain_points.items():
-            if count > 5:  # Threshold for addressing
+            if count > SUGGESTION_THRESHOLDS["user_feedback_threshold"]:
                 self.suggestions.append(Suggestion(
                     title=f"Address {category} feedback",
                     description=f"Multiple users reported issues with {category} ({count} reports). "
@@ -127,7 +128,7 @@ class AISuggestionEngine:
         # Check response times
         if "response_times" in metrics:
             avg_time = metrics["response_times"].get("average", 0)
-            if avg_time > 1000:  # More than 1 second
+            if avg_time > SUGGESTION_THRESHOLDS["response_time_warning"]:
                 self.suggestions.append(Suggestion(
                     title="Reduce response time",
                     description=f"Average response time is {avg_time}ms. "

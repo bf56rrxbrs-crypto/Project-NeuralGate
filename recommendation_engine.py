@@ -6,6 +6,7 @@ Guides users on optimal project usage and feature discovery
 from typing import List, Dict, Any
 from dataclasses import dataclass
 from datetime import datetime
+from ai_config import SUGGESTION_THRESHOLDS
 
 
 @dataclass
@@ -219,7 +220,7 @@ class RecommendationEngine:
         
         # Find frequently used features that could be optimized
         for feature, count in profile.feature_adoption.items():
-            if count > 20:  # Frequently used
+            if count > SUGGESTION_THRESHOLDS["frequent_usage_threshold"]:
                 optimization_recs.append(Recommendation(
                     title=f"Optimize Your {feature.replace('_', ' ').title()} Usage",
                     description=f"Learn advanced techniques to maximize {feature} efficiency",

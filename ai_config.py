@@ -65,6 +65,9 @@ FEATURE_CATEGORIES = {
 SUGGESTION_THRESHOLDS = {
     "feature_usage_high": 100,  # Operations per week
     "feature_usage_low": 10,
+    "user_feedback_threshold": 5,  # Minimum feedback reports to address
+    "pattern_frequency_threshold": 10,  # Minimum pattern occurrences
+    "frequent_usage_threshold": 20,  # Usage count for optimization recommendations
     "error_rate_critical": 0.05,  # 5% error rate
     "error_rate_warning": 0.02,  # 2% error rate
     "response_time_critical": 2000,  # milliseconds

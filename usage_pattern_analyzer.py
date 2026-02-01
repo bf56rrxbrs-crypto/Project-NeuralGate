@@ -7,6 +7,7 @@ from typing import Dict, List, Any, Tuple
 from datetime import datetime, timedelta
 from collections import defaultdict
 import json
+from ai_config import SUGGESTION_THRESHOLDS
 
 
 class UsagePatternAnalyzer:
@@ -141,7 +142,7 @@ class UsagePatternAnalyzer:
         insights = []
         
         for pattern, count in patterns:
-            if count > 10:  # Significant pattern
+            if count > SUGGESTION_THRESHOLDS["pattern_frequency_threshold"]:
                 insights.append(
                     f"Common pattern '{pattern}' occurs {count} times. "
                     f"Consider optimizing this workflow."
@@ -164,7 +165,9 @@ class UsagePatternAnalyzer:
             
             if timestamps:
                 time_span = max(timestamps) - min(timestamps)
-                frequency = len(occurrences) / max(time_span.days, 1)
+                # Use total_seconds to handle sub-day time spans correctly
+                days = time_span.total_seconds() / 86400
+                frequency = len(occurrences) / max(days, 1)
             else:
                 frequency = 0
             
