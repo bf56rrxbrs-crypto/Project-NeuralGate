@@ -1,0 +1,49 @@
+# Swift Package Manager
+.build/
+.swiftpm/
+Package.resolved
+*.xcodeproj/
+
+# Xcode
+xcuserdata/
+DerivedData/
+*.xcworkspace
+!default.xcworkspace
+
+# Swift
+.DS_Store
+*.swp
+*.swo
+*~
+.#*
+
+# Build artifacts
+*.o
+*.a
+*.dylib
+*.dSYM.zip
+*.dSYM
+
+# CocoaPods
+Pods/
+Podfile.lock
+
+# Carthage
+Carthage/Build/
+
+# fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output
+
+# Code coverage
+*.profdata
+*.profraw
+*.gcov
+*.gcda
+*.gcno
+
+# Temporary files
+tmp/
+temp/
