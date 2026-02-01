@@ -12,7 +12,6 @@ public class NaturalLanguageProcessor {
     #if canImport(NaturalLanguage)
     private let tagger: NLTagger
     #endif
-    private let intentClassifier: IntentClassifier
     
     // MARK: - Initialization
     
@@ -20,7 +19,6 @@ public class NaturalLanguageProcessor {
         #if canImport(NaturalLanguage)
         self.tagger = NLTagger(tagSchemes: [.nameType, .lexicalClass])
         #endif
-        self.intentClassifier = IntentClassifier()
     }
     
     // MARK: - Public Methods
@@ -130,14 +128,7 @@ public class NaturalLanguageProcessor {
     }
 }
 
-// MARK: - Supporting Classes
-
-private class IntentClassifier {
-    func classify(_ text: String) -> String {
-        // Placeholder for ML-based intent classification
-        return "general"
-    }
-}
+// MARK: - Supporting Structures
 
 private struct Entity {
     let type: String

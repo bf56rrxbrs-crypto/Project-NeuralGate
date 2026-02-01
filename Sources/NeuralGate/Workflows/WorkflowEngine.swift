@@ -20,7 +20,7 @@ public class WorkflowEngine {
     /// Execute a single task
     /// - Parameter task: Task to execute
     /// - Returns: Result of task execution
-    public func execute(_ task: Task) async throws -> TaskResult {
+    public func executeTask(_ task: Task) async throws -> TaskResult {
         let startTime = Date()
         
         do {
@@ -64,7 +64,7 @@ public class WorkflowEngine {
                 priority: .normal
             )
             
-            let result = try await execute(task)
+            let result = try await executeTask(task)
             stepResults.append(result)
             
             // Stop execution if a critical step fails

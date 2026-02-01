@@ -81,11 +81,18 @@ public class NeuralGateViewModel: ObservableObject {
     
     /// Open iOS Shortcuts integration
     public func openShortcuts() {
+        isProcessing = true
+        
         Task {
             do {
                 try await agent.integrateWithShortcut("NeuralGate")
             } catch {
-                errorMessage = error.localizedDescription
+                await MainActor.run {
+                    errorMessage = error.localizedDescription
+                }
+            }
+            await MainActor.run {
+                isProcessing = false
             }
         }
     }

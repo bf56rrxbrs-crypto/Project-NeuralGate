@@ -33,7 +33,7 @@ public class NeuralGateAgent {
         let task = try taskManager.createTask(from: intent)
         
         // Execute task using workflow engine
-        let result = try await workflowEngine.execute(task)
+        let result = try await workflowEngine.executeTask(task)
         
         return result
     }
