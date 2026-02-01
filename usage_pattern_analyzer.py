@@ -4,7 +4,7 @@ Tracks and analyzes user behavior to identify improvement opportunities
 """
 
 from typing import Dict, List, Any, Tuple
-from datetime import datetime, timedelta
+from datetime import datetime
 from collections import defaultdict
 import json
 from ai_config import SUGGESTION_THRESHOLDS
