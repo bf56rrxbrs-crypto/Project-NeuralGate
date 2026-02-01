@@ -157,10 +157,7 @@ class RecommendationEngine:
             relevance_score=relevance,
             estimated_time_savings=feature_info["time_savings"],
             difficulty=feature_info["difficulty"],
-            learning_resources=[
-                f"docs/{feature_name}.md",
-                f"tutorials/{feature_name}_quickstart.md"
-            ]
+            learning_resources=[]
         )
     
     def _calculate_relevance(self, feature_name: str, 
