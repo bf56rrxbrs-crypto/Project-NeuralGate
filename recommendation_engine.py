@@ -298,7 +298,7 @@ def main():
     engine = RecommendationEngine()
     
     # Create sample user profiles
-    beginner = engine.create_user_profile(
+    engine.create_user_profile(
         user_id="user123",
         experience_level="beginner",
         use_cases=["task_management", "email"]
