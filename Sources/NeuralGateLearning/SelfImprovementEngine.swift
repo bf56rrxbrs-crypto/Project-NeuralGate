@@ -89,16 +89,18 @@ public class SelfImprovementEngine {
         // optimization routines, or configuration adjustments
         
         let success = true // Placeholder - would be determined by actual execution
-        let improvement = 0.15 // 15% improvement placeholder
+        let improvement = success ? 0.15 : 0.0 // 15% improvement on success, 0% on failure
         
-        // Update metrics on success
-        updateMetrics(for: opportunity.area, improvement: improvement)
+        // Update metrics only on success to prevent metrics pollution
+        if success {
+            updateMetrics(for: opportunity.area, improvement: improvement)
+        }
         
         return ImprovementResult(
             action: action,
             success: success,
             actualImprovement: improvement,
-            newValue: opportunity.targetValue,
+            newValue: success ? opportunity.targetValue : opportunity.currentValue,
             timestamp: Date()
         )
     }
