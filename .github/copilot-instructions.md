@@ -2,15 +2,15 @@
 
 ## Copilot Permissions
 
-GitHub Copilot has **full edit permissions** for all files in this repository. Copilot is authorized to:
-- Create, modify, and delete any files in the repository
-- Make changes to source code, tests, documentation, and configuration files
-- Refactor code across multiple files
-- Update dependencies and build configurations
-- Modify CI/CD workflows and GitHub Actions
-- Edit all documentation and instruction files
+GitHub Copilot is authorized to **provide suggestions and assistance** for all files in this repository without restrictions. Copilot may suggest:
+- Creating, modifying, or deleting any files in the repository
+- Changes to source code, tests, documentation, and configuration files
+- Refactoring code across multiple files
+- Updates to dependencies and build configurations
+- Modifications to CI/CD workflows and GitHub Actions
+- Edits to all documentation and instruction files
 
-No files or directories are restricted from Copilot's access.
+No files or directories are off-limits for Copilot's suggestions and assistance.
 
 ## Project Overview
 
