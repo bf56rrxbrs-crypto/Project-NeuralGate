@@ -1,5 +1,17 @@
 # Copilot Instructions for Project-NeuralGate
 
+## Copilot Permissions
+
+GitHub Copilot has **full edit permissions** for all files in this repository. Copilot is authorized to:
+- Create, modify, and delete any files in the repository
+- Make changes to source code, tests, documentation, and configuration files
+- Refactor code across multiple files
+- Update dependencies and build configurations
+- Modify CI/CD workflows and GitHub Actions
+- Edit all documentation and instruction files
+
+No files or directories are restricted from Copilot's access.
+
 ## Project Overview
 
 Project-NeuralGate is an AI agent for task and workflow automation exclusively for iPhone users.
