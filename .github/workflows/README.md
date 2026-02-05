@@ -447,6 +447,33 @@ Settings > Code security and analysis > Dependabot security updates
 
 ## Configuration
 
+### Repository Settings
+
+Important repository settings that must be enabled for full workflow functionality:
+
+#### Security Features
+
+Go to **Settings > Code security and analysis**:
+
+1. **✅ Dependency Graph** (Required for dependency-review workflow)
+   - Enables dependency tracking and vulnerability detection
+   - Required by the `actions/dependency-review-action` in security.yml
+   - **Important**: The workflow will run but skip dependency review if not enabled
+   
+2. **✅ Dependabot Alerts** (Recommended)
+   - Automatically alerts on vulnerable dependencies
+   - Requires Dependency Graph to be enabled first
+   
+3. **✅ Dependabot Security Updates** (Recommended)
+   - Automatically creates PRs to fix vulnerabilities
+   - See `.github/dependabot.yml` for configuration
+   
+4. **✅ Secret Scanning** (Recommended for private repos)
+   - Detects accidentally committed secrets
+   - Automatically enabled for public repos
+
+**Quick Setup Link**: https://github.com/bf56rrxbrs-crypto/Project-NeuralGate/settings/security_analysis
+
 ### Secrets Required
 
 None required for basic functionality. Optional secrets:
@@ -475,6 +502,28 @@ Recommended settings for `main` branch:
 - ✅ Require linear history
 
 ## Troubleshooting
+
+### Security Scanning Issues
+
+**Issue**: Dependency Review fails with "Dependency review is not supported"
+- **Cause**: Dependency Graph feature is not enabled in repository settings
+- **Solution**: 
+  1. Go to Settings > Code security and analysis
+  2. Enable "Dependency graph"
+  3. Re-run the workflow
+- **Note**: The workflow is configured with `continue-on-error: true` so it won't block other checks
+- **Reference**: https://github.com/bf56rrxbrs-crypto/Project-NeuralGate/settings/security_analysis
+
+**Issue**: CodeQL analysis fails
+- Check Swift build succeeds first
+- Verify CodeQL action version is current
+- Review build logs for compilation errors
+- Ensure macOS runner has sufficient resources
+
+**Issue**: Secret scanning not working
+- Enable in repository settings for private repos
+- Check if secrets match GitHub's patterns
+- Review security alerts in the Security tab
 
 ### Build Failures
 
