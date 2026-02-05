@@ -2,6 +2,13 @@
 
 🧠 **Advanced AI Agent for iPhone** - Intelligent task and workflow automation with cutting-edge AI, loop engineering, and autonomous self-improvement.
 
+[![CI/CD](https://github.com/bf56rrxbrs-crypto/Project-NeuralGate/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/bf56rrxbrs-crypto/Project-NeuralGate/actions/workflows/ci-cd.yml)
+[![Code Quality](https://github.com/bf56rrxbrs-crypto/Project-NeuralGate/actions/workflows/code-quality.yml/badge.svg)](https://github.com/bf56rrxbrs-crypto/Project-NeuralGate/actions/workflows/code-quality.yml)
+[![Security](https://github.com/bf56rrxbrs-crypto/Project-NeuralGate/actions/workflows/security.yml/badge.svg)](https://github.com/bf56rrxbrs-crypto/Project-NeuralGate/actions/workflows/security.yml)
+[![Swift 5.9](https://img.shields.io/badge/Swift-5.9-orange.svg)](https://swift.org)
+[![iOS 15.0+](https://img.shields.io/badge/iOS-15.0%2B-blue.svg)](https://www.apple.com/ios/)
+[![License](https://img.shields.io/badge/License-Proprietary-red.svg)](LICENSE)
+
 ## Overview
 
 NeuralGate is a comprehensive AI-powered automation framework designed exclusively for iPhone users. It combines state-of-the-art AI methodologies, advanced feedback loops, and self-improvement capabilities to deliver unparalleled mobile task automation.
@@ -65,6 +72,29 @@ dependencies: [
 ```bash
 swift test
 ```
+
+## CI/CD and Automation
+
+This project uses comprehensive GitHub Actions workflows for:
+
+- **Continuous Integration**: Automated builds and tests on every push and PR
+- **Code Quality**: SwiftLint and SwiftFormat checks
+- **Security**: CodeQL analysis and dependency scanning
+- **Deployment**: Automated staging and production deployments
+- **Metrics**: Performance monitoring and build time tracking
+- **Issue Management**: Automated labeling and reporting
+
+See [Workflow Documentation](.github/workflows/README.md) for details.
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'feat: add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+All contributions are automatically validated through our CI/CD pipeline.
 
 ## License
 
