@@ -1,0 +1,74 @@
+# Dependabot configuration for automated dependency updates and security vulnerability checks
+# https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+version: 2
+
+updates:
+  # Swift Package Manager dependencies
+  - package-ecosystem: "swift"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "bf56rrxbrs-crypto"
+    assignees:
+      - "bf56rrxbrs-crypto"
+    labels:
+      - "dependencies"
+      - "swift"
+      - "automated"
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+    # Group minor and patch updates together
+    groups:
+      swift-dependencies:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+    # Security updates are always created individually
+    
+  # GitHub Actions dependencies
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "bf56rrxbrs-crypto"
+    assignees:
+      - "bf56rrxbrs-crypto"
+    labels:
+      - "dependencies"
+      - "github-actions"
+      - "automated"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+    # Group all GitHub Actions updates together
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+
+# Note: Dependabot security updates are enabled by default and will create PRs
+# for vulnerable dependencies regardless of this configuration file.
+# 
+# To enable Dependabot security updates:
+# 1. Go to repository Settings > Code security and analysis
+# 2. Enable "Dependabot security updates"
+# 
+# Dependabot will:
+# - Automatically detect vulnerable dependencies
+# - Create pull requests to update them
+# - Provide detailed information about the vulnerability
+# - Suggest the minimum version needed to fix the issue

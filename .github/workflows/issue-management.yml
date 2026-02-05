@@ -1,0 +1,369 @@
+name: Issue Management
+
+on:
+  issues:
+    types: [opened, labeled, edited]
+  issue_comment:
+    types: [created]
+  schedule:
+    # Run weekly on Mondays at 9 AM UTC
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+
+jobs:
+  # Job 1: Auto-label New Issues
+  auto-label-issues:
+    name: Auto-label Issues
+    runs-on: ubuntu-latest
+    if: github.event_name == 'issues' && github.event.action == 'opened'
+    permissions:
+      issues: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Analyze and Label Issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const title = issue.title.toLowerCase();
+            const body = (issue.body || '').toLowerCase();
+            const text = title + ' ' + body;
+            
+            const labels = [];
+            
+            // Category labels
+            if (text.includes('bug') || text.includes('error') || text.includes('crash')) {
+              labels.push('bug');
+            }
+            if (text.includes('feature') || text.includes('enhancement') || text.includes('add')) {
+              labels.push('enhancement');
+            }
+            if (text.includes('documentation') || text.includes('docs') || text.includes('readme')) {
+              labels.push('documentation');
+            }
+            if (text.includes('test') || text.includes('testing')) {
+              labels.push('testing');
+            }
+            if (text.includes('performance') || text.includes('slow') || text.includes('optimization')) {
+              labels.push('performance');
+            }
+            if (text.includes('security') || text.includes('vulnerability')) {
+              labels.push('security');
+            }
+            
+            // AI-related labels
+            if (text.includes('ai') || text.includes('machine learning') || text.includes('ml')) {
+              labels.push('ai');
+            }
+            if (text.includes('automation') || text.includes('workflow')) {
+              labels.push('automation');
+            }
+            if (text.includes('learning') || text.includes('feedback')) {
+              labels.push('learning');
+            }
+            
+            // Priority estimation (basic)
+            if (text.includes('critical') || text.includes('urgent') || text.includes('crash')) {
+              labels.push('priority: high');
+            } else if (text.includes('important') || text.includes('needed')) {
+              labels.push('priority: medium');
+            } else if (text.includes('nice to have') || text.includes('suggestion')) {
+              labels.push('priority: low');
+            }
+            
+            // Difficulty estimation
+            if (text.includes('simple') || text.includes('easy') || text.includes('quick')) {
+              labels.push('difficulty: easy');
+            } else if (text.includes('complex') || text.includes('difficult') || text.includes('hard')) {
+              labels.push('difficulty: hard');
+            }
+            
+            // Add needs-triage if no labels were added
+            if (labels.length === 0) {
+              labels.push('needs-triage');
+            }
+            
+            // Apply labels
+            if (labels.length > 0) {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                labels: labels
+              });
+              
+              console.log(`Added labels: ${labels.join(', ')}`);
+            }
+            
+      - name: Add Welcome Comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue;
+            
+            // Check if this is the user's first issue
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              creator: issue.user.login,
+              state: 'all'
+            });
+            
+            if (issues.data.length === 1) {
+              const welcomeMessage = `👋 Thanks for opening your first issue, @${issue.user.login}! 
+              
+We appreciate your contribution to NeuralGate. Our team will review this issue and get back to you soon.
+
+In the meantime, please make sure you've provided:
+- ✅ A clear description of the issue or feature request
+- ✅ Steps to reproduce (for bugs)
+- ✅ Expected vs actual behavior (for bugs)
+- ✅ Any relevant context or screenshots
+
+If you'd like to work on this issue yourself, feel free to comment and we'll assign it to you!`;
+
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: welcomeMessage
+              });
+            }
+
+  # Job 2: Categorize and Track Feedback
+  categorize-feedback:
+    name: Categorize Feedback
+    runs-on: ubuntu-latest
+    if: github.event_name == 'issues'
+    permissions:
+      issues: write
+      contents: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Categorize Issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const labels = issue.labels.map(l => l.name);
+            
+            // Determine category
+            let category = 'uncategorized';
+            if (labels.includes('bug')) category = 'bugs';
+            else if (labels.includes('enhancement')) category = 'enhancements';
+            else if (labels.includes('documentation')) category = 'documentation';
+            else if (labels.includes('performance')) category = 'performance';
+            else if (labels.includes('security')) category = 'security';
+            
+            // Add category comment
+            const categoryComment = `📋 **Issue Category**: ${category}
+
+This issue has been automatically categorized. If this is incorrect, please update the labels.`;
+
+            // Check if category comment already exists
+            const comments = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number
+            });
+            
+            const hasCategoryComment = comments.data.some(c => 
+              c.body.includes('Issue Category') && c.user.type === 'Bot'
+            );
+            
+            if (!hasCategoryComment && category !== 'uncategorized') {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: categoryComment
+              });
+            }
+
+  # Job 3: Generate Weekly Report
+  weekly-report:
+    name: Generate Weekly Report
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    permissions:
+      issues: write
+      contents: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Generate Issue Report
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+            
+            // Fetch issues from the last week
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'all',
+              since: oneWeekAgo.toISOString(),
+              per_page: 100
+            });
+            
+            // Categorize issues
+            const categories = {
+              'bugs': [],
+              'enhancements': [],
+              'documentation': [],
+              'performance': [],
+              'security': [],
+              'other': []
+            };
+            
+            const stats = {
+              total: issues.data.length,
+              opened: 0,
+              closed: 0,
+              open: 0
+            };
+            
+            issues.data.forEach(issue => {
+              if (!issue.pull_request) {
+                const labels = issue.labels.map(l => l.name);
+                
+                // Count stats
+                if (new Date(issue.created_at) > oneWeekAgo) stats.opened++;
+                if (issue.closed_at && new Date(issue.closed_at) > oneWeekAgo) stats.closed++;
+                if (issue.state === 'open') stats.open++;
+                
+                // Categorize
+                if (labels.includes('bug')) categories.bugs.push(issue);
+                else if (labels.includes('enhancement')) categories.enhancements.push(issue);
+                else if (labels.includes('documentation')) categories.documentation.push(issue);
+                else if (labels.includes('performance')) categories.performance.push(issue);
+                else if (labels.includes('security')) categories.security.push(issue);
+                else categories.other.push(issue);
+              }
+            });
+            
+            // Generate report
+            let report = `# 📊 Weekly Issue Report\n\n`;
+            report += `**Report Period**: ${oneWeekAgo.toDateString()} - ${new Date().toDateString()}\n\n`;
+            report += `## Summary\n\n`;
+            report += `- **Total Issues**: ${stats.total}\n`;
+            report += `- **Opened**: ${stats.opened}\n`;
+            report += `- **Closed**: ${stats.closed}\n`;
+            report += `- **Currently Open**: ${stats.open}\n\n`;
+            
+            report += `## Issues by Category\n\n`;
+            for (const [category, issueList] of Object.entries(categories)) {
+              if (issueList.length > 0) {
+                report += `### ${category.charAt(0).toUpperCase() + category.slice(1)} (${issueList.length})\n\n`;
+                issueList.slice(0, 5).forEach(issue => {
+                  const status = issue.state === 'open' ? '🟢' : '🔴';
+                  report += `- ${status} #${issue.number}: ${issue.title}\n`;
+                });
+                if (issueList.length > 5) {
+                  report += `- _...and ${issueList.length - 5} more_\n`;
+                }
+                report += `\n`;
+              }
+            }
+            
+            report += `\n---\n*Generated automatically by Issue Management workflow*\n`;
+            
+            // Save report to file
+            const fs = require('fs');
+            const path = `reports/weekly-report-${new Date().toISOString().split('T')[0]}.md`;
+            
+            // Create reports directory
+            if (!fs.existsSync('reports')) {
+              fs.mkdirSync('reports');
+            }
+            
+            fs.writeFileSync(path, report);
+            console.log(`Report saved to ${path}`);
+            console.log(report);
+            
+            return report;
+            
+      - name: Upload Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: weekly-report
+          path: reports/
+          retention-days: 90
+          
+      - name: Add Report to Summary
+        run: |
+          if [ -f reports/*.md ]; then
+            cat reports/*.md >> $GITHUB_STEP_SUMMARY
+          fi
+
+  # Job 4: Manage Stale Issues
+  stale-issues:
+    name: Manage Stale Issues
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    permissions:
+      issues: write
+    
+    steps:
+      - name: Mark Stale Issues
+        uses: actions/stale@v9
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          stale-issue-message: |
+            👋 This issue has been automatically marked as stale because it has not had recent activity.
+            
+            It will be closed in 14 days if no further activity occurs. If this issue is still relevant, please:
+            - Add a comment to keep it open
+            - Add the `keep-open` label
+            - Provide any additional context or updates
+            
+            Thank you for your contributions!
+          stale-pr-message: |
+            👋 This pull request has been automatically marked as stale because it has not had recent activity.
+            
+            It will be closed in 14 days if no further activity occurs. If this PR is still relevant, please:
+            - Rebase on the latest main branch
+            - Respond to any review comments
+            - Add the `keep-open` label
+            
+            Thank you for your contributions!
+          days-before-stale: 60
+          days-before-close: 14
+          stale-issue-label: 'stale'
+          stale-pr-label: 'stale'
+          exempt-issue-labels: 'keep-open,security,critical,pinned'
+          exempt-pr-labels: 'keep-open,security,critical'
+
+  # Job 5: AI Feedback Analysis (placeholder for future ML integration)
+  ai-feedback-analysis:
+    name: AI Feedback Analysis
+    runs-on: ubuntu-latest
+    if: github.event_name == 'issues' && github.event.action == 'opened'
+    
+    steps:
+      - name: Analyze Issue Content
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue;
+            
+            // Placeholder for future AI-powered analysis
+            // This could integrate with OpenAI, or custom NLP models
+            // to better understand user feedback and sentiment
+            
+            console.log('AI analysis placeholder');
+            console.log(`Issue #${issue.number}: ${issue.title}`);
+            
+            // Future enhancements:
+            // - Sentiment analysis
+            // - Duplicate detection
+            // - Priority recommendation
+            // - Auto-assignment based on content

@@ -1,0 +1,104 @@
+# SwiftLint Configuration for NeuralGate
+# https://realm.github.io/SwiftLint/rule-directory.html
+
+# Paths to include in linting
+included:
+  - Sources
+  
+# Paths to exclude from linting
+excluded:
+  - .build
+  - .swiftpm
+  - Tests
+  - Pods
+  - Carthage
+  - DerivedData
+
+# Disabled rules - rules that are turned off
+disabled_rules:
+  - trailing_whitespace # Allow trailing whitespace for now
+  - todo # Allow TODO comments
+  - line_length # Handled by SwiftFormat
+
+# Opt-in rules - rules that are not enabled by default
+opt_in_rules:
+  - empty_count # Prefer isEmpty over count == 0
+  - closure_spacing # Add spacing in closures
+  - contains_over_first_not_nil # Use contains over first != nil
+  - explicit_init # Explicitly call .init()
+  - first_where # Prefer first(where:) over filter + first
+  - implicit_return # Implicit returns in closures
+  - modifier_order # Consistent modifier order
+  - sorted_first_last # Use min/max over sorted().first/last
+  - unused_optional_binding # Detect unused optional bindings
+  - vertical_whitespace_closing_braces # Whitespace before closing braces
+
+# Rule configuration
+force_cast: warning
+force_try: warning
+function_body_length:
+  warning: 100
+  error: 150
+function_parameter_count:
+  warning: 6
+  error: 8
+type_body_length:
+  warning: 300
+  error: 400
+file_length:
+  warning: 500
+  error: 800
+  ignore_comment_only_lines: true
+cyclomatic_complexity:
+  warning: 15
+  error: 25
+  ignores_case_statements: true
+nesting:
+  type_level:
+    warning: 3
+  statement_level:
+    warning: 5
+identifier_name:
+  min_length:
+    warning: 2
+    error: 1
+  max_length:
+    warning: 50
+    error: 60
+  excluded:
+    - id
+    - x
+    - y
+    - z
+    - i
+    - j
+    - k
+type_name:
+  min_length:
+    warning: 3
+    error: 2
+  max_length:
+    warning: 50
+    error: 60
+
+# Custom rules (optional)
+custom_rules:
+  # Ensure proper spacing around operators
+  operator_usage_whitespace:
+    name: "Operator Usage Whitespace"
+    regex: '([\+\-\*\/\=]{1})[^\s\+\-\*\/\=]|[^\s\+\-\*\/\=]([\+\-\*\/\=]{1})'
+    message: "Operators should be surrounded by spaces"
+    severity: warning
+  
+  # Discourage force unwrapping in production code
+  multiple_empty_lines:
+    name: "Multiple Empty Lines"
+    regex: '\n\n\n+'
+    message: "Avoid multiple consecutive empty lines"
+    severity: warning
+
+# Reporting
+reporter: "xcode"
+
+# Warnings and errors
+warning_threshold: 100
