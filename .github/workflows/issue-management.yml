@@ -113,17 +113,19 @@ jobs:
             });
             
             if (issues.data.length === 1) {
-              const welcomeMessage = `👋 Thanks for opening your first issue, @${issue.user.login}! 
-              
-We appreciate your contribution to NeuralGate. Our team will review this issue and get back to you soon.
-
-In the meantime, please make sure you've provided:
-- ✅ A clear description of the issue or feature request
-- ✅ Steps to reproduce (for bugs)
-- ✅ Expected vs actual behavior (for bugs)
-- ✅ Any relevant context or screenshots
-
-If you'd like to work on this issue yourself, feel free to comment and we'll assign it to you!`;
+              const welcomeMessage = [
+                `👋 Thanks for opening your first issue, @${issue.user.login}!`,
+                '',
+                'We appreciate your contribution to NeuralGate. Our team will review this issue and get back to you soon.',
+                '',
+                "In the meantime, please make sure you've provided:",
+                '- ✅ A clear description of the issue or feature request',
+                '- ✅ Steps to reproduce (for bugs)',
+                '- ✅ Expected vs actual behavior (for bugs)',
+                '- ✅ Any relevant context or screenshots',
+                '',
+                "If you'd like to work on this issue yourself, feel free to comment and we'll assign it to you!"
+              ].join('\n');
 
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
@@ -162,9 +164,11 @@ If you'd like to work on this issue yourself, feel free to comment and we'll ass
             else if (labels.includes('security')) category = 'security';
             
             // Add category comment
-            const categoryComment = `📋 **Issue Category**: ${category}
-
-This issue has been automatically categorized. If this is incorrect, please update the labels.`;
+            const categoryComment = [
+              `📋 **Issue Category**: ${category}`,
+              '',
+              'This issue has been automatically categorized. If this is incorrect, please update the labels.'
+            ].join('\n');
 
             // Check if category comment already exists
             const comments = await github.rest.issues.listComments({
