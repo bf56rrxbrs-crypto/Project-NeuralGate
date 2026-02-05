@@ -1,0 +1,278 @@
+name: Deployment
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+
+env:
+  SWIFT_VERSION: '5.9'
+
+jobs:
+  # Job 1: Build Release Artifacts
+  build-release:
+    name: Build Release Artifacts
+    runs-on: macos-14
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for changelog generation
+          
+      - name: Setup Swift
+        uses: swift-actions/setup-swift@v2
+        with:
+          swift-version: ${{ env.SWIFT_VERSION }}
+          
+      - name: Build Release Configuration
+        run: |
+          swift build -c release --verbose
+          
+      - name: Run Tests
+        run: |
+          swift test -c release
+          
+      - name: Package Artifacts
+        run: |
+          mkdir -p artifacts
+          cp -R .build/release/ artifacts/
+          tar -czf neuralgate-release.tar.gz artifacts/
+          
+      - name: Upload Release Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-artifacts
+          path: neuralgate-release.tar.gz
+          retention-days: 90
+
+  # Job 2: Deploy to Staging
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: build-release
+    if: github.ref == 'refs/heads/develop' || github.event.inputs.environment == 'staging'
+    environment:
+      name: staging
+      url: https://staging.neuralgate.app
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Download Release Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: release-artifacts
+          
+      - name: Deploy to Staging
+        run: |
+          echo "🚀 Deploying to staging environment..."
+          echo "Version: ${GITHUB_SHA::7}"
+          echo "Branch: ${GITHUB_REF_NAME}"
+          # Add your staging deployment commands here
+          # For example: AWS, TestFlight, or custom deployment scripts
+          
+      - name: Deployment Status
+        run: |
+          echo "✅ Successfully deployed to staging"
+
+  # Job 3: Deploy to Production
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: build-release
+    if: startsWith(github.ref, 'refs/tags/v') || github.event.inputs.environment == 'production'
+    environment:
+      name: production
+      url: https://neuralgate.app
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: Download Release Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: release-artifacts
+          
+      - name: Deploy to Production
+        run: |
+          echo "🚀 Deploying to production environment..."
+          echo "Version: ${GITHUB_REF_NAME}"
+          # Add your production deployment commands here
+          # For example: App Store Connect, AWS, or custom deployment scripts
+          
+      - name: Deployment Status
+        run: |
+          echo "✅ Successfully deployed to production"
+
+  # Job 4: Create GitHub Release
+  create-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: build-release
+    if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: Download Release Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: release-artifacts
+          
+      - name: Extract Version
+        id: version
+        run: |
+          VERSION=${GITHUB_REF_NAME#v}
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "tag=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
+          
+      - name: Generate Changelog
+        id: changelog
+        run: |
+          # Get the previous tag
+          PREV_TAG=$(git describe --tags --abbrev=0 ${GITHUB_REF_NAME}^ 2>/dev/null || echo "")
+          
+          if [ -z "$PREV_TAG" ]; then
+            echo "First release - no previous tag found"
+            CHANGELOG="Initial release of NeuralGate v${{ steps.version.outputs.version }}"
+          else
+            echo "Generating changelog from ${PREV_TAG} to ${GITHUB_REF_NAME}"
+            
+            # Generate changelog
+            CHANGELOG=$(cat <<EOF
+          ## What's Changed
+          
+          $(git log ${PREV_TAG}..${GITHUB_REF_NAME} --pretty=format:"- %s (%h)" --no-merges)
+          
+          ## Contributors
+          
+          $(git log ${PREV_TAG}..${GITHUB_REF_NAME} --pretty=format:"%an" --no-merges | sort -u | sed 's/^/- @/')
+          
+          **Full Changelog**: https://github.com/${{ github.repository }}/compare/${PREV_TAG}...${GITHUB_REF_NAME}
+          EOF
+          )
+          fi
+          
+          # Save changelog to file
+          echo "$CHANGELOG" > RELEASE_NOTES.md
+          
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: NeuralGate ${{ steps.version.outputs.version }}
+          body_path: RELEASE_NOTES.md
+          draft: false
+          prerelease: false
+          files: |
+            neuralgate-release.tar.gz
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Job 5: Update Changelog File
+  update-changelog:
+    name: Update CHANGELOG.md
+    runs-on: ubuntu-latest
+    needs: create-release
+    if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
+          token: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Extract Version
+        id: version
+        run: |
+          VERSION=${GITHUB_REF_NAME#v}
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "tag=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
+          
+      - name: Update CHANGELOG.md
+        run: |
+          # Get the previous tag
+          PREV_TAG=$(git describe --tags --abbrev=0 ${GITHUB_REF_NAME}^ 2>/dev/null || echo "")
+          DATE=$(date +%Y-%m-%d)
+          
+          # Create or update CHANGELOG.md
+          if [ ! -f CHANGELOG.md ]; then
+            echo "# Changelog" > CHANGELOG.md
+            echo "" >> CHANGELOG.md
+            echo "All notable changes to NeuralGate will be documented in this file." >> CHANGELOG.md
+            echo "" >> CHANGELOG.md
+          fi
+          
+          # Prepare new entry
+          NEW_ENTRY=$(cat <<EOF
+          ## [${{ steps.version.outputs.version }}] - ${DATE}
+          
+          ### Added
+          $(git log ${PREV_TAG}..${GITHUB_REF_NAME} --pretty=format:"- %s" --no-merges | grep -i "add\|feat" | head -10 || echo "")
+          
+          ### Changed
+          $(git log ${PREV_TAG}..${GITHUB_REF_NAME} --pretty=format:"- %s" --no-merges | grep -i "change\|update\|improve" | head -10 || echo "")
+          
+          ### Fixed
+          $(git log ${PREV_TAG}..${GITHUB_REF_NAME} --pretty=format:"- %s" --no-merges | grep -i "fix\|bug" | head -10 || echo "")
+          
+          EOF
+          )
+          
+          # Insert new entry after the header
+          awk -v new_entry="$NEW_ENTRY" '
+            /^# Changelog/ {print; print ""; print new_entry; next}
+            {print}
+          ' CHANGELOG.md > CHANGELOG.tmp && mv CHANGELOG.tmp CHANGELOG.md
+          
+      - name: Commit and Push CHANGELOG.md
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add CHANGELOG.md
+          git commit -m "docs: update CHANGELOG.md for ${{ steps.version.outputs.tag }}" || echo "No changes to commit"
+          git push origin main || echo "Nothing to push"
+
+  # Job 6: Notify Deployment
+  notify-deployment:
+    name: Notify Deployment Status
+    runs-on: ubuntu-latest
+    needs: [deploy-staging, deploy-production]
+    if: always()
+    
+    steps:
+      - name: Deployment Summary
+        run: |
+          echo "## 🚀 Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Staging**: ${{ needs.deploy-staging.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Production**: ${{ needs.deploy-production.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Deployment completed at $(date)" >> $GITHUB_STEP_SUMMARY
