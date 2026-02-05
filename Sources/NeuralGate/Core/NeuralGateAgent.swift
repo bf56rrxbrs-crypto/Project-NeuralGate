@@ -29,11 +29,11 @@ public class NeuralGateAgent {
         // Parse natural language to understand intent
         let intent = try await nlpProcessor.parseIntent(request)
         
-        // Convert intent to executable task
-        let task = try taskManager.createTask(from: intent)
+        // Convert intent to executable workflow task
+        let workflowTask = try taskManager.createWorkflowTask(from: intent)
         
         // Execute task using workflow engine
-        let result = try await workflowEngine.executeTask(task)
+        let result = try await workflowEngine.executeTask(workflowTask)
         
         return result
     }
@@ -50,15 +50,16 @@ public class NeuralGateAgent {
     /// - Parameters:
     ///   - name: Name of the workflow
     ///   - steps: Array of workflow steps
-    /// - Returns: Created workflow
-    public func createWorkflow(name: String, steps: [WorkflowStep]) -> Workflow {
-        return workflowEngine.createWorkflow(name: name, steps: steps)
+    /// - Returns: Created workflow definition ID
+    public func createWorkflow(name: String, steps: [WorkflowStep]) -> String {
+        let definition = workflowEngine.createWorkflow(name: name, steps: steps)
+        return definition.id
     }
     
-    /// Get all available workflows
-    /// - Returns: Array of available workflows
-    public func getAvailableWorkflows() -> [Workflow] {
-        return workflowEngine.getAllWorkflows()
+    /// Get all available workflow IDs
+    /// - Returns: Array of workflow IDs
+    public func getAvailableWorkflows() -> [String] {
+        return workflowEngine.getAllWorkflows().map { $0.id }
     }
     
     /// Integrate with iOS Shortcuts

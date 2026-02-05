@@ -439,14 +439,6 @@ class RecommendationsViewModel: ObservableObject {
     }
 }
 
-// MARK: - Supporting Extensions
-
-extension RecommendationType: CaseIterable {
-    public static var allCases: [RecommendationType] = [
-        .workflow, .task, .timing, .automation, .efficiency
-    ]
-}
-
 // MARK: - Preview Provider
 
 #if DEBUG

@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: - Workflow Execution Models (for WorkflowEngine)
 
-/// Represents a single executable workflow task (legacy model for workflow engine)
+/// Represents a single executable workflow task (workflow engine model)
 public struct WorkflowTask: Codable, Identifiable {
     public let id: String
     public let type: String

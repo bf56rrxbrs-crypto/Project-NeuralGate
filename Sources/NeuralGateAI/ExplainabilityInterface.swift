@@ -471,10 +471,10 @@ public actor ExplainabilityInterface {
             ))
         }
         
-        if let userPreference = metadata["userPreference"] as? String {
+        if let userPreferenceValue = metadata["userPreference"] as? String {
             factors.append(DecisionFactor(
                 name: "User Preference",
-                value: userPreference,
+                value: userPreferenceValue,
                 weight: 0.10,
                 impact: .positive,
                 explanation: "Aligns with your stated preferences"

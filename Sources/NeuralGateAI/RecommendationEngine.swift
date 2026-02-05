@@ -7,7 +7,7 @@
 import Foundation
 
 /// Types of recommendations that can be provided to users
-public enum RecommendationType: String, Codable {
+public enum RecommendationType: String, Codable, CaseIterable {
     case workflow = "workflow"              // Workflow optimization suggestions
     case task = "task"                      // Task-related recommendations
     case timing = "timing"                  // Optimal timing suggestions
