@@ -184,7 +184,7 @@ Performs comprehensive security analysis including CodeQL analysis, dependency r
 1. Go to repository Settings
 2. Navigate to "Code security and analysis"
 3. Enable "Dependency graph"
-4. URL: https://github.com/bf56rrxbrs-crypto/Project-NeuralGate/settings/security_analysis
+4. URL format: `https://github.com/<OWNER>/<REPO>/settings/security_analysis`
 
 **Note**: The dependency-review job is configured with `continue-on-error: true` to prevent workflow failures if Dependency Graph is not enabled. However, for full security coverage, it's recommended to enable this feature.
 
@@ -472,7 +472,7 @@ Go to **Settings > Code security and analysis**:
    - Detects accidentally committed secrets
    - Automatically enabled for public repos
 
-**Quick Setup Link**: https://github.com/bf56rrxbrs-crypto/Project-NeuralGate/settings/security_analysis
+**Quick Setup**: Go to Settings > Code security and analysis in your repository
 
 ### Secrets Required
 
@@ -508,11 +508,10 @@ Recommended settings for `main` branch:
 **Issue**: Dependency Review fails with "Dependency review is not supported"
 - **Cause**: Dependency Graph feature is not enabled in repository settings
 - **Solution**: 
-  1. Go to Settings > Code security and analysis
+  1. Go to repository Settings > Code security and analysis
   2. Enable "Dependency graph"
   3. Re-run the workflow
 - **Note**: The workflow is configured with `continue-on-error: true` so it won't block other checks
-- **Reference**: https://github.com/bf56rrxbrs-crypto/Project-NeuralGate/settings/security_analysis
 
 **Issue**: CodeQL analysis fails
 - Check Swift build succeeds first
