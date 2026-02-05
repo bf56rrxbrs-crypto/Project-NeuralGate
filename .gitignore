@@ -31,19 +31,12 @@ Podfile.lock
 # Carthage
 Carthage/Build/
 
-# fastlane
-fastlane/report.xml
-fastlane/Preview.html
-fastlane/screenshots/**/*.png
-fastlane/test_output
+# macOS
+.DS_Store
 
-# Code coverage
-*.profdata
-*.profraw
-*.gcov
-*.gcda
-*.gcno
-
-# Temporary files
-tmp/
-temp/
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
