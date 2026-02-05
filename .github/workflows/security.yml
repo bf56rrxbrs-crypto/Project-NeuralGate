@@ -49,6 +49,8 @@ jobs:
           category: "/language:${{ matrix.language }}"
 
   # Job 2: Dependency Review (PRs only)
+  # Note: Requires Dependency Graph to be enabled in repository settings
+  # See: https://github.com/bf56rrxbrs-crypto/Project-NeuralGate/settings/security_analysis
   dependency-review:
     name: Dependency Review
     runs-on: ubuntu-latest
@@ -62,6 +64,7 @@ jobs:
 
       - name: Dependency Review
         uses: actions/dependency-review-action@v4
+        continue-on-error: true
         with:
           fail-on-severity: moderate
           deny-licenses: GPL-2.0, GPL-3.0

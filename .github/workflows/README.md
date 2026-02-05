@@ -8,12 +8,13 @@ This document provides comprehensive information about the GitHub Actions workfl
 2. [Workflow Files](#workflow-files)
 3. [CI/CD Pipeline](#cicd-pipeline)
 4. [Code Quality Checks](#code-quality-checks)
-5. [Deployment Automation](#deployment-automation)
-6. [Performance Metrics](#performance-metrics)
-7. [Issue Management](#issue-management)
-8. [Dependency Management](#dependency-management)
-9. [Configuration](#configuration)
-10. [Troubleshooting](#troubleshooting)
+5. [Security Scanning](#security-scanning)
+6. [Deployment Automation](#deployment-automation)
+7. [Performance Metrics](#performance-metrics)
+8. [Issue Management](#issue-management)
+9. [Dependency Management](#dependency-management)
+10. [Configuration](#configuration)
+11. [Troubleshooting](#troubleshooting)
 
 ## Overview
 
@@ -21,7 +22,7 @@ The GitHub Actions workflows for NeuralGate provide automated:
 
 - **Continuous Integration**: Automated building and testing on every push and PR
 - **Code Quality**: Linting and formatting checks using SwiftLint and SwiftFormat
-- **Security**: Dependency vulnerability scanning via Dependabot
+- **Security Scanning**: CodeQL analysis, dependency review, and secret detection
 - **Deployment**: Automated deployment to staging and production environments
 - **Metrics**: Performance monitoring and build time tracking
 - **Issue Management**: Automated labeling, categorization, and reporting
@@ -34,6 +35,7 @@ All workflow files are located in `.github/workflows/`:
 |------|---------|----------|
 | `ci-cd.yml` | Main CI/CD pipeline | Push to main/develop, PRs |
 | `code-quality.yml` | Linting and code analysis | Push, PRs |
+| `security.yml` | Security scanning and analysis | Push, PRs, schedule |
 | `deployment.yml` | Deployment automation | Push to main/develop, tags |
 | `metrics.yml` | Performance metrics collection | Push, PRs, schedule |
 | `issue-management.yml` | Issue automation | Issue events, schedule |
@@ -149,6 +151,73 @@ Runs automatically on:
 - Pull requests
 - Push to main/develop
 - Manual trigger
+
+## Security Scanning
+
+**File**: `security.yml`
+
+### Purpose
+Performs comprehensive security analysis including CodeQL analysis, dependency review, and secret scanning.
+
+### Jobs
+
+#### 1. CodeQL Security Analysis
+- Runs static code analysis using GitHub CodeQL
+- Analyzes Swift code for security vulnerabilities
+- Uses security-extended and security-and-quality query suites
+- Uploads results to GitHub Security tab
+
+**Key Features**:
+- Builds the project for accurate analysis
+- Categorizes findings by language
+- Integrates with GitHub Advanced Security
+
+#### 2. Dependency Review
+- Reviews dependency changes in pull requests
+- Detects known vulnerabilities in dependencies
+- Checks for restricted licenses (GPL-2.0, GPL-3.0)
+- Fails on moderate or higher severity issues
+
+**⚠️ Important**: This job requires the **Dependency Graph** feature to be enabled in repository settings.
+
+**Enable Dependency Graph**:
+1. Go to repository Settings
+2. Navigate to "Code security and analysis"
+3. Enable "Dependency graph"
+4. URL: https://github.com/bf56rrxbrs-crypto/Project-NeuralGate/settings/security_analysis
+
+**Note**: The dependency-review job is configured with `continue-on-error: true` to prevent workflow failures if Dependency Graph is not enabled. However, for full security coverage, it's recommended to enable this feature.
+
+#### 3. Secret Scanning Alert Check
+- Checks for exposed secrets in code
+- Placeholder for custom secret pattern detection
+- GitHub secret scanning runs automatically if enabled
+
+#### 4. Security Report
+- Aggregates results from all security jobs
+- Generates comprehensive security summary
+- Reports pass/fail status for each check
+- Posted to GitHub Actions summary
+
+### Usage
+
+Runs automatically on:
+- Push to `main` or `develop` branches
+- All pull requests
+- Weekly on Mondays at 3 AM UTC (scheduled)
+- Manual trigger via workflow_dispatch
+
+### Security Features Checklist
+
+To get full security coverage, ensure these features are enabled:
+
+- ✅ **CodeQL Analysis** - Enabled in workflow (no additional setup required)
+- ⚠️ **Dependency Graph** - Must be enabled in repository settings
+- ⚠️ **Dependabot Alerts** - Requires Dependency Graph to be enabled first
+- ⚠️ **Secret Scanning** - Available for public repos, or enable for private repos
+
+**Enable in GitHub Settings**:
+Settings > Code security and analysis > Enable all security features
 
 ## Deployment Automation
 
