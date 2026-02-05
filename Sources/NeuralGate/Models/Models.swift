@@ -1,9 +1,9 @@
 import Foundation
 
-// MARK: - Task Models
+// MARK: - Workflow Execution Models (for WorkflowEngine)
 
-/// Represents a single executable task
-public struct Task: Codable, Identifiable {
+/// Represents a single executable workflow task (legacy model for workflow engine)
+public struct WorkflowTask: Codable, Identifiable {
     public let id: String
     public let type: String
     public let parameters: [String: String]
@@ -58,10 +58,10 @@ public struct TaskResult: Codable {
     }
 }
 
-// MARK: - Workflow Models
+// MARK: - Workflow Engine Models
 
-/// Represents a workflow containing multiple steps
-public struct Workflow: Codable, Identifiable {
+/// Represents a workflow containing multiple steps (for workflow engine)
+public struct WorkflowDefinition: Codable, Identifiable {
     public let id: String
     public let name: String
     public let steps: [WorkflowStep]
