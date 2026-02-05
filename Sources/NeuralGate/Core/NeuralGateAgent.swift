@@ -7,7 +7,7 @@ public class NeuralGateAgent {
     // MARK: - Properties
     
     public let taskManager: TaskManager
-    private let workflowEngine: WorkflowEngine
+    public let workflowEngine: WorkflowEngine
     private let nlpProcessor: NaturalLanguageProcessor
     private let iosIntegration: iOSIntegration
     
