@@ -351,6 +351,8 @@ jobs:
     name: AI Feedback Analysis
     runs-on: ubuntu-latest
     if: github.event_name == 'issues' && github.event.action == 'opened'
+    permissions:
+      contents: read
     
     steps:
       - name: Analyze Issue Content
