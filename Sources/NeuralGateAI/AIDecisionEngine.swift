@@ -7,9 +7,18 @@ public class AIDecisionEngine {
     private var models: [AIModel]
     private let logger = NeuralGateLogger.shared
     
+    // Performance optimizations
+    private var decisionCache: [String: CachedDecision] = [:]
+    private let cacheMaxSize = 100
+    private var modelHealthScores: [String: Double] = [:]
+    
     public init(configuration: NeuralGateConfiguration, models: [AIModel] = []) {
         self.configuration = configuration
         self.models = models.isEmpty ? [BaselineAIModel()] : models
+        // Initialize health scores
+        for model in self.models {
+            modelHealthScores[model.name] = 1.0
+        }
     }
     
     /// Make a decision using ensemble of AI models
@@ -19,21 +28,62 @@ public class AIDecisionEngine {
     ) async throws -> ExplainableResult<TaskDecision> {
         logger.log("Making decision for task: \(task.name)", level: .info)
         
+        // Early exit optimization for critical tasks
+        if task.priority == .critical && shouldUseEarlyExit(task: task) {
+            logger.log("Using early exit for critical task", level: .debug)
+            return ExplainableResult(
+                value: .execute,
+                explanation: "Critical priority task - fast-track execution",
+                confidence: 0.95,
+                factors: ["priority": 1.0, "early_exit": 1.0]
+            )
+        }
+        
+        // Check cache for recent similar decisions
+        let cacheKey = generateCacheKey(task: task, context: context)
+        if let cached = decisionCache[cacheKey], !cached.isExpired() {
+            logger.log("Using cached decision", level: .debug)
+            return cached.result
+        }
+        
         // Check resource constraints
         let totalEstimatedUsage = models.reduce(0) { $0 + $1.estimatedMemoryUsage }
         guard totalEstimatedUsage <= configuration.maxMemoryUsage else {
             throw NeuralGateError.resourceLimitExceeded
         }
         
-        // Get predictions from all models
+        // Filter healthy models using circuit breaker pattern
+        let healthyModels = models.filter { (modelHealthScores[$0.name] ?? 0) > 0.3 }
+        guard !healthyModels.isEmpty else {
+            // All models unhealthy, reset and try again
+            resetModelHealth()
+            throw NeuralGateError.modelLoadingFailed("All models are unhealthy")
+        }
+        
+        // Get predictions from all models in parallel
         var predictions: [(model: String, decision: TaskDecision, confidence: Double)] = []
         
-        for model in models {
-            do {
-                let prediction = try await model.predict(task: task, context: context)
-                predictions.append((model.name, prediction.decision, prediction.confidence))
-            } catch {
-                logger.log("Model \(model.name) failed: \(error)", level: .warning)
+        await withTaskGroup(of: (String, TaskDecision, Double)?.self) { group in
+            for model in healthyModels {
+                group.addTask {
+                    do {
+                        let prediction = try await model.predict(task: task, context: context)
+                        // Update health score on success
+                        self.updateModelHealth(model.name, success: true)
+                        return (model.name, prediction.decision, prediction.confidence)
+                    } catch {
+                        self.logger.log("Model \(model.name) failed: \(error)", level: .warning)
+                        // Decrease health score on failure
+                        self.updateModelHealth(model.name, success: false)
+                        return nil
+                    }
+                }
+            }
+            
+            for await result in group {
+                if let prediction = result {
+                    predictions.append(prediction)
+                }
             }
         }
         
@@ -53,12 +103,73 @@ public class AIDecisionEngine {
         // Extract contributing factors
         let factors = extractFactors(task: task, predictions: predictions)
         
-        return ExplainableResult(
+        let result = ExplainableResult(
             value: decision,
             explanation: explanation,
             confidence: avgConfidence,
             factors: factors
         )
+        
+        // Cache the decision
+        cacheDecision(key: cacheKey, result: result)
+        
+        return result
+    }
+    
+    // MARK: - Performance Optimization Methods
+    
+    /// Generate cache key for task and context
+    private func generateCacheKey(task: Task, context: ExecutionContext) -> String {
+        // Simple hash based on task properties
+        return "\(task.priority.rawValue)_\(task.category.rawValue)_\(task.status.rawValue)"
+    }
+    
+    /// Cache a decision result
+    private func cacheDecision(key: String, result: ExplainableResult<TaskDecision>) {
+        decisionCache[key] = CachedDecision(result: result, timestamp: Date())
+        
+        // Limit cache size using LRU-like eviction
+        if decisionCache.count > cacheMaxSize {
+            // Remove oldest entries
+            let sortedKeys = decisionCache.keys.sorted {
+                (decisionCache[$0]?.timestamp ?? Date.distantPast) < (decisionCache[$1]?.timestamp ?? Date.distantPast)
+            }
+            for key in sortedKeys.prefix(sortedKeys.count - cacheMaxSize) {
+                decisionCache.removeValue(forKey: key)
+            }
+        }
+    }
+    
+    /// Check if early exit should be used for high-priority tasks
+    private func shouldUseEarlyExit(task: Task) -> Bool {
+        // Use early exit for communication tasks with critical priority
+        return task.category == .communication || task.category == .automation
+    }
+    
+    /// Update model health score based on prediction success
+    private func updateModelHealth(_ modelName: String, success: Bool) {
+        let currentHealth = modelHealthScores[modelName] ?? 1.0
+        // Exponential moving average: increase slowly on success, decrease quickly on failure
+        let alpha = success ? 0.1 : 0.3
+        let newHealth = success ? min(1.0, currentHealth + alpha * (1.0 - currentHealth)) : max(0.0, currentHealth - alpha)
+        modelHealthScores[modelName] = newHealth
+        
+        if newHealth < 0.5 {
+            logger.log("Model \(modelName) health degraded to \(newHealth)", level: .warning)
+        }
+    }
+    
+    /// Reset all model health scores
+    private func resetModelHealth() {
+        for model in models {
+            modelHealthScores[model.name] = 1.0
+        }
+        logger.log("Reset all model health scores", level: .info)
+    }
+    
+    /// Get model health metrics
+    public func getModelHealthMetrics() -> [String: Double] {
+        return modelHealthScores
     }
     
     /// Ensemble voting strategy
@@ -111,6 +222,17 @@ public class AIDecisionEngine {
         factors["avg_confidence"] = predictions.reduce(0.0) { $0 + $1.confidence } / Double(predictions.count)
         
         return factors
+    }
+}
+
+/// Cached decision with expiration
+private struct CachedDecision {
+    let result: ExplainableResult<TaskDecision>
+    let timestamp: Date
+    let ttl: TimeInterval = 60.0 // 60 seconds cache lifetime
+    
+    func isExpired() -> Bool {
+        return Date().timeIntervalSince(timestamp) > ttl
     }
 }
 
