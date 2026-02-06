@@ -95,25 +95,20 @@ Check the [Examples](Examples/) directory for detailed usage examples.
 
 ## Architecture
 
-The system is built with these core components:
+The system is built with four main modules:
+
+- **NeuralGate**: Core framework and models
+- **NeuralGateAI**: AI decision engine and analytics
+- **NeuralGateAutomation**: Workflow automation
+- **NeuralGateLearning**: Feedback loops and self-improvement
+
+### Core Components
 
 1. **NeuralGateAgent** - Main AI agent interface
 2. **TaskManager** - Task lifecycle and scheduling
 3. **WorkflowEngine** - Workflow execution and management
 4. **NaturalLanguageProcessor** - Intent parsing from natural language
 5. **iOSIntegration** - iPhone-specific features (Siri, Shortcuts, Notifications)
-
-## License
-
-Designed exclusively for iPhone/iOS applications.
-See [DOCUMENTATION.md](DOCUMENTATION.md) for comprehensive guides, API reference, and advanced usage examples.
-
-## Architecture
-
-- **NeuralGate**: Core framework and models
-- **NeuralGateAI**: AI decision engine and analytics
-- **NeuralGateAutomation**: Workflow automation
-- **NeuralGateLearning**: Feedback loops and self-improvement
 
 ## Installation
 
@@ -124,12 +119,6 @@ dependencies: [
     .package(url: "https://github.com/bf56rrxbrs-crypto/Project-NeuralGate.git", from: "1.0.0")
 ]
 ```
-
-## Requirements
-
-- iOS 15.0+
-- Swift 5.9+
-- Xcode 14.0+
 
 ## Testing
 

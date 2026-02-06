@@ -1,6 +1,6 @@
 # Project NeuralGate - Development Roadmap
 
-This document provides a high-level overview of the project roadmap. For detailed execution plan, see [EXECUTION_PLAN.md](EXECUTION_PLAN.md).
+This document provides a high-level overview of the project roadmap. For the detailed execution plan, see [EXECUTION_PLAN.md](EXECUTION_PLAN.md).
 
 ## Vision
 
