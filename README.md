@@ -41,6 +41,9 @@ NeuralGate is a comprehensive AI-powered automation framework designed exclusive
 
 ## Quick Start
 
+**New to the project?** See [QUICK_START.md](QUICK_START.md) for a comprehensive getting started guide.
+
+**For Developers**:
 ```swift
 import NeuralGate
 
@@ -56,13 +59,11 @@ Task {
 Task {
     try await agent.executeWorkflow("morning-routine")
 }
-// Execute a task
-let task = Task(name: "My Task", description: "Task description", priority: .high)
-let result = try await agent.executeTask(task)
-
-// Get intelligent suggestions
-let suggestions = agent.getTaskSuggestions()
 ```
+
+**For Project Planning**:
+- See [ROADMAP.md](ROADMAP.md) for project phases and milestones
+- See [EXECUTION_PLAN.md](EXECUTION_PLAN.md) for detailed development guide
 
 ## Documentation
 
