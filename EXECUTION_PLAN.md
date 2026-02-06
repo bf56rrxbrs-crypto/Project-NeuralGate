@@ -2957,7 +2957,8 @@ actor OfflineQueueManager {
     private var isInitialized = false
     
     init() {
-        // Synchronous initialization
+        // Empty init - actor state initialized in initialize() method
+        // Call initialize() before first use to load persisted operations
     }
     
     func initialize() async {
@@ -2996,15 +2997,19 @@ actor OfflineQueueManager {
     }
     
     private func performNetworkRequest(_ operation: PendingOperation) async throws {
-        // Actual network request implementation
+        // Implementation should:
+        // 1. Construct URLRequest from operation data
+        // 2. Execute request via URLSession
+        // 3. Parse and validate response
+        // 4. Throw on failure for retry logic
     }
     
-    private func savePendingOperations() {
+    private func savePendingOperations() async {
         let data = try? JSONEncoder().encode(pendingOperations)
         UserDefaults.standard.set(data, forKey: "pendingOperations")
     }
     
-    private func loadPendingOperations() {
+    private func loadPendingOperations() async {
         guard let data = UserDefaults.standard.data(forKey: "pendingOperations"),
               let operations = try? JSONDecoder().decode([PendingOperation].self, from: data) else {
             return
