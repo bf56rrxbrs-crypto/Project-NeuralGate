@@ -69,7 +69,7 @@ Create the most advanced AI-powered task and workflow automation app exclusively
 - Develop iOS integrations
 
 **MVP Features**:
-- [ ] User authentication (Apple Sign In, biometric)
+- [ ] User authentication (Sign in with Apple, biometric)
 - [ ] Task management (create, edit, delete, complete)
 - [ ] Natural language processing
 - [ ] Workflow automation engine
