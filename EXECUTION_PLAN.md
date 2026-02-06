@@ -966,6 +966,9 @@ jobs:
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO
       
+      - name: Install xcbeautify
+        run: brew install xcbeautify
+      
       - name: Run tests
         run: |
           xcodebuild test \
@@ -973,17 +976,17 @@ jobs:
             -destination "${{ env.IOS_DESTINATION }}" \
             -configuration Debug \
             -enableCodeCoverage YES \
+            -resultBundlePath TestResults.xcresult \
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
-            | xcpretty --report junit --output build/reports/junit.xml
+            | xcbeautify
       
       - name: Generate code coverage
         run: |
-          xcrun llvm-cov export \
-            -format="lcov" \
-            -instr-profile=$(find . -name "*.profdata") \
-            $(find . -name "NeuralGate") \
-            > coverage.lcov
+          xcrun xccov view --report --json TestResults.xcresult > coverage.json
+          # Or use xcov or slather for LCOV format
+          # gem install slather
+          # slather coverage -x --output-directory . --scheme ${{ env.IOS_SCHEME }} NeuralGate.xcodeproj
       
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
@@ -1146,8 +1149,8 @@ end
 
 3. **Create Provisioning Profiles**:
    - Development profile (for local devices)
-   - Ad Hoc profile (for TestFlight internal testing)
-   - App Store profile (for App Store distribution)
+   - Ad Hoc profile (for limited on-device distribution outside the App Store and TestFlight, e.g., client demos)
+   - App Store profile (used for both TestFlight and App Store distribution via App Store Connect)
 
 #### Automatic Signing (Recommended)
 
@@ -1356,8 +1359,8 @@ Define and implement core functionality and features that deliver value to users
 
 **MVP Implementation Example**:
 ```swift
-// MARK: - Task Model
-struct Task: Identifiable, Codable {
+// MARK: - UserTask Model (renamed to avoid conflict with Swift.Task)
+struct UserTask: Identifiable, Codable {
     let id: UUID
     var title: String
     var description: String?
@@ -1514,6 +1517,8 @@ enum TaskError: LocalizedError {
 
 **Implementation Strategy**:
 ```swift
+import Network
+
 // MARK: - Offline-First Architecture
 class SyncManager: ObservableObject {
     @Published var syncStatus: SyncStatus = .synced
@@ -2696,7 +2701,10 @@ struct BottomSheetModifier<SheetContent: View>: ViewModifier {
                             .padding(.top, 8)
                     }
                     .background(Color(.systemBackground))
-                    .cornerRadius(20, corners: [.topLeft, .topRight])
+                    .clipShape(UnevenRoundedRectangle(cornerRadii: .init(
+                        topLeading: 20,
+                        topTrailing: 20
+                    )))
                     .transition(.move(edge: .bottom))
                 }
                 .ignoresSafeArea(edges: .bottom)
@@ -2942,7 +2950,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
 
 ```swift
 // MARK: - Offline Queue Manager
-class OfflineQueueManager {
+actor OfflineQueueManager {
     static let shared = OfflineQueueManager()
     
     private let queue: OperationQueue
@@ -2953,20 +2961,27 @@ class OfflineQueueManager {
         queue.maxConcurrentOperationCount = 1
         queue.qualityOfService = .utility
         
-        loadPendingOperations()
+        Task {
+            await loadPendingOperations()
+        }
     }
     
-    func enqueue(_ operation: PendingOperation) {
+    func enqueue(_ operation: PendingOperation) async {
         pendingOperations.append(operation)
-        savePendingOperations()
+        await savePendingOperations()
     }
     
-    func processQueue() {
+    func processQueue() async {
         guard NetworkMonitor.shared.isConnected else { return }
         
-        for operation in pendingOperations {
+        // Take a snapshot to avoid mutation during iteration
+        let operations = pendingOperations
+        
+        for operation in operations {
             queue.addOperation {
-                self.execute(operation)
+                Task {
+                    await self.execute(operation)
+                }
             }
         }
     }
