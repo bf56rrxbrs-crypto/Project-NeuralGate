@@ -30,14 +30,16 @@ NeuralGate is a comprehensive AI-powered automation framework designed exclusive
 
 ## Key Features
 
-- ✨ **AI Decision Engine** - Ensemble models for superior accuracy
+- ✨ **AI Decision Engine** - Ensemble models for superior accuracy with parallel execution
 - 🔄 **Loop Engineering** - Continuous learning and adaptation
 - 🚀 **Workflow Automation** - Complex task orchestration
-- 📊 **Predictive Analytics** - Smart suggestions based on patterns
-- 🛡️ **Failover & Redundancy** - Robust error handling
-- 🔋 **Resource Optimized** - Battery and memory efficient
+- 📊 **Predictive Analytics** - Smart suggestions with hash-based pattern indexing
+- 🛡️ **Failover & Redundancy** - Robust error handling with circuit breakers
+- 🔋 **Resource Optimized** - Battery and memory efficient with intelligent caching
 - 💡 **Explainable AI** - Transparent decision-making
 - 📈 **Self-Improvement** - Autonomous performance optimization
+- 🧬 **Genetic Evolution** - Adaptive learning through genetic algorithms
+- ⚡ **Speed Optimized** - Decision caching, early exit, and parallel processing
 
 ## Quick Start
 
@@ -66,12 +68,12 @@ let suggestions = agent.getTaskSuggestions()
 
 ## Documentation
 
-See [DOCUMENTATION.md](DOCUMENTATION.md) for comprehensive documentation including:
-- Installation instructions
-- API reference
-- Usage examples
-- iOS integration guide
-- Advanced features
+See documentation for comprehensive guides:
+- [DOCUMENTATION.md](DOCUMENTATION.md) - Installation, API reference, usage examples
+- [ARCHITECTURE.md](ARCHITECTURE.md) - System architecture and design patterns
+- [PERFORMANCE.md](PERFORMANCE.md) - Performance tuning and optimization strategies
+- [OPTIMIZATION_GUIDE.md](OPTIMIZATION_GUIDE.md) - **NEW: Speed, reliability, and genetic AI features**
+- [EXAMPLES.md](EXAMPLES.md) - Code examples and use cases
 
 ## Examples
 
