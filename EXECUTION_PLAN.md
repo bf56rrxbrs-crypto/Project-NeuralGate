@@ -2953,44 +2953,50 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
 actor OfflineQueueManager {
     static let shared = OfflineQueueManager()
     
-    private let queue: OperationQueue
     private var pendingOperations: [PendingOperation] = []
+    private var isInitialized = false
     
     init() {
-        queue = OperationQueue()
-        queue.maxConcurrentOperationCount = 1
-        queue.qualityOfService = .utility
-        
-        Task {
-            await loadPendingOperations()
-        }
+        // Synchronous initialization
+    }
+    
+    func initialize() async {
+        guard !isInitialized else { return }
+        await loadPendingOperations()
+        isInitialized = true
     }
     
     func enqueue(_ operation: PendingOperation) async {
+        await initialize()
         pendingOperations.append(operation)
         await savePendingOperations()
     }
     
     func processQueue() async {
+        await initialize()
         guard NetworkMonitor.shared.isConnected else { return }
         
-        // Take a snapshot to avoid mutation during iteration
-        let operations = pendingOperations
-        
-        for operation in operations {
-            queue.addOperation {
-                Task {
-                    await self.execute(operation)
-                }
-            }
+        // Process operations using async/await throughout
+        for operation in pendingOperations {
+            await execute(operation)
         }
     }
     
-    private func execute(_ operation: PendingOperation) {
+    private func execute(_ operation: PendingOperation) async {
         // Execute operation
-        // On success, remove from queue
-        pendingOperations.removeAll { $0.id == operation.id }
-        savePendingOperations()
+        do {
+            try await performNetworkRequest(operation)
+            // On success, remove from queue
+            pendingOperations.removeAll { $0.id == operation.id }
+            await savePendingOperations()
+        } catch {
+            // Handle error - operation remains in queue for retry
+            print("Failed to execute operation: \(error)")
+        }
+    }
+    
+    private func performNetworkRequest(_ operation: PendingOperation) async throws {
+        // Actual network request implementation
     }
     
     private func savePendingOperations() {
