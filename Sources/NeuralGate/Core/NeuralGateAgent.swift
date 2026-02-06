@@ -6,7 +6,7 @@ public class NeuralGateAgent {
     
     // MARK: - Properties
     
-    public let taskManager: TaskManager
+    public let taskManager: LegacyTaskManager
     public let workflowEngine: WorkflowEngine
     private let nlpProcessor: NaturalLanguageProcessor
     private let iosIntegration: iOSIntegration
@@ -14,7 +14,7 @@ public class NeuralGateAgent {
     // MARK: - Initialization
     
     public init() {
-        self.taskManager = TaskManager()
+        self.taskManager = LegacyTaskManager()
         self.workflowEngine = WorkflowEngine()
         self.nlpProcessor = NaturalLanguageProcessor()
         self.iosIntegration = iOSIntegration()
@@ -41,7 +41,7 @@ public class NeuralGateAgent {
     /// Execute a predefined workflow by ID
     /// - Parameter workflowId: Unique identifier for the workflow
     /// - Returns: Result of workflow execution
-    public func executeWorkflow(_ workflowId: String) async throws -> WorkflowResult {
+    public func executeWorkflow(_ workflowId: String) async throws -> LegacyWorkflowResult {
         let workflow = try workflowEngine.getWorkflow(workflowId)
         return try await workflowEngine.executeWorkflow(workflow)
     }
@@ -51,13 +51,13 @@ public class NeuralGateAgent {
     ///   - name: Name of the workflow
     ///   - steps: Array of workflow steps
     /// - Returns: Created workflow
-    public func createWorkflow(name: String, steps: [WorkflowStep]) -> Workflow {
+    public func createWorkflow(name: String, steps: [WorkflowStep]) -> LegacyWorkflow {
         return workflowEngine.createWorkflow(name: name, steps: steps)
     }
     
     /// Get all available workflows
     /// - Returns: Array of available workflows
-    public func getAvailableWorkflows() -> [Workflow] {
+    public func getAvailableWorkflows() -> [LegacyWorkflow] {
         return workflowEngine.getAllWorkflows()
     }
     
@@ -76,7 +76,7 @@ public class NeuralGateAgent {
     /// - Parameters:
     ///   - task: Task to schedule
     ///   - date: Date and time to execute
-    public func scheduleTask(_ task: Task, for date: Date) throws {
+    public func scheduleTask(_ task: LegacyTask, for date: Date) throws {
         try taskManager.scheduleTask(task, for: date)
     }
 }
