@@ -264,7 +264,7 @@ swift test --verbose
 ### Resource Optimization
 - Battery-aware algorithms (optimization levels 0-3)
 - Memory limits enforced at runtime
-- CPU-efficient implementations (O(n log n) or better)
+- CPU-efficient implementations (O(n log n) or lower complexity such as O(n), O(log n), or O(1))
 - Lazy loading and caching
 
 ## Notes for Copilot
