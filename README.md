@@ -73,6 +73,15 @@ See [DOCUMENTATION.md](DOCUMENTATION.md) for comprehensive documentation includi
 - iOS integration guide
 - Advanced features
 
+For a complete development roadmap and execution plan, see [EXECUTION_PLAN.md](EXECUTION_PLAN.md), which includes:
+- 6 development phases (Ideation → App Store Launch)
+- Dependencies and tool setup
+- Feature categorization (MVP vs Enhancements)
+- iPhone-specific optimizations
+- CI/CD configuration
+- Testing strategies
+- Progress tracking
+
 ## Examples
 
 Check the [Examples](Examples/) directory for detailed usage examples.
