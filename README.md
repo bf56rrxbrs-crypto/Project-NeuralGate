@@ -28,6 +28,22 @@ NeuralGate is a powerful AI-powered agent designed exclusively for iPhone to aut
 
 NeuralGate is a comprehensive AI-powered automation framework designed exclusively for iPhone users. It combines state-of-the-art AI methodologies, advanced feedback loops, and self-improvement capabilities to deliver unparalleled mobile task automation.
 
+### 📱 Perfect for iPhone-Only Users
+
+**No Mac? No Desktop? No Problem!** NeuralGate is fully functional on iPhone alone:
+
+- ✅ **100% On-Device AI** - All processing happens on your iPhone
+- ✅ **Complete Without Mac** - Develop, test, and use entirely from iPhone
+- ✅ **Cloud IDE Support** - Use GitHub Codespaces or Replit for development
+- ✅ **TestFlight Distribution** - Install and test directly on iPhone
+- ✅ **30+ iPhone Tools** - Curated toolset for automation and productivity
+- ✅ **20+ Ready Workflows** - Pre-built templates for common tasks
+- ✅ **Voice-First Control** - Full Siri integration for hands-free operation
+- ✅ **iOS Shortcuts Integration** - Native automation with Shortcuts app
+- ✅ **GitHub Mobile Workflow** - Complete development cycle on iPhone
+
+👉 **New here? Start with the [iPhone-Only User Guide](IPHONE_ONLY_GUIDE.md)**
+
 ## Key Features
 
 - ✨ **AI Decision Engine** - Ensemble models for superior accuracy
@@ -66,16 +82,21 @@ let suggestions = agent.getTaskSuggestions()
 
 ## Documentation
 
-See [DOCUMENTATION.md](DOCUMENTATION.md) for comprehensive documentation including:
-- Installation instructions
-- API reference
-- Usage examples
-- iOS integration guide
-- Advanced features
+### 📱 For iPhone-Only Users (No Mac Required)
+- **[iPhone-Only User Guide](IPHONE_ONLY_GUIDE.md)** - Complete guide for users with only an iPhone
+- **[Tools & Resources](TOOLS_AND_RESOURCES.md)** - 30+ reliable tools and integrations for iPhone
+- **[Actionable Workflows](ACTIONABLE_WORKFLOWS.md)** - 20+ ready-to-use workflow templates
 
-## Examples
-
-Check the [Examples](Examples/) directory for detailed usage examples.
+### 📚 Technical Documentation
+- **[DOCUMENTATION.md](DOCUMENTATION.md)** - Comprehensive technical documentation
+  - Installation instructions
+  - API reference
+  - Usage examples
+  - iOS integration guide
+  - Advanced features
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** - System architecture and design patterns
+- **[EXAMPLES.md](EXAMPLES.md)** - Code examples and usage patterns
+- **[Examples Directory](Examples/)** - Detailed usage examples
 
 ## Requirements
 
