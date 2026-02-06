@@ -1,23 +1,25 @@
 import Foundation
 
-/// Manages task creation, scheduling, and execution
+/// Manages task creation, scheduling, and execution (Legacy)
 @available(iOS 16.0, *)
-public class TaskManager {
+public class LegacyTaskManager {
     
     // MARK: - Properties
     
-    private var tasks: [String: Task] = [:]
-    private var scheduledTasks: [String: (task: Task, date: Date)] = [:]
+    private var tasks: [String: LegacyTask] = [:]
+    private var scheduledTasks: [String: (task: LegacyTask, date: Date)] = [:]
+    
+    public init() {}
     
     // MARK: - Public Methods
     
     /// Create a task from a parsed intent
     /// - Parameter intent: User intent parsed from natural language
     /// - Returns: Executable task
-    public func createTask(from intent: Intent) throws -> Task {
+    public func createTask(from intent: Intent) throws -> LegacyTask {
         let taskId = UUID().uuidString
         
-        let task = Task(
+        let task = LegacyTask(
             id: taskId,
             type: intent.action,
             parameters: intent.parameters,
@@ -32,7 +34,7 @@ public class TaskManager {
     /// - Parameters:
     ///   - task: Task to schedule
     ///   - date: Execution date
-    public func scheduleTask(_ task: Task, for date: Date) throws {
+    public func scheduleTask(_ task: LegacyTask, for date: Date) throws {
         guard date > Date() else {
             throw TaskError.invalidScheduleDate
         }
@@ -43,13 +45,13 @@ public class TaskManager {
     /// Get a task by ID
     /// - Parameter taskId: Task identifier
     /// - Returns: Task if found
-    public func getTask(_ taskId: String) -> Task? {
+    public func getTask(_ taskId: String) -> LegacyTask? {
         return tasks[taskId]
     }
     
     /// Get all scheduled tasks
     /// - Returns: Array of scheduled tasks
-    public func getScheduledTasks() -> [(task: Task, date: Date)] {
+    public func getScheduledTasks() -> [(task: LegacyTask, date: Date)] {
         return Array(scheduledTasks.values)
     }
     

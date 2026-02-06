@@ -1,9 +1,11 @@
 import Foundation
 
-// MARK: - Task Models
+// MARK: - Task Models (Legacy)
+// Note: Task models have been moved to TaskModel.swift for the modern implementation
+// These legacy types are kept for backward compatibility with old Core/Workflows code
 
-/// Represents a single executable task
-public struct Task: Codable, Identifiable {
+/// Represents a single executable task (Legacy)
+public struct LegacyTask: Codable, Identifiable {
     public let id: String
     public let type: String
     public let parameters: [String: String]
@@ -58,26 +60,11 @@ public struct TaskResult: Codable {
     }
 }
 
-// MARK: - Workflow Models
+// MARK: - Workflow Models (Legacy)
+// Note: Workflow models have been moved to TaskModel.swift
+// These legacy types are kept for backward compatibility with old Core/Workflows code
 
-/// Represents a workflow containing multiple steps
-public struct Workflow: Codable, Identifiable {
-    public let id: String
-    public let name: String
-    public let steps: [WorkflowStep]
-    public let createdAt: Date
-    public var isActive: Bool
-    
-    public init(id: String, name: String, steps: [WorkflowStep]) {
-        self.id = id
-        self.name = name
-        self.steps = steps
-        self.createdAt = Date()
-        self.isActive = true
-    }
-}
-
-/// A single step in a workflow
+/// A single step in a workflow (Legacy)
 public struct WorkflowStep: Codable {
     public let action: String
     public let parameters: [String: String]
@@ -90,8 +77,8 @@ public struct WorkflowStep: Codable {
     }
 }
 
-/// Result of workflow execution
-public struct WorkflowResult: Codable {
+/// Result of workflow execution (Legacy)
+public struct LegacyWorkflowResult: Codable {
     public let workflowId: String
     public let workflowName: String
     public let success: Bool
@@ -106,6 +93,23 @@ public struct WorkflowResult: Codable {
         self.stepResults = stepResults
         self.duration = duration
         self.timestamp = Date()
+    }
+}
+
+/// Legacy Workflow struct - use Workflow from TaskModel.swift instead
+public struct LegacyWorkflow: Codable, Identifiable {
+    public let id: String
+    public let name: String
+    public let steps: [WorkflowStep]
+    public let createdAt: Date
+    public var isActive: Bool
+    
+    public init(id: String, name: String, steps: [WorkflowStep]) {
+        self.id = id
+        self.name = name
+        self.steps = steps
+        self.createdAt = Date()
+        self.isActive = true
     }
 }
 
