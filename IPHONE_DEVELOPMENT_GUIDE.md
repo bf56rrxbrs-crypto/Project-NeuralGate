@@ -198,21 +198,12 @@ Train AI models directly on your iPhone using your own usage data:
 let aiProcessor = iPhoneOnDeviceAI()
 
 // Collect feedback from past tasks
-let feedbackData: [TaskFeedback] = [
-    TaskFeedback(
-        taskId: UUID(),
-        taskCategory: .communication,
-        outcome: .success,
-        executionTime: 1.5,
-        userRating: 5
-    ),
-    TaskFeedback(
-        taskId: UUID(),
-        taskCategory: .productivity,
-        outcome: .success,
-        executionTime: 2.0,
-        userRating: 4
-    )
+// Format: (wasSuccessful: Bool, category: String, rating: Int)
+let feedbackData: [(wasSuccessful: Bool, category: String, rating: Int)] = [
+    (wasSuccessful: true, category: "communication", rating: 5),
+    (wasSuccessful: true, category: "productivity", rating: 4),
+    (wasSuccessful: false, category: "automation", rating: 2),
+    (wasSuccessful: true, category: "analytics", rating: 5)
     // ... more feedback
 ]
 
@@ -231,26 +222,28 @@ print("Samples used: \(trainingResult.sampleCount)")
 ### Continuous Learning
 
 ```swift
-// Enable continuous learning from every task
-agent.enableContinuousLearning = true
+// Collect feedback as tasks are executed
+var feedbackHistory: [(wasSuccessful: Bool, category: String, rating: Int)] = []
 
-// Execute tasks and the agent learns automatically
+// Execute tasks and collect feedback
 for task in dailyTasks {
     let result = try await agent.executeTask(task)
     
-    // Provide feedback
-    let feedback = TaskFeedback(
-        taskId: task.id,
-        taskCategory: task.category,
-        outcome: result.status == .completed ? .success : .failure,
-        executionTime: result.executionTime,
-        userRating: 4
-    )
-    
-    agent.recordFeedback(feedback)
+    // Record feedback
+    let success = result.status == .completed
+    let feedback = (wasSuccessful: success, category: task.category.rawValue, rating: success ? 4 : 2)
+    feedbackHistory.append(feedback)
 }
 
-// Model improves automatically over time
+// Periodically retrain the model
+let aiProcessor = iPhoneOnDeviceAI()
+let trainingResult = await aiProcessor.trainOnDeviceModel(
+    feedbackData: feedbackHistory,
+    iterations: 10
+)
+
+print("Model retrained with \(feedbackHistory.count) samples")
+print("New accuracy: \(trainingResult.accuracy * 100)%")
 ```
 
 ## iPhone-Specific Features
@@ -281,9 +274,12 @@ let result = try await agent.executeTask(task)
 ### Focus Mode Integration
 
 ```swift
-// Respect iPhone Focus modes
-if agent.isFocusModeActive() {
-    print("Focus mode is active - deferring non-critical tasks")
+// Check device state before executing tasks
+import UIKit
+
+// Defer non-critical tasks during low battery
+if ProcessInfo.processInfo.isLowPowerModeEnabled {
+    print("Low power mode active - deferring non-critical tasks")
     
     // Only execute critical tasks
     let criticalTasks = tasks.filter { $0.priority == .critical }
@@ -305,7 +301,6 @@ if agent.isFocusModeActive() {
 // No internet connection required
 
 let agent = NeuralGateAgent()
-agent.offlineMode = true  // Enforce offline operation
 
 // Process natural language offline
 let aiProcessor = iPhoneOnDeviceAI()
@@ -313,11 +308,13 @@ let result = await aiProcessor.processNaturalLanguage("Create a reminder for 3 P
 
 // Train models offline
 let trainingResult = await aiProcessor.trainOnDeviceModel(
-    feedbackData: historicalData,
+    feedbackData: [(true, "productivity", 5), (true, "communication", 4)],
     iterations: 10
 )
 
 // Everything works without internet!
+print("NL processing confidence: \(result.confidence)")
+print("Training accuracy: \(trainingResult.accuracy)")
 ```
 
 ## Battery Optimization
@@ -352,15 +349,24 @@ let batteryConfig = NeuralGateConfiguration(
 // Agent automatically adjusts based on battery level
 let agent = NeuralGateAgent(configuration: config)
 
-// Check current optimization level
-let status = agent.getStatus()
-print("Current battery optimization: \(status.batteryOptimizationLevel)")
+// Check current optimization level from configuration
+print("Current battery optimization: \(config.batteryOptimizationLevel)")
 
-// Agent adapts automatically:
-// - Battery > 80%: Optimization level 0-1
-// - Battery 50-80%: Optimization level 2
-// - Battery 20-50%: Optimization level 3
-// - Battery < 20%: Defer non-critical tasks
+// Adjust based on battery level manually
+import UIKit
+UIDevice.current.isBatteryMonitoringEnabled = true
+let batteryLevel = UIDevice.current.batteryLevel
+
+if batteryLevel < 0.2 {
+    // Low battery: defer non-critical tasks
+    print("Battery low - deferring non-critical tasks")
+} else if batteryLevel < 0.5 {
+    // Moderate battery: use high optimization
+    let efficientConfig = NeuralGateConfiguration(batteryOptimizationLevel: 3)
+} else {
+    // Good battery: balanced optimization
+    let balancedConfig = NeuralGateConfiguration(batteryOptimizationLevel: 2)
+}
 ```
 
 ## Privacy & Security
@@ -387,35 +393,33 @@ All AI processing happens locally on your iPhone:
 ### Data Control
 
 ```swift
-// You have complete control over your data
+// All processing and data stays on your device
 let agent = NeuralGateAgent()
 
-// Export your data
-let exportedData = agent.exportUserData()
-// Save to Files app or share
+// Data is stored locally in app's sandbox
+// Access via standard file operations if needed
 
-// Delete all data
-agent.deleteAllUserData()
-// All models and history removed
-
-// Import previous data
-agent.importUserData(exportedData)
-// Restore from backup
+// Clear workflow history (example)
+// Note: Specific export/import APIs depend on your storage implementation
+// All data remains under your control on the device
 ```
 
 ### Secure Storage
 
 ```swift
 // All data is stored securely
-// - Encrypted at rest
-// - Keychain for sensitive data
-// - Sandboxed storage
-// - No cross-app access
+// - Encrypted at rest (iOS default)
+// - Sandboxed storage (iOS default)
+// - No cross-app access (iOS default)
 
-// Enable extra security features
+// NeuralGate leverages iOS security features:
+// - App sandbox for data isolation
+// - Keychain for sensitive credentials (if needed)
+// - File encryption via Data Protection
+
 let secureConfig = NeuralGateConfiguration(
-    enableDataEncryption: true,
-    enableSecureKeychain: true
+    debugMode: false,  // Disable debug logging in production
+    maxMemoryUsage: 100
 )
 ```
 
@@ -556,32 +560,50 @@ try await agent.executeWorkflow(workflow)  // More efficient than individual tas
 ### 2. Respect User Context
 
 ```swift
-// Check Focus mode before executing
-if !agent.isFocusModeActive() {
-    // Execute tasks
-}
+// Check device state before executing
+import UIKit
 
-// Schedule non-urgent tasks for later
-if agent.getBatteryLevel() < 20 {
-    agent.scheduleTaskForLater(task, when: .charging)
+// Schedule tasks when device is charging
+UIDevice.current.isBatteryMonitoringEnabled = true
+if UIDevice.current.batteryState == .charging || UIDevice.current.batteryState == .full {
+    // Good time for resource-intensive tasks
+    for task in tasks {
+        try await agent.executeTask(task)
+    }
+} else if UIDevice.current.batteryLevel < 0.2 {
+    // Low battery: only critical tasks
+    let criticalTasks = tasks.filter { $0.priority == .critical }
+    for task in criticalTasks {
+        try await agent.executeTask(task)
+    }
 }
 ```
 
-### 3. Provide Feedback
+### 3. Provide Feedback for Learning
 
 ```swift
-// Always provide feedback for learning
+// Collect feedback for model improvement
+var feedbackData: [(wasSuccessful: Bool, category: String, rating: Int)] = []
+
 let result = try await agent.executeTask(task)
 
-let feedback = TaskFeedback(
-    taskId: task.id,
-    taskCategory: task.category,
-    outcome: result.status == .completed ? .success : .failure,
-    executionTime: result.executionTime,
-    userRating: 5  // 1-5 scale
+let feedback = (
+    wasSuccessful: result.status == .completed,
+    category: task.category.rawValue,
+    rating: 5  // 1-5 scale based on your satisfaction
 )
 
-agent.recordFeedback(feedback)
+feedbackData.append(feedback)
+
+// Periodically retrain with collected feedback
+if feedbackData.count >= 50 {
+    let aiProcessor = iPhoneOnDeviceAI()
+    let trainingResult = await aiProcessor.trainOnDeviceModel(
+        feedbackData: feedbackData,
+        iterations: 20
+    )
+    print("Model retrained with accuracy: \(trainingResult.accuracy)")
+}
 ```
 
 ### 4. Use Natural Language
@@ -604,41 +626,60 @@ let nlResult = await aiProcessor.processNaturalLanguage(
 
 **Issue: Tasks not executing**
 ```swift
-// Check agent status
-let status = agent.getStatus()
-if !status.isHealthy {
-    print("Agent health issues: \(status.issues)")
-    // Trigger self-improvement
-    let evaluation = try await agent.performSelfImprovement()
+// Check configuration
+let config = NeuralGateConfiguration(debugMode: true)
+let agent = NeuralGateAgent(configuration: config)
+
+// Try executing a simple task
+let task = Task(name: "Test", description: "Test task", priority: .high)
+do {
+    let result = try await agent.executeTask(task)
+    print("Task result: \(result.status)")
+} catch {
+    print("Error executing task: \(error)")
 }
 ```
 
 **Issue: Low accuracy**
 ```swift
-// Provide more training data
-let feedbackData = agent.getAllFeedback()
-if feedbackData.count < 50 {
-    print("Need more feedback for better accuracy")
-    // Continue using and providing feedback
+// Collect more training data for better accuracy
+var feedbackData: [(wasSuccessful: Bool, category: String, rating: Int)] = []
+
+// As you use the system, collect feedback
+for task in completedTasks {
+    let feedback = (wasSuccessful: true, category: "productivity", rating: 4)
+    feedbackData.append(feedback)
 }
 
-// Retrain model
-let aiProcessor = iPhoneOnDeviceAI()
-let result = await aiProcessor.trainOnDeviceModel(
-    feedbackData: feedbackData,
-    iterations: 30  // More iterations
-)
+if feedbackData.count >= 50 {
+    // Retrain model with more data
+    let aiProcessor = iPhoneOnDeviceAI()
+    let result = await aiProcessor.trainOnDeviceModel(
+        feedbackData: feedbackData,
+        iterations: 30  // More iterations for better accuracy
+    )
+    print("Retrained accuracy: \(result.accuracy * 100)%")
+}
 ```
 
 **Issue: High battery usage**
 ```swift
-// Increase optimization level
-let newConfig = NeuralGateConfiguration(
+// Increase battery optimization level
+let batteryConfig = NeuralGateConfiguration(
     batteryOptimizationLevel: 3  // Maximum optimization
 )
+let agent = NeuralGateAgent(configuration: batteryConfig)
 
-// Or reduce task frequency
-agent.reduceTaskFrequency(by: 50)  // 50% less frequent
+// Or reduce task execution frequency
+// Execute tasks in batches during charging
+import UIKit
+UIDevice.current.isBatteryMonitoringEnabled = true
+if UIDevice.current.batteryState == .charging {
+    // Execute accumulated tasks when charging
+    for task in queuedTasks {
+        try await agent.executeTask(task)
+    }
+}
 ```
 
 ## Next Steps
