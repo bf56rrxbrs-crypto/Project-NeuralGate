@@ -44,15 +44,15 @@ jobs:
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         
       - name: Setup Swift
-        uses: swift-actions/setup-swift@v2
+        uses: swift-actions/setup-swift@v3
         with:
           swift-version: ${{ inputs.swift-version }}
           
       - name: Cache Swift Package Manager
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: .build
           key: ${{ runner.os }}-spm-${{ inputs.configuration }}-${{ hashFiles('**/Package.resolved') }}
@@ -99,7 +99,7 @@ jobs:
         
       - name: Upload Code Coverage
         if: success() && inputs.enable-code-coverage == true
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: coverage-report-${{ inputs.configuration }}
           path: coverage.lcov
@@ -108,7 +108,7 @@ jobs:
           
       - name: Upload Build Artifacts
         if: success() && inputs.upload-artifacts == true
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: build-${{ inputs.configuration }}
           path: .build/${{ inputs.configuration }}/
