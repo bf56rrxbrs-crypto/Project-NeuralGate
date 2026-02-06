@@ -296,16 +296,16 @@ public class SelfImprovementEngine {
     
     /// Crossover operation between two parent chromosomes
     private func crossover(parent1: ModelChromosome, parent2: ModelChromosome) -> ModelChromosome {
-        // Single-point crossover
-        let crossoverPoint = Double.random(in: 0...1)
+        // True single-point crossover
+        let crossoverPoint = Int.random(in: 0...5) // 5 genes total
         
         return ModelChromosome(
             id: UUID(),
-            learningRate: crossoverPoint < 0.5 ? parent1.learningRate : parent2.learningRate,
-            confidenceThreshold: crossoverPoint < 0.5 ? parent1.confidenceThreshold : parent2.confidenceThreshold,
-            earlyExitEnabled: crossoverPoint < 0.5 ? parent1.earlyExitEnabled : parent2.earlyExitEnabled,
-            parallelExecutionEnabled: crossoverPoint < 0.5 ? parent1.parallelExecutionEnabled : parent2.parallelExecutionEnabled,
-            cacheSize: crossoverPoint < 0.5 ? parent1.cacheSize : parent2.cacheSize,
+            learningRate: crossoverPoint < 1 ? parent1.learningRate : parent2.learningRate,
+            confidenceThreshold: crossoverPoint < 2 ? parent1.confidenceThreshold : parent2.confidenceThreshold,
+            earlyExitEnabled: crossoverPoint < 3 ? parent1.earlyExitEnabled : parent2.earlyExitEnabled,
+            parallelExecutionEnabled: crossoverPoint < 4 ? parent1.parallelExecutionEnabled : parent2.parallelExecutionEnabled,
+            cacheSize: crossoverPoint < 5 ? parent1.cacheSize : parent2.cacheSize,
             fitness: 0.0
         )
     }

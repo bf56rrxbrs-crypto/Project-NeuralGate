@@ -120,8 +120,9 @@ public class AIDecisionEngine {
     
     /// Generate cache key for task and context
     private func generateCacheKey(task: Task, context: ExecutionContext) -> String {
-        // Simple hash based on task properties
-        return "\(task.priority.rawValue)_\(task.category.rawValue)_\(task.status.rawValue)"
+        // Include task name hash to distinguish different tasks with same metadata
+        let nameHash = abs(task.name.hashValue % 10000)
+        return "\(task.priority.rawValue)_\(task.category.rawValue)_\(task.status.rawValue)_\(nameHash)"
     }
     
     /// Cache a decision result
@@ -149,9 +150,11 @@ public class AIDecisionEngine {
     /// Update model health score based on prediction success
     private func updateModelHealth(_ modelName: String, success: Bool) {
         let currentHealth = modelHealthScores[modelName] ?? 1.0
-        // Exponential moving average: increase slowly on success, decrease quickly on failure
+        // Exponential moving average with multiplicative approach
         let alpha = success ? 0.1 : 0.3
-        let newHealth = success ? min(1.0, currentHealth + alpha * (1.0 - currentHealth)) : max(0.0, currentHealth - alpha)
+        let newHealth = success ? 
+            min(1.0, currentHealth + alpha * (1.0 - currentHealth)) : 
+            max(0.0, currentHealth * (1.0 - alpha))
         modelHealthScores[modelName] = newHealth
         
         if newHealth < 0.5 {
