@@ -1,9 +1,10 @@
 ---
-name: Sub-Issue for #6 - AI-Powered Enhancements
-about: Create a sub-issue for implementing specific AI-powered enhancements from issue #6
-title: '[Enhancement] '
-labels: enhancement, ai-improvement
+name: Sub-Issue for
+about: Create a sub-issue for implementing specific AI-powered enhancements from issue
+title: "[Enhancement] "
+labels: enhancement
 assignees: ''
+
 ---
 
 ## 📋 Parent Issue
