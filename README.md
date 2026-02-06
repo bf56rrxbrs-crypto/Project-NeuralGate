@@ -1,27 +1,12 @@
 # Project-NeuralGate
 
-AI agent for task and workflow automation exclusively for iPhone users.
-
-## 🎯 Overview
-
-NeuralGate is a powerful AI-powered agent designed exclusively for iPhone to automate tasks and workflows through natural language processing and deep iOS integration.
-
-### Key Features
-
-- 🤖 **Natural Language Processing**: Understand and execute tasks from natural language
-- 📱 **iPhone-First Design**: Built specifically for iOS 16+ with native integrations
-- ⚡ **Workflow Automation**: Pre-built and custom workflows for common tasks
-- 🎤 **Siri Integration**: Voice-activated task execution
-- 🔗 **Shortcuts Support**: Seamless integration with iOS Shortcuts app
-- 📊 **Task Management**: Schedule, track, and manage tasks with priorities
-- 🔔 **Smart Notifications**: Context-aware notifications for task updates
 🧠 **Advanced AI Agent for iPhone** - Intelligent task and workflow automation with cutting-edge AI, loop engineering, and autonomous self-improvement.
 
 [![CI/CD](https://github.com/bf56rrxbrs-crypto/Project-NeuralGate/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/bf56rrxbrs-crypto/Project-NeuralGate/actions/workflows/ci-cd.yml)
 [![Code Quality](https://github.com/bf56rrxbrs-crypto/Project-NeuralGate/actions/workflows/code-quality.yml/badge.svg)](https://github.com/bf56rrxbrs-crypto/Project-NeuralGate/actions/workflows/code-quality.yml)
 [![Security](https://github.com/bf56rrxbrs-crypto/Project-NeuralGate/actions/workflows/security.yml/badge.svg)](https://github.com/bf56rrxbrs-crypto/Project-NeuralGate/actions/workflows/security.yml)
 [![Swift 5.9](https://img.shields.io/badge/Swift-5.9-orange.svg)](https://swift.org)
-[![iOS 15.0+](https://img.shields.io/badge/iOS-15.0%2B-blue.svg)](https://www.apple.com/ios/)
+[![iOS 16.0+](https://img.shields.io/badge/iOS-16.0%2B-blue.svg)](https://www.apple.com/ios/)
 [![License](https://img.shields.io/badge/License-Proprietary-red.svg)](LICENSE)
 
 ## Overview
