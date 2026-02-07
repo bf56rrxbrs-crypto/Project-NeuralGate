@@ -1,0 +1,154 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+  workflow_dispatch:
+
+env:
+  SWIFT_VERSION: '5.9'
+
+jobs:
+  # Job 1: Build and Test
+  build-and-test:
+    name: Build and Test
+    runs-on: macos-14
+    permissions:
+      contents: read
+      actions: read
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Swift
+        uses: swift-actions/setup-swift@v2
+        with:
+          swift-version: ${{ env.SWIFT_VERSION }}
+          
+      - name: Cache Swift Package Manager
+        uses: actions/cache@v4
+        with:
+          path: .build
+          key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-spm-
+            
+      - name: Swift Version
+        run: swift --version
+        
+      - name: Build NeuralGate
+        run: swift build --verbose
+        
+      - name: Run Tests with Coverage
+        run: |
+          swift test --enable-code-coverage --verbose
+        
+      - name: Generate Code Coverage Report
+        run: |
+          xcrun llvm-cov export \
+            .build/debug/NeuralGatePackageTests.xctest/Contents/MacOS/NeuralGatePackageTests \
+            -instr-profile=.build/debug/codecov/default.profdata \
+            -format=lcov > coverage.lcov
+        continue-on-error: true
+        
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          file: ./coverage.lcov
+          flags: unittests
+          name: codecov-neuralgate
+        continue-on-error: true
+        
+      - name: Archive Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: .build/debug/*.xctest
+          retention-days: 30
+          
+      - name: Archive Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: |
+            .build/debug/
+            !.build/debug/**/*.o
+            !.build/debug/**/*.swiftmodule
+          retention-days: 7
+
+  # Job 2: Test Result Reporting
+  test-report:
+    name: Test Result Report
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    if: always() && github.event_name == 'pull_request'
+    permissions:
+      contents: read
+      pull-requests: write
+    
+    steps:
+      - name: Download Test Results
+        uses: actions/download-artifact@v4
+        with:
+          name: test-results
+        continue-on-error: true
+        
+      - name: Comment Test Results on PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const outcome = '${{ needs.build-and-test.result }}';
+            
+            let message = '## 🧪 Test Results\n\n';
+            
+            if (outcome === 'success') {
+              message += '✅ **All tests passed successfully!**\n\n';
+              message += '- Build: ✅ Success\n';
+              message += '- Tests: ✅ Passed\n';
+              message += '- Coverage: ✅ Generated\n';
+            } else if (outcome === 'failure') {
+              message += '❌ **Tests failed!**\n\n';
+              message += 'Please check the workflow logs for details.\n';
+            } else {
+              message += '⚠️ **Tests status unknown**\n\n';
+              message += 'Build outcome: ' + outcome + '\n';
+            }
+            
+            message += '\n---\n';
+            message += `*Workflow run: [#${context.runNumber}](${context.payload.repository.html_url}/actions/runs/${context.runId})*`;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: message
+            });
+
+  # Job 3: Build Success Notification
+  build-status:
+    name: Build Status
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    if: always()
+    permissions:
+      contents: read
+    
+    steps:
+      - name: Check Build Status
+        run: |
+          if [ "${{ needs.build-and-test.result }}" == "success" ]; then
+            echo "✅ Build and tests passed successfully"
+            exit 0
+          else
+            echo "❌ Build or tests failed"
+            exit 1
+          fi
