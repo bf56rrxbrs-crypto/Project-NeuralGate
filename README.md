@@ -66,7 +66,7 @@ print("Suggested tasks: \(suggestions)")
 ## Requirements
 
 - iOS 16.0+
-- Xcode 14.0+
+- Xcode 15.0+
 - Swift 5.9+
 
 ## Installation
