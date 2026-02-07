@@ -25,7 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Duplicate Overview and Key Features sections in README
 - Improved code examples formatting and completeness
 
-## [1.0.0] - 2026-02-XX
+## [1.0.0] - TBD
 
 ### Added
 - Initial release of Project-NeuralGate

@@ -24,24 +24,18 @@ let agent = NeuralGateAgent()
 // Agent is now ready to process tasks and workflows
 ```
 
+**Note**: This guide uses `Swift.Task {}` for concurrency to avoid conflicts with the `NeuralGate.Task` model type. In your code, you can use `Task {}` from `_Concurrency` or qualify the model type as `NeuralGate.Task` explicitly.
+
 ## Task Management
 
 ### Creating and Executing Tasks
 
 ```swift
-// Create a simple task
-let task = Task(
-    name: "Send Email",
-    description: "Send project update to team",
-    priority: .high,
-    category: .communication
-)
-
-// Execute the task
-Task {
+// Create a task using natural language
+Swift.Task {
     do {
-        let result = try await agent.executeTask(task)
-        print("Task completed: \(result.success)")
+        let result = try await agent.processRequest("Send project update email to team with high priority")
+        print("Task completed: \(result)")
     } catch {
         print("Task failed: \(error)")
     }
@@ -185,7 +179,7 @@ let workflow = agent.createWorkflow(
 
 ```swift
 // Execute a predefined workflow
-Task {
+Swift.Task {
     do {
         let result = try await agent.executeWorkflow("morning-routine")
         print("Workflow completed: \(result.success)")
@@ -234,7 +228,7 @@ let dataWorkflow = agent.createWorkflow(
 )
 
 // Execute the workflow
-Task {
+Swift.Task {
     let result = try await agent.executeWorkflow("data-processing")
     print("Processed \(result.completedTasks.count) steps")
 }
@@ -258,13 +252,13 @@ for workflow in workflows {
 
 ```swift
 // Simple request
-Task {
+Swift.Task {
     let result = try await agent.processRequest("Send a message to John")
     print("Message sent: \(result.success)")
 }
 
 // Complex request
-Task {
+Swift.Task {
     let result = try await agent.processRequest(
         "Schedule a meeting with the team tomorrow at 2pm about the project update"
     )
@@ -272,7 +266,7 @@ Task {
 }
 
 // Multiple actions
-Task {
+Swift.Task {
     let result = try await agent.processRequest(
         "Check my calendar for today and send me a summary"
     )
@@ -283,7 +277,7 @@ Task {
 ### Handling NLP Results
 
 ```swift
-Task {
+Swift.Task {
     do {
         let result = try await agent.processRequest("Remind me to call mom at 5pm")
         
@@ -307,7 +301,7 @@ Task {
 
 ```swift
 // Enable Siri integration
-Task {
+Swift.Task {
     do {
         try await agent.enableSiriIntegration()
         print("Siri integration enabled")
@@ -323,7 +317,7 @@ Task {
 
 ```swift
 // Connect to an iOS Shortcut
-Task {
+Swift.Task {
     do {
         try await agent.integrateWithShortcut("Daily Briefing")
         print("Connected to Shortcut")
@@ -353,7 +347,7 @@ let task = Task(
     metadata: ["notify_on_complete": "true"]
 )
 
-Task {
+Swift.Task {
     let result = try await agent.executeTask(task)
     if result.success {
         // Notification will be sent automatically
@@ -406,7 +400,7 @@ print("Task completed at: \(task.completedAt!)")
 ### Error Handling
 
 ```swift
-Task {
+Swift.Task {
     do {
         let result = try await agent.processRequest("Invalid request format")
         print("Success: \(result)")
@@ -432,7 +426,7 @@ let tasks = [
     Task(name: "Task 3", description: "Third task", priority: .low)
 ]
 
-Task {
+Swift.Task {
     for task in tasks {
         do {
             let result = try await agent.executeTask(task)
@@ -448,7 +442,7 @@ Task {
 
 ```swift
 // Execute multiple tasks concurrently
-Task {
+Swift.Task {
     async let result1 = agent.processRequest("Check weather")
     async let result2 = agent.processRequest("Read news")
     async let result3 = agent.processRequest("Check calendar")
@@ -496,7 +490,7 @@ let masterWorkflow = agent.createWorkflow(
 )
 
 // Execute the composed workflow
-Task {
+Swift.Task {
     try await agent.executeWorkflow("full-pipeline")
 }
 ```
@@ -560,7 +554,7 @@ class DailyAssistant {
 // Usage
 let assistant = DailyAssistant()
 
-Task {
+Swift.Task {
     try await assistant.setup()
     try await assistant.runMorningRoutine()
     try await assistant.processUserRequest("Schedule team meeting for 2pm")

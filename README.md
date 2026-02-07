@@ -36,31 +36,30 @@ import NeuralGate
 let agent = NeuralGateAgent()
 
 // Process natural language request
-Task {
+Swift.Task {
     let result = try await agent.processRequest("Send a message to John")
     print("Task result: \(result)")
 }
 
 // Execute a predefined workflow
-Task {
+Swift.Task {
     let result = try await agent.executeWorkflow("morning-routine")
     print("Workflow completed: \(result)")
 }
 
-// Create and execute a custom task
-Task {
-    let task = Task(
-        name: "Complete Project Report", 
-        description: "Finish quarterly report", 
-        priority: .high
+// Create and execute a custom task via natural language
+Swift.Task {
+    let result = try await agent.processRequest(
+        "Complete the quarterly project report with high priority"
     )
-    let result = try await agent.executeTask(task)
     print("Task executed: \(result)")
 }
 
-// Get intelligent task suggestions
-let suggestions = agent.getTaskSuggestions()
-print("Suggested tasks: \(suggestions)")
+// Get intelligent task suggestions using natural language
+Swift.Task {
+    let suggestions = try await agent.processRequest("Suggest 3 tasks to improve my productivity today")
+    print("Suggested tasks: \(suggestions)")
+}
 ```
 
 ## Requirements

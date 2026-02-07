@@ -13,15 +13,24 @@ import Foundation
 /// ```swift
 /// let agent = NeuralGateAgent()
 ///
-/// // Process natural language
-/// let result = try await agent.processRequest("Send a message to John")
+/// Swift.Task {
+///     do {
+///         // Process natural language
+///         let result = try await agent.processRequest("Send a message to John")
 ///
-/// // Execute a workflow
-/// let workflowResult = try await agent.executeWorkflow("morning-routine")
+///         // Execute a workflow
+///         let workflowResult = try await agent.executeWorkflow("morning-routine")
 ///
-/// // Schedule a task
-/// let task = Task(name: "Daily Report", description: "Generate report", priority: .medium)
-/// try agent.scheduleTask(task, for: tomorrow)
+///         // Schedule a task for tomorrow
+///         let task = NeuralGate.Task(name: "Daily Report", description: "Generate report", priority: .medium)
+///         let calendar = Calendar.current
+///         let tomorrow = calendar.date(byAdding: .day, value: 1, to: Date())!
+///         try agent.scheduleTask(task, for: tomorrow)
+///     } catch {
+///         // Handle any errors from processing, workflow execution, or scheduling
+///         print("NeuralGateAgent example failed with error: \(error)")
+///     }
+/// }
 /// ```
 @available(iOS 16.0, *)
 public class NeuralGateAgent {
@@ -191,11 +200,11 @@ public class NeuralGateAgent {
     /// - Parameters:
     ///   - task: Task to schedule for execution
     ///   - date: Date and time when the task should be executed
-    /// - Throws: `SchedulingError` if date is in the past or task cannot be scheduled
+    /// - Throws: `TaskError.invalidScheduleDate` if the date is in the past or otherwise invalid
     ///
     /// Example:
     /// ```swift
-    /// let task = Task(name: "Send Report", description: "Send weekly report", priority: .medium)
+    /// let task = NeuralGate.Task(name: "Send Report", description: "Send weekly report", priority: .medium)
     /// let friday = Calendar.current.date(byAdding: .day, value: 5, to: Date())!
     /// try agent.scheduleTask(task, for: friday)
     /// ```

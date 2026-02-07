@@ -64,7 +64,7 @@ import Foundation
 import UIKit
 
 // 2. Type Definition
-public struct Task {
+public struct WorkItem {
     // 3. Properties (public first, then private)
     public let id: UUID
     private let internalState: State
@@ -83,7 +83,7 @@ public struct Task {
 }
 
 // 7. Extensions
-extension Task: Codable { }
+extension WorkItem: Codable { }
 ```
 
 ## Error Handling
@@ -93,7 +93,7 @@ extension Task: Codable { }
 Create descriptive error types for better debugging:
 
 ```swift
-public enum TaskError: LocalizedError {
+public enum CustomTaskError: LocalizedError {
     case invalidStatus(current: TaskStatus)
     case executionFailed(reason: String)
     case timeout(duration: TimeInterval)
@@ -156,7 +156,7 @@ func processTasks(_ tasks: [Task]) async throws {
     for batch in tasks.chunked(into: 10) {
         try await processBatch(batch)
         // Allow system to sleep between batches
-        try await Task.sleep(nanoseconds: 100_000_000)
+        try await Swift.Task.sleep(nanoseconds: 100_000_000)
     }
 }
 
@@ -331,7 +331,7 @@ func enableNotifications() async throws {
     let granted = try await center.requestAuthorization(options: [.alert, .sound, .badge])
     
     guard granted else {
-        throw IntegrationError.permissionDenied
+        throw IntegrationError.notificationPermissionDenied
     }
 }
 ```

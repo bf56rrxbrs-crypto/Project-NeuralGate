@@ -11,7 +11,7 @@ By participating in this project, you agree to maintain a respectful and collabo
 ### Prerequisites
 
 - iOS 16.0+
-- Xcode 14.0+
+- Xcode 15.0+
 - Swift 5.9+
 - Git
 
