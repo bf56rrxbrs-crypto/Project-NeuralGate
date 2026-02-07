@@ -6,7 +6,7 @@ public class WorkflowEngine {
     
     // MARK: - Properties
     
-    private var workflows: [String: Workflow] = [:]
+    private var workflows: [String: StepWorkflow] = [:]
     private var executionHistory: [String: [WorkflowResult]] = [:]
     
     // MARK: - Initialization
@@ -56,19 +56,12 @@ public class WorkflowEngine {
         let startTime = Date()
         var stepResults: [TaskResult] = []
         
-        for step in workflow.steps {
-            let task = Task(
-                id: UUID().uuidString,
-                type: step.action,
-                parameters: step.parameters,
-                priority: .normal
-            )
-            
+        for task in workflow.tasks {
             let result = try await executeTask(task)
             stepResults.append(result)
             
-            // Stop execution if a critical step fails
-            if !result.success && step.isCritical {
+            // Stop execution if a critical task fails
+            if !result.success && task.priority == .critical {
                 break
             }
         }
@@ -84,23 +77,24 @@ public class WorkflowEngine {
             duration: duration
         )
         
-        // Store execution history
-        if executionHistory[workflow.id] == nil {
-            executionHistory[workflow.id] = []
+        // Store execution history (convert UUID to String for storage)
+        let historyKey = workflow.id.uuidString
+        if executionHistory[historyKey] == nil {
+            executionHistory[historyKey] = []
         }
-        executionHistory[workflow.id]?.append(workflowResult)
+        executionHistory[historyKey]?.append(workflowResult)
         
         return workflowResult
     }
     
-    /// Create a new workflow
+    /// Create a new workflow (step-based)
     /// - Parameters:
     ///   - name: Workflow name
     ///   - steps: Workflow steps
     /// - Returns: Created workflow
-    public func createWorkflow(name: String, steps: [WorkflowStep]) -> Workflow {
+    public func createWorkflow(name: String, steps: [WorkflowStep]) -> StepWorkflow {
         let workflowId = UUID().uuidString
-        let workflow = Workflow(id: workflowId, name: name, steps: steps)
+        let workflow = StepWorkflow(id: workflowId, name: name, steps: steps)
         workflows[workflowId] = workflow
         return workflow
     }
@@ -108,7 +102,7 @@ public class WorkflowEngine {
     /// Get workflow by ID
     /// - Parameter id: Workflow identifier
     /// - Returns: Workflow if found
-    public func getWorkflow(_ id: String) throws -> Workflow {
+    public func getWorkflow(_ id: String) throws -> StepWorkflow {
         guard let workflow = workflows[id] else {
             throw WorkflowError.workflowNotFound
         }
@@ -117,7 +111,7 @@ public class WorkflowEngine {
     
     /// Get all available workflows
     /// - Returns: Array of workflows
-    public func getAllWorkflows() -> [Workflow] {
+    public func getAllWorkflows() -> [StepWorkflow] {
         return Array(workflows.values)
     }
     
@@ -131,8 +125,11 @@ public class WorkflowEngine {
     // MARK: - Private Methods
     
     private func performTaskAction(_ task: Task) async throws -> Any {
-        // Simulate task execution based on type
-        switch task.type.lowercased() {
+        // Get action type from task metadata or use task name
+        let actionType = task.metadata["action"] ?? task.name.lowercased()
+        
+        // Simulate task execution based on action type
+        switch actionType.lowercased() {
         case "send":
             return try await sendMessage(task)
         case "create":
@@ -142,7 +139,7 @@ public class WorkflowEngine {
         case "remind":
             return try await setReminder(task)
         default:
-            return "Task executed: \(task.type)"
+            return "Task executed: \(task.name)"
         }
     }
     
@@ -164,8 +161,8 @@ public class WorkflowEngine {
     }
     
     private func loadDefaultWorkflows() {
-        // Load pre-defined iPhone workflows
-        let morningRoutine = Workflow(
+        // Load pre-defined iPhone workflow definitions
+        let morningRoutine = StepWorkflow(
             id: "morning-routine",
             name: "Morning Routine",
             steps: [
@@ -176,12 +173,12 @@ public class WorkflowEngine {
         )
         workflows[morningRoutine.id] = morningRoutine
         
-        let emailDigest = Workflow(
+        let emailDigest = StepWorkflow(
             id: "email-digest",
             name: "Email Digest",
             steps: [
                 WorkflowStep(action: "fetch", parameters: ["type": "emails"], isCritical: true),
-                WorkflowStep(action: "summarize", parameters: ["count": 10], isCritical: false)
+                WorkflowStep(action: "summarize", parameters: ["count": "10"], isCritical: false)
             ]
         )
         workflows[emailDigest.id] = emailDigest

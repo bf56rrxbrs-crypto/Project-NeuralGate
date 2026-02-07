@@ -114,7 +114,7 @@ public class NaturalLanguageProcessor {
         #endif
     }
     
-    private func determinePriority(from text: String) -> TaskPriority {
+    private func determinePriority(from text: String) -> Task.Priority {
         let urgentKeywords = ["urgent", "asap", "immediately", "now", "critical"]
         let textLower = text.lowercased()
         
@@ -124,7 +124,7 @@ public class NaturalLanguageProcessor {
             }
         }
         
-        return .normal
+        return .medium
     }
 }
 

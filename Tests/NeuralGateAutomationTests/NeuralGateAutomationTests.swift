@@ -3,18 +3,21 @@ import XCTest
 @testable import NeuralGateAI
 @testable import NeuralGate
 
+// Resolve ambiguity by explicitly importing TaskManager from NeuralGateAutomation
+typealias AutomationTaskManager = NeuralGateAutomation.TaskManager
+
 final class NeuralGateAutomationTests: XCTestCase {
     var configuration: NeuralGateConfiguration!
     var decisionEngine: AIDecisionEngine!
     var automationEngine: WorkflowAutomationEngine!
-    var taskManager: TaskManager!
+    var taskManager: AutomationTaskManager!
     
     override func setUp() {
         super.setUp()
         configuration = NeuralGateConfiguration(debugMode: true)
         decisionEngine = AIDecisionEngine(configuration: configuration)
         automationEngine = WorkflowAutomationEngine(configuration: configuration, decisionEngine: decisionEngine)
-        taskManager = TaskManager(configuration: configuration)
+        taskManager = AutomationTaskManager(configuration: configuration)
     }
     
     func testWorkflowExecution() async throws {
@@ -77,6 +80,6 @@ final class NeuralGateAutomationTests: XCTestCase {
         
         XCTAssertNotNil(result)
         // Task should eventually complete even if primary path fails
-        XCTAssertTrue(result!.status == .completed || result!.status == .failed)
+        XCTAssertTrue(result!.status == TaskExecutionResult.Status.completed || result!.status == TaskExecutionResult.Status.failed)
     }
 }
