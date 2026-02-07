@@ -88,29 +88,21 @@ public class SelfImprovementEngine {
         // In a real implementation, this would trigger actual model retraining,
         // optimization routines, or configuration adjustments
         
-        let success = true // Placeholder
-        let improvement = 0.15 // 15% improvement placeholder
+        let success = true // Placeholder - will be determined by actual execution
+        let improvement = 0.15 // Placeholder - fixed improvement until real execution logic is added
         
+        // Update metrics only on success to prevent metrics pollution
         if success {
-            // Update metrics
             updateMetrics(for: opportunity.area, improvement: improvement)
-            
-            return ImprovementResult(
-                action: action,
-                success: true,
-                actualImprovement: improvement,
-                newValue: opportunity.targetValue,
-                timestamp: Date()
-            )
-        } else {
-            return ImprovementResult(
-                action: action,
-                success: false,
-                actualImprovement: 0.0,
-                newValue: opportunity.currentValue,
-                timestamp: Date()
-            )
         }
+        
+        return ImprovementResult(
+            action: action,
+            success: success,
+            actualImprovement: improvement,
+            newValue: success ? opportunity.targetValue : opportunity.currentValue,
+            timestamp: Date()
+        )
     }
     
     /// Update performance metrics
