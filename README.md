@@ -137,15 +137,23 @@ See [DOCUMENTATION.md](DOCUMENTATION.md) for comprehensive documentation includi
 
 Check the [Examples](Examples/) directory for detailed usage examples.
 
+### Additional Guides
+
+- **[API_EXAMPLES.md](API_EXAMPLES.md)** - Comprehensive API usage examples
+- **[BEST_PRACTICES.md](BEST_PRACTICES.md)** - Development best practices and coding standards
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** - Contribution guidelines
+- **[SECURITY.md](SECURITY.md)** - Security policy and best practices
+- **[CHANGELOG.md](CHANGELOG.md)** - Version history and release notes
+
 ## Contributing
 
-We welcome contributions! Please follow these steps:
+We welcome contributions! Please read our [Contributing Guide](CONTRIBUTING.md) for details on:
+- Development setup
+- Code style and standards
+- Testing requirements
+- Pull request process
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'feat: add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+Please also read our [Code of Conduct](CODE_OF_CONDUCT.md) before contributing.
 
 All contributions are automatically validated through our CI/CD pipeline.
 
