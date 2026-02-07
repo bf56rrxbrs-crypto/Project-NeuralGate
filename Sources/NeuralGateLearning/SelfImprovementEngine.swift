@@ -88,8 +88,8 @@ public class SelfImprovementEngine {
         // In a real implementation, this would trigger actual model retraining,
         // optimization routines, or configuration adjustments
         
-        let success = true // Placeholder - would be determined by actual execution
-        let improvement = success ? 0.15 : 0.0 // 15% improvement on success, 0% on failure
+        let success = true // Placeholder - will be determined by actual execution
+        let improvement = 0.15 // Placeholder - fixed improvement until real execution logic is added
         
         // Update metrics only on success to prevent metrics pollution
         if success {
