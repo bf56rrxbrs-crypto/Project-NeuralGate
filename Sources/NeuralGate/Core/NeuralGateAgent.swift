@@ -42,7 +42,22 @@ public class NeuralGateAgent {
     /// - Parameter workflowId: Unique identifier for the workflow
     /// - Returns: Result of workflow execution
     public func executeWorkflow(_ workflowId: String) async throws -> WorkflowResult {
-        let workflow = try workflowEngine.getWorkflow(workflowId)
+        let stepWorkflow = try workflowEngine.getWorkflow(workflowId)
+        // Convert StepWorkflow to Workflow for execution
+        let tasks = stepWorkflow.steps.map { step in
+            Task(
+                name: step.action,
+                description: "Workflow step: \(step.action)",
+                priority: step.isCritical ? .high : .medium,
+                category: .automation,
+                metadata: step.parameters
+            )
+        }
+        let workflow = Workflow(
+            name: stepWorkflow.name,
+            description: "Step-based workflow: \(stepWorkflow.name)",
+            tasks: tasks
+        )
         return try await workflowEngine.executeWorkflow(workflow)
     }
     
@@ -51,13 +66,13 @@ public class NeuralGateAgent {
     ///   - name: Name of the workflow
     ///   - steps: Array of workflow steps
     /// - Returns: Created workflow
-    public func createWorkflow(name: String, steps: [WorkflowStep]) -> Workflow {
+    public func createWorkflow(name: String, steps: [WorkflowStep]) -> StepWorkflow {
         return workflowEngine.createWorkflow(name: name, steps: steps)
     }
     
     /// Get all available workflows
     /// - Returns: Array of available workflows
-    public func getAvailableWorkflows() -> [Workflow] {
+    public func getAvailableWorkflows() -> [StepWorkflow] {
         return workflowEngine.getAllWorkflows()
     }
     

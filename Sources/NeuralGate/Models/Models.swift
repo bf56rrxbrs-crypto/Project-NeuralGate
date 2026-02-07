@@ -1,54 +1,18 @@
 import Foundation
 
-// MARK: - Task Models
-
-/// Represents a single executable task
-public struct Task: Codable, Identifiable {
-    public let id: String
-    public let type: String
-    public let parameters: [String: String]
-    public let priority: TaskPriority
-    public var status: TaskStatus
-    public let createdAt: Date
-    
-    public init(id: String, type: String, parameters: [String: Any], priority: TaskPriority) {
-        self.id = id
-        self.type = type
-        // Convert Any to String for Codable support
-        self.parameters = parameters.mapValues { "\($0)" }
-        self.priority = priority
-        self.status = .pending
-        self.createdAt = Date()
-    }
-}
-
-/// Task execution priority
-public enum TaskPriority: String, Codable {
-    case low
-    case normal
-    case high
-    case critical
-}
-
-/// Task execution status
-public enum TaskStatus: String, Codable {
-    case pending
-    case running
-    case completed
-    case failed
-    case cancelled
-}
+// Note: Task and Workflow models are defined in TaskModel.swift
+// This file contains WorkflowStep, WorkflowResult, TaskResult and Intent models for the WorkflowEngine
 
 /// Result of task execution
 public struct TaskResult: Codable {
-    public let taskId: String
+    public let taskId: UUID
     public let success: Bool
     public let output: String?
     public let duration: TimeInterval
     public let error: String?
     public let timestamp: Date
     
-    public init(taskId: String, success: Bool, output: Any?, duration: TimeInterval, error: String?) {
+    public init(taskId: UUID, success: Bool, output: Any?, duration: TimeInterval, error: String?) {
         self.taskId = taskId
         self.success = success
         self.output = output.map { "\($0)" }
@@ -58,10 +22,23 @@ public struct TaskResult: Codable {
     }
 }
 
-// MARK: - Workflow Models
+// MARK: - Workflow Engine Support Models
 
-/// Represents a workflow containing multiple steps
-public struct Workflow: Codable, Identifiable {
+/// A single step in a workflow definition
+public struct WorkflowStep: Codable {
+    public let action: String
+    public let parameters: [String: String]
+    public let isCritical: Bool
+    
+    public init(action: String, parameters: [String: Any], isCritical: Bool) {
+        self.action = action
+        self.parameters = parameters.mapValues { "\($0)" }
+        self.isCritical = isCritical
+    }
+}
+
+/// Step-based workflow definition (used internally by WorkflowEngine)
+public struct StepWorkflow: Codable, Identifiable {
     public let id: String
     public let name: String
     public let steps: [WorkflowStep]
@@ -77,29 +54,16 @@ public struct Workflow: Codable, Identifiable {
     }
 }
 
-/// A single step in a workflow
-public struct WorkflowStep: Codable {
-    public let action: String
-    public let parameters: [String: String]
-    public let isCritical: Bool
-    
-    public init(action: String, parameters: [String: Any], isCritical: Bool) {
-        self.action = action
-        self.parameters = parameters.mapValues { "\($0)" }
-        self.isCritical = isCritical
-    }
-}
-
 /// Result of workflow execution
 public struct WorkflowResult: Codable {
-    public let workflowId: String
+    public let workflowId: UUID
     public let workflowName: String
     public let success: Bool
     public let stepResults: [TaskResult]
     public let duration: TimeInterval
     public let timestamp: Date
     
-    public init(workflowId: String, workflowName: String, success: Bool, stepResults: [TaskResult], duration: TimeInterval) {
+    public init(workflowId: UUID, workflowName: String, success: Bool, stepResults: [TaskResult], duration: TimeInterval) {
         self.workflowId = workflowId
         self.workflowName = workflowName
         self.success = success
@@ -115,11 +79,11 @@ public struct WorkflowResult: Codable {
 public struct Intent {
     public let action: String
     public let parameters: [String: Any]
-    public let priority: TaskPriority
+    public let priority: Task.Priority
     public let originalText: String
     public let confidence: Double
     
-    public init(action: String, parameters: [String: Any], priority: TaskPriority, originalText: String, confidence: Double = 1.0) {
+    public init(action: String, parameters: [String: Any], priority: Task.Priority, originalText: String, confidence: Double = 1.0) {
         self.action = action
         self.parameters = parameters
         self.priority = priority

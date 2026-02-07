@@ -6,8 +6,8 @@ public class TaskManager {
     
     // MARK: - Properties
     
-    private var tasks: [String: Task] = [:]
-    private var scheduledTasks: [String: (task: Task, date: Date)] = [:]
+    private var tasks: [UUID: Task] = [:]
+    private var scheduledTasks: [UUID: (task: Task, date: Date)] = [:]
     
     // MARK: - Public Methods
     
@@ -15,16 +15,18 @@ public class TaskManager {
     /// - Parameter intent: User intent parsed from natural language
     /// - Returns: Executable task
     public func createTask(from intent: Intent) throws -> Task {
-        let taskId = UUID().uuidString
+        // Convert intent parameters to metadata strings
+        let metadata = intent.parameters.mapValues { "\($0)" }
         
         let task = Task(
-            id: taskId,
-            type: intent.action,
-            parameters: intent.parameters,
-            priority: intent.priority
+            name: intent.action,
+            description: intent.originalText,
+            priority: intent.priority,
+            category: .general,
+            metadata: metadata
         )
         
-        tasks[taskId] = task
+        tasks[task.id] = task
         return task
     }
     
@@ -43,7 +45,7 @@ public class TaskManager {
     /// Get a task by ID
     /// - Parameter taskId: Task identifier
     /// - Returns: Task if found
-    public func getTask(_ taskId: String) -> Task? {
+    public func getTask(_ taskId: UUID) -> Task? {
         return tasks[taskId]
     }
     
@@ -55,7 +57,7 @@ public class TaskManager {
     
     /// Cancel a scheduled task
     /// - Parameter taskId: ID of task to cancel
-    public func cancelTask(_ taskId: String) {
+    public func cancelTask(_ taskId: UUID) {
         scheduledTasks.removeValue(forKey: taskId)
     }
 }
