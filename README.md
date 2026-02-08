@@ -1,27 +1,12 @@
 # Project-NeuralGate
 
-AI agent for task and workflow automation exclusively for iPhone users.
-
-## 🎯 Overview
-
-NeuralGate is a powerful AI-powered agent designed exclusively for iPhone to automate tasks and workflows through natural language processing and deep iOS integration.
-
-### Key Features
-
-- 🤖 **Natural Language Processing**: Understand and execute tasks from natural language
-- 📱 **iPhone-First Design**: Built specifically for iOS 16+ with native integrations
-- ⚡ **Workflow Automation**: Pre-built and custom workflows for common tasks
-- 🎤 **Siri Integration**: Voice-activated task execution
-- 🔗 **Shortcuts Support**: Seamless integration with iOS Shortcuts app
-- 📊 **Task Management**: Schedule, track, and manage tasks with priorities
-- 🔔 **Smart Notifications**: Context-aware notifications for task updates
 🧠 **Advanced AI Agent for iPhone** - Intelligent task and workflow automation with cutting-edge AI, loop engineering, and autonomous self-improvement.
 
 [![CI/CD](https://github.com/bf56rrxbrs-crypto/Project-NeuralGate/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/bf56rrxbrs-crypto/Project-NeuralGate/actions/workflows/ci-cd.yml)
 [![Code Quality](https://github.com/bf56rrxbrs-crypto/Project-NeuralGate/actions/workflows/code-quality.yml/badge.svg)](https://github.com/bf56rrxbrs-crypto/Project-NeuralGate/actions/workflows/code-quality.yml)
 [![Security](https://github.com/bf56rrxbrs-crypto/Project-NeuralGate/actions/workflows/security.yml/badge.svg)](https://github.com/bf56rrxbrs-crypto/Project-NeuralGate/actions/workflows/security.yml)
 [![Swift 5.9](https://img.shields.io/badge/Swift-5.9-orange.svg)](https://swift.org)
-[![iOS 15.0+](https://img.shields.io/badge/iOS-15.0%2B-blue.svg)](https://www.apple.com/ios/)
+[![iOS 16.0+](https://img.shields.io/badge/iOS-16.0%2B-blue.svg)](https://www.apple.com/ios/)
 [![License](https://img.shields.io/badge/License-Proprietary-red.svg)](LICENSE)
 
 ## Overview
@@ -41,6 +26,9 @@ NeuralGate is a comprehensive AI-powered automation framework designed exclusive
 
 ## Quick Start
 
+**New to the project?** See [QUICK_START.md](QUICK_START.md) for a comprehensive getting started guide.
+
+**For Developers**:
 ```swift
 import NeuralGate
 
@@ -56,13 +44,11 @@ Task {
 Task {
     try await agent.executeWorkflow("morning-routine")
 }
-// Execute a task
-let task = Task(name: "My Task", description: "Task description", priority: .high)
-let result = try await agent.executeTask(task)
-
-// Get intelligent suggestions
-let suggestions = agent.getTaskSuggestions()
 ```
+
+**For Project Planning**:
+- See [ROADMAP.md](ROADMAP.md) for project phases and milestones
+- See [EXECUTION_PLAN.md](EXECUTION_PLAN.md) for detailed development guide
 
 ## Documentation
 
@@ -72,6 +58,15 @@ See [DOCUMENTATION.md](DOCUMENTATION.md) for comprehensive documentation includi
 - Usage examples
 - iOS integration guide
 - Advanced features
+
+For a complete development roadmap and execution plan, see [EXECUTION_PLAN.md](EXECUTION_PLAN.md), which includes:
+- 6 development phases (Ideation → App Store Launch)
+- Dependencies and tool setup
+- Feature categorization (MVP vs Enhancements)
+- iPhone-specific optimizations
+- CI/CD configuration
+- Testing strategies
+- Progress tracking
 
 ## Examples
 
@@ -85,25 +80,20 @@ Check the [Examples](Examples/) directory for detailed usage examples.
 
 ## Architecture
 
-The system is built with these core components:
+The system is built with four main modules:
+
+- **NeuralGate**: Core framework and models
+- **NeuralGateAI**: AI decision engine and analytics
+- **NeuralGateAutomation**: Workflow automation
+- **NeuralGateLearning**: Feedback loops and self-improvement
+
+### Core Components
 
 1. **NeuralGateAgent** - Main AI agent interface
 2. **TaskManager** - Task lifecycle and scheduling
 3. **WorkflowEngine** - Workflow execution and management
 4. **NaturalLanguageProcessor** - Intent parsing from natural language
 5. **iOSIntegration** - iPhone-specific features (Siri, Shortcuts, Notifications)
-
-## License
-
-Designed exclusively for iPhone/iOS applications.
-See [DOCUMENTATION.md](DOCUMENTATION.md) for comprehensive guides, API reference, and advanced usage examples.
-
-## Architecture
-
-- **NeuralGate**: Core framework and models
-- **NeuralGateAI**: AI decision engine and analytics
-- **NeuralGateAutomation**: Workflow automation
-- **NeuralGateLearning**: Feedback loops and self-improvement
 
 ## Installation
 
@@ -114,12 +104,6 @@ dependencies: [
     .package(url: "https://github.com/bf56rrxbrs-crypto/Project-NeuralGate.git", from: "1.0.0")
 ]
 ```
-
-## Requirements
-
-- iOS 15.0+
-- Swift 5.9+
-- Xcode 14.0+
 
 ## Testing
 
