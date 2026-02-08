@@ -8,7 +8,7 @@ This documentation was created in response to a request to create a sub-issue fo
 
 ## Why Documentation Instead of Direct Issue Creation?
 
-Due to GitHub API limitations and security constraints, automated tools cannot directly create issues in GitHub repositories. Instead, this comprehensive documentation provides everything needed to manually create the sub-issue.
+In this project context, the automation tools used do not have the necessary GitHub token permissions or repository/organization authorization to create issues via the GitHub API. Instead, this comprehensive documentation provides everything needed to manually create the sub-issue.
 
 ## Files Included
 
