@@ -195,7 +195,7 @@ class RecommendationEngine:
                 relevance_score=0.85,
                 estimated_time_savings=150,
                 difficulty="advanced",
-                learning_resources=["docs/advanced_workflows.md"]
+                learning_resources=["EXAMPLES.md"]
             ))
         
         # Recommend API integration for power users
@@ -207,7 +207,7 @@ class RecommendationEngine:
                 relevance_score=0.80,
                 estimated_time_savings=120,
                 difficulty="advanced",
-                learning_resources=["docs/api_reference.md"]
+                learning_resources=["DOCUMENTATION.md"]
             ))
         
         return advanced_recs
@@ -226,7 +226,7 @@ class RecommendationEngine:
                     relevance_score=0.75,
                     estimated_time_savings=30,
                     difficulty="intermediate",
-                    learning_resources=[f"docs/{feature}_optimization.md"]
+                    learning_resources=["PERFORMANCE.md"]
                 ))
         
         return optimization_recs
@@ -241,7 +241,7 @@ class RecommendationEngine:
                 relevance_score=0.95,
                 estimated_time_savings=120,
                 difficulty="beginner",
-                learning_resources=["docs/getting_started.md", "tutorials/first_workflow.md"]
+                learning_resources=["README.md", "DOCUMENTATION.md"]
             ),
             Recommendation(
                 title="Explore Voice Commands",
@@ -250,7 +250,7 @@ class RecommendationEngine:
                 relevance_score=0.85,
                 estimated_time_savings=30,
                 difficulty="beginner",
-                learning_resources=["docs/voice_commands.md"]
+                learning_resources=["EXAMPLES.md"]
             ),
             Recommendation(
                 title="Set Up Your First Automation",
@@ -259,7 +259,7 @@ class RecommendationEngine:
                 relevance_score=0.90,
                 estimated_time_savings=60,
                 difficulty="beginner",
-                learning_resources=["tutorials/quick_start.md"]
+                learning_resources=["EXAMPLES.md"]
             )
         ]
     

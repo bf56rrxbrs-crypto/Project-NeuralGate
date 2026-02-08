@@ -125,6 +125,7 @@ Project-NeuralGate/
 
 ```swift
 import NeuralGate
+import NeuralGateAutomation
 
 // Initialize the agent
 let agent = NeuralGateAgent()
@@ -171,7 +172,7 @@ dependencies: [
 
 - iOS 15.0+
 - Swift 5.9+
-- Xcode 14.0+
+- Xcode 15.0+
 - Python 3.8+ (for AI analysis modules)
 
 ## Documentation

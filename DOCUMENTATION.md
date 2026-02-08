@@ -64,6 +64,7 @@ dependencies: [
 
 ```swift
 import NeuralGate
+import NeuralGateAutomation
 
 // Initialize the agent with configuration
 let configuration = NeuralGateConfiguration(
@@ -270,7 +271,7 @@ Tests cover:
 
 - iOS 15.0+
 - Swift 5.9+
-- Xcode 14.0+
+- Xcode 15.0+
 
 ## Performance Characteristics
 

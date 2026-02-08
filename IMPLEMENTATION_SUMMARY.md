@@ -208,6 +208,7 @@ NeuralGate is a comprehensive, production-ready AI agent framework for iPhone wi
 ### Swift Framework
 ```swift
 import NeuralGate
+import NeuralGateAutomation
 
 let agent = NeuralGateAgent()
 let task = Task(name: "My Task", description: "Task description", priority: .high)

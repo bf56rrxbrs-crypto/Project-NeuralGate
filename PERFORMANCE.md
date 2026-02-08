@@ -251,7 +251,7 @@ class TaskWrapper { var task: Task }
 
 ```swift
 // Use background tasks for non-critical operations
-Task.detached(priority: .background) {
+_Concurrency.Task.detached(priority: .background) {
     await performNonCriticalAnalysis()
 }
 ```
