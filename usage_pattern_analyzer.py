@@ -17,6 +17,7 @@ class UsagePatternAnalyzer:
         self.events: List[Dict[str, Any]] = []
         self.user_sessions: Dict[str, List[Dict]] = defaultdict(list)
         self.feature_usage: Dict[str, int] = defaultdict(int)
+        self.feature_users: Dict[str, set] = defaultdict(set)  # Track users per feature
         self.error_patterns: Dict[str, List[Dict]] = defaultdict(list)
         
     def track_event(self, event_type: str, user_id: str, 
@@ -34,6 +35,7 @@ class UsagePatternAnalyzer:
         if event_type.startswith("feature_"):
             feature_name = event_type.replace("feature_", "")
             self.feature_usage[feature_name] += 1
+            self.feature_users[feature_name].add(user_id)
     
     def track_error(self, error_type: str, user_id: str, 
                    context: Dict[str, Any] = None) -> None:
@@ -53,12 +55,8 @@ class UsagePatternAnalyzer:
         
         adoption_rates = {}
         for feature, count in self.feature_usage.items():
-            # Calculate how many unique users used this feature
-            users_using_feature = set()
-            for user_id, sessions in self.user_sessions.items():
-                for event in sessions:
-                    if event["type"] == f"feature_{feature}":
-                        users_using_feature.add(user_id)
+            # Use pre-computed user set for O(1) lookup
+            users_using_feature = self.feature_users[feature]
             
             adoption_rate = len(users_using_feature) / total_users
             adoption_rates[feature] = {
@@ -76,9 +74,9 @@ class UsagePatternAnalyzer:
     
     def _get_adoption_status(self, rate: float) -> str:
         """Categorize adoption rate"""
-        if rate >= 0.7:
+        if rate >= SUGGESTION_THRESHOLDS["adoption_rate_high"]:
             return "high_adoption"
-        elif rate >= 0.3:
+        elif rate >= SUGGESTION_THRESHOLDS["adoption_rate_low"]:
             return "moderate_adoption"
         else:
             return "low_adoption"
@@ -89,7 +87,7 @@ class UsagePatternAnalyzer:
         
         low_adoption_features = [
             f for f, data in adoption_rates.items() 
-            if data["adoption_rate"] < 0.3
+            if data["adoption_rate"] < SUGGESTION_THRESHOLDS["adoption_rate_low"]
         ]
         
         if low_adoption_features:
@@ -100,7 +98,8 @@ class UsagePatternAnalyzer:
         
         high_value_features = [
             f for f, data in adoption_rates.items() 
-            if data["adoption_rate"] > 0.7 and data["total_uses"] > 100
+            if data["adoption_rate"] > SUGGESTION_THRESHOLDS["adoption_rate_high"] 
+            and data["total_uses"] > SUGGESTION_THRESHOLDS["feature_usage_high"]
         ]
         
         if high_value_features:

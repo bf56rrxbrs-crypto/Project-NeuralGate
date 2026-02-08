@@ -66,6 +66,8 @@ class AISuggestionEngine:
         
     def analyze_usage_patterns(self, usage_data: Dict[str, Any]) -> None:
         """Analyze usage patterns to identify improvement opportunities"""
+        # Clear previous suggestions to make analysis idempotent
+        self.suggestions = []
         self.usage_patterns = usage_data
         
         # Analyze frequency of operations
