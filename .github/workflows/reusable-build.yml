@@ -1,0 +1,115 @@
+name: Reusable Swift Build
+
+# This is a reusable workflow that can be called from other workflows
+# It provides common Swift build and test functionality
+
+on:
+  workflow_call:
+    inputs:
+      swift-version:
+        description: 'Swift version to use'
+        required: false
+        type: string
+        default: '5.9'
+      configuration:
+        description: 'Build configuration (debug or release)'
+        required: false
+        type: string
+        default: 'debug'
+      enable-code-coverage:
+        description: 'Enable code coverage collection'
+        required: false
+        type: boolean
+        default: false
+      upload-artifacts:
+        description: 'Upload build artifacts'
+        required: false
+        type: boolean
+        default: false
+    outputs:
+      build-result:
+        description: 'Build result (success or failure)'
+        value: ${{ jobs.build.outputs.result }}
+      test-count:
+        description: 'Number of tests executed'
+        value: ${{ jobs.build.outputs.test_count }}
+
+jobs:
+  build:
+    name: Build and Test
+    runs-on: macos-14
+    outputs:
+      result: ${{ steps.build.outcome }}
+      test_count: ${{ steps.tests.outputs.count }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Swift
+        uses: swift-actions/setup-swift@v2
+        with:
+          swift-version: ${{ inputs.swift-version }}
+          
+      - name: Cache Swift Package Manager
+        uses: actions/cache@v4
+        with:
+          path: .build
+          key: ${{ runner.os }}-spm-${{ inputs.configuration }}-${{ hashFiles('**/Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-spm-${{ inputs.configuration }}-
+            ${{ runner.os }}-spm-
+            
+      - name: Swift Version Info
+        run: |
+          swift --version
+          xcodebuild -version || true
+          
+      - name: Build
+        id: build
+        run: |
+          if [ "${{ inputs.configuration }}" = "release" ]; then
+            swift build -c release --verbose
+          else
+            swift build --verbose
+          fi
+          
+      - name: Run Tests
+        id: tests
+        if: success()
+        run: |
+          if [ "${{ inputs.enable-code-coverage }}" = "true" ]; then
+            swift test --enable-code-coverage --verbose
+          else
+            swift test --verbose
+          fi
+          
+          # Count tests
+          TEST_COUNT=$(swift test list 2>/dev/null | grep -c "Test" || echo "0")
+          echo "count=${TEST_COUNT}" >> $GITHUB_OUTPUT
+          
+      - name: Generate Code Coverage
+        if: success() && inputs.enable-code-coverage == true
+        run: |
+          xcrun llvm-cov export \
+            .build/debug/NeuralGatePackageTests.xctest/Contents/MacOS/NeuralGatePackageTests \
+            -instr-profile=.build/debug/codecov/default.profdata \
+            -format=lcov > coverage.lcov || echo "Coverage generation failed"
+        continue-on-error: true
+        
+      - name: Upload Code Coverage
+        if: success() && inputs.enable-code-coverage == true
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report-${{ inputs.configuration }}
+          path: coverage.lcov
+          retention-days: 30
+        continue-on-error: true
+          
+      - name: Upload Build Artifacts
+        if: success() && inputs.upload-artifacts == true
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-${{ inputs.configuration }}
+          path: .build/${{ inputs.configuration }}/
+          retention-days: 7
