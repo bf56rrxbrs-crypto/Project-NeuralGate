@@ -21,7 +21,7 @@ jobs:
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         
       - name: Install SwiftLint
         run: |
@@ -43,7 +43,7 @@ jobs:
           
       - name: Upload SwiftLint Reports
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: swiftlint-reports
           path: |
@@ -60,7 +60,7 @@ jobs:
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         
       - name: Install SwiftFormat
         run: |
@@ -86,13 +86,13 @@ jobs:
     
     steps:
       - name: Download SwiftLint Report
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: swiftlint-reports
         continue-on-error: true
         
       - name: Comment on PR
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const fs = require('fs');
