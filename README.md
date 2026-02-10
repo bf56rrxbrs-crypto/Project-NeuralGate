@@ -32,15 +32,15 @@ NeuralGate is a comprehensive AI-powered automation framework designed exclusive
 
 **No Mac? No Desktop? No Problem!** NeuralGate is fully functional on iPhone alone:
 
-- ✅ **100% On-Device AI** - All processing happens on your iPhone
-- ✅ **Complete Without Mac** - Develop, test, and use entirely from iPhone
-- ✅ **Cloud IDE Support** - Use GitHub Codespaces or Replit for development
-- ✅ **TestFlight Distribution** - Install and test directly on iPhone
+- ✅ **100% On-Device AI** - All runtime AI processing happens on your iPhone
+- ✅ **Complete Without Mac** - Use and collaborate from iPhone alone; builds and tests run via cloud CI
+- ✅ **Cloud IDE & CI Support** - Use GitHub Codespaces or Replit to build, test, and iterate from your iPhone
+- ✅ **TestFlight Distribution** - Install and test CI/Xcode-built versions directly on your iPhone
 - ✅ **30+ iPhone Tools** - Curated toolset for automation and productivity
 - ✅ **20+ Ready Workflows** - Pre-built templates for common tasks
 - ✅ **Voice-First Control** - Full Siri integration for hands-free operation
 - ✅ **iOS Shortcuts Integration** - Native automation with Shortcuts app
-- ✅ **GitHub Mobile Workflow** - Complete development cycle on iPhone
+- ✅ **GitHub Mobile Workflow** - Manage issues, PRs, and CI pipelines entirely from your iPhone
 
 👉 **New here? Start with the [iPhone-Only User Guide](IPHONE_ONLY_GUIDE.md)**
 

@@ -24,7 +24,7 @@ This document provides a comprehensive, curated list of **reliable tools and res
 **What it does:** Native iOS automation framework  
 **Integration:** Direct NeuralGate actions available  
 **Automation level:** High  
-**Reliability:** 99.9%  
+**Reliability:** Excellent (native iOS framework)  
 **Cost:** Free (included with iOS)
 
 **Key Capabilities:**
@@ -74,19 +74,20 @@ This document provides a comprehensive, curated list of **reliable tools and res
 ✅ "Hey Siri, show my productivity"
 ```
 
-**Setup Instructions:**
-1. NeuralGate → Settings → Siri Integration
-2. Tap "Enable Siri"
-3. Grant permissions
-4. Test with voice command
+**Setup Instructions (current beta):**
+1. On your iPhone, go to **Settings → Siri & Search** and ensure "Listen for 'Hey Siri'" (or "Siri") is enabled.
+2. Set up any NeuralGate-related actions using the **iOS Shortcuts** app (see the Shortcuts section above).
+3. Use your configured Siri phrases to trigger those Shortcuts (for example, "Hey Siri, run my NeuralGate morning routine").
+
+_Planned_: A dedicated **NeuralGate → Settings → Siri Integration** screen will make this setup simpler in a future release.
 
 ---
 
-### 3. TestFlight (Built-in)
+### 3. TestFlight (App Store)
 **What it does:** Beta testing platform  
 **Integration:** Direct app distribution  
 **Automation level:** Medium  
-**Reliability:** 99%+  
+**Reliability:** Excellent  
 **Cost:** Free
 
 **Key Capabilities:**
@@ -98,7 +99,7 @@ This document provides a comprehensive, curated list of **reliable tools and res
 
 **Setup Instructions:**
 1. Install TestFlight from App Store
-2. Join NeuralGate beta: [Link]
+2. Join NeuralGate beta: TBD — the public TestFlight invitation link will be added here once available
 3. Install and test
 4. Submit feedback
 
@@ -122,15 +123,28 @@ This document provides a comprehensive, curated list of **reliable tools and res
 
 **Example Integrations:**
 ```javascript
-// Fetch tasks from NeuralGate API
-let tasks = await neuralgate.getTasks();
+// Scriptable example – replace URL and API key with your actual NeuralGate values.
+const API_URL = "https://api.neuralgate.app/v1/tasks"; // ← example URL
+
+// Fetch tasks from NeuralGate HTTP API
+let req = new Request(API_URL);
+req.method = "GET";
+req.headers = {
+  "Authorization": "Bearer YOUR_API_KEY" // ← replace with your real key/token
+};
+let tasks = await req.loadJSON();
 
 // Create custom widget
 let widget = new ListWidget();
 widget.addText(`Tasks: ${tasks.length}`);
 
-// Schedule automation
-Script.schedule("daily", 8, 0);
+// Show widget in Scriptable
+Script.setWidget(widget);
+Script.complete();
+
+// Note: To run this on a schedule, use a Personal Automation
+// in the Shortcuts app that opens this Scriptable script
+// at your desired time (e.g., daily at 8:00).
 ```
 
 **Use Cases:**

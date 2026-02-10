@@ -454,7 +454,9 @@ When: Every 2 hours (8 AM - 8 PM)
    - Show Notification
      - Title: "Time to hydrate! 💧"
      - Body: "Drink water ([Remaining] cups remaining)"
-4. Add "Wait for 'Logged'"
+4. Add "Show Alert"
+   - Title: "Log your water"
+   - Message: "Tap Continue after you've logged 1 cup in NeuralGate."
 5. Add "Run NeuralGate Action: Log Water"
    - Amount: 1 cup
 6. Add "Check Progress"
