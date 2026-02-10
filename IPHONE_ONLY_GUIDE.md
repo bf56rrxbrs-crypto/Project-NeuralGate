@@ -19,7 +19,7 @@ NeuralGate is designed as an **iPhone-first AI agent** that leverages:
 
 #### Option 1: Via TestFlight (Recommended for iPhone-Only Users)
 1. Install TestFlight from App Store
-2. Join beta: [NeuralGate TestFlight Link]
+2. Join beta: **TBD** – see the latest TestFlight invite link in the main `README.md` under **Installation**
 3. Install NeuralGate directly on your iPhone
 4. Start using immediately - no Mac needed!
 
@@ -41,7 +41,7 @@ If you want to contribute or customize:
 
 | Tool | Purpose | App Store Link | Cost |
 |------|---------|----------------|------|
-| **TestFlight** | Beta testing | Built-in | Free |
+| **TestFlight** | Beta testing | App Store | Free |
 | **Shortcuts** | Automation | Built-in | Free |
 | **Siri** | Voice control | Built-in | Free |
 | **Working Copy** | Git client | Yes | Freemium |
@@ -62,11 +62,24 @@ If you want to contribute or customize:
 
 ### Setting Up Siri Integration
 
+**Current Setup (via iOS Shortcuts):**
+
+1. On your iPhone, open **Settings** → **Siri & Search**
+2. Make sure **Listen for "Hey Siri"** (or **"Siri"**) is enabled
+3. Make sure **Press Side Button for Siri** is enabled (recommended)
+4. Open the **Shortcuts** app and create or install NeuralGate-related shortcuts
+5. Record custom Siri phrases (e.g., "add to NeuralGate") to trigger them
+6. Test by saying "Hey Siri, [your custom phrase]"
+
+> **Note:** Direct in-app Siri settings inside NeuralGate are not yet available. This feature is planned for a future release.
+
+**Planned In-App Settings (Future):**
+
+Once the in-app settings screen is available:
 1. Open NeuralGate app
 2. Go to Settings → Siri Integration
 3. Tap "Enable Siri"
 4. Grant permissions when prompted
-5. Say "Hey Siri, add to NeuralGate" to test
 
 ### Essential Siri Commands
 
@@ -177,10 +190,12 @@ NeuralGate provides ready-to-use Shortcuts:
 3. Create tasks automatically
 4. Archive or flag email
 
-**Setup:**
-- Use Mail rules (iPhone)
-- Connect to NeuralGate via Shortcuts
-- Configure email filters
+**Setup (using server-side email filters):**
+- Create server-side filters/rules in your email provider (e.g., Gmail, Outlook) to label, move, or forward action-oriented emails
+- (Optional) Use an automation service (e.g., IFTTT or Zapier) to react to those filtered emails if you need additional processing
+- Connect NeuralGate via Shortcuts to process tasks created from these filtered emails on your iPhone
+
+> **Note:** iOS Mail doesn't support client-side "Mail rules" like macOS Mail. Use server-side email filters or automation services instead.
 
 ### 3. Fitness Tracking Workflow
 
