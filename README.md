@@ -46,8 +46,8 @@ NeuralGate is a comprehensive AI-powered automation framework designed exclusive
 ```swift
 import NeuralGate
 
-// Initialize the agent
-let agent = NeuralGateAgent()
+// Initialize the core agent
+let agent = NeuralGate.NeuralGateAgent()
 
 // Process natural language
 _Concurrency.Task {
@@ -69,10 +69,10 @@ import NeuralGateAutomation
 // Initialize the advanced agent
 let agent = NeuralGateAutomation.NeuralGateAgent()
 
-// Execute a task
-let task = Task(name: "My Task", description: "Task description", priority: .high)
+// Execute a task model
+let taskModel = Task(name: "My Task", description: "Task description", priority: .high)
 _Concurrency.Task {
-    let result = try await agent.executeTask(task)
+    let result = try await agent.executeTask(taskModel)
 }
 
 // Get intelligent suggestions
