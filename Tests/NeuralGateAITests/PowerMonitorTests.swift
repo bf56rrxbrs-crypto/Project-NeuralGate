@@ -1,20 +1,28 @@
 import XCTest
+#if canImport(Combine)
 import Combine
+#endif
 @testable import NeuralGateAI
 @testable import NeuralGate
 
 @MainActor
 final class PowerMonitorTests: XCTestCase {
     var powerMonitor: PowerMonitor!
+    #if canImport(Combine)
     var cancellables: Set<AnyCancellable>!
+    #endif
     
     override func setUp() async throws {
         powerMonitor = PowerMonitor.shared
+        #if canImport(Combine)
         cancellables = Set<AnyCancellable>()
+        #endif
     }
     
     override func tearDown() {
+        #if canImport(Combine)
         cancellables = nil
+        #endif
     }
     
     // MARK: - Initialization Tests
@@ -23,8 +31,11 @@ final class PowerMonitorTests: XCTestCase {
         // PowerMonitor should initialize with current system state
         XCTAssertNotNil(powerMonitor.thermalState)
         
-        // Thermal state should be one of the valid states
+        #if os(iOS) || os(macOS) || os(watchOS) || os(tvOS)
         let validStates: [ProcessInfo.ThermalState] = [.nominal, .fair, .serious, .critical]
+        #else
+        let validStates: [ThermalState] = [.nominal, .fair, .serious, .critical]
+        #endif
         XCTAssertTrue(validStates.contains(powerMonitor.thermalState))
     }
     
@@ -43,6 +54,7 @@ final class PowerMonitorTests: XCTestCase {
     
     // MARK: - Published Properties Tests
     
+    #if canImport(Combine)
     func testPublishedPropertiesAreObservable() {
         let expectation = XCTestExpectation(description: "Thermal state is observable")
         
@@ -59,7 +71,9 @@ final class PowerMonitorTests: XCTestCase {
         
         wait(for: [expectation], timeout: 2.0)
     }
+    #endif
     
+    #if canImport(Combine)
     func testLowPowerModeIsObservable() {
         #if canImport(UIKit)
         let expectation = XCTestExpectation(description: "Low power mode is observable")
@@ -78,6 +92,7 @@ final class PowerMonitorTests: XCTestCase {
         wait(for: [expectation], timeout: 2.0)
         #endif
     }
+    #endif
     
     // MARK: - Recommended Batch Size Tests
     
@@ -156,7 +171,9 @@ final class PowerMonitorTests: XCTestCase {
         let initialState = powerMonitor.thermalState
         
         // Post notification
+        #if os(iOS) || os(macOS) || os(watchOS) || os(tvOS)
         NotificationCenter.default.post(name: ProcessInfo.thermalStateDidChangeNotification, object: nil)
+        #endif
         
         // Give it a moment to process
         let expectation = XCTestExpectation(description: "Thermal state updated")
@@ -191,6 +208,7 @@ final class PowerMonitorTests: XCTestCase {
     
     // MARK: - Edge Case Tests
     
+    #if canImport(Combine)
     func testMultipleNotifications() {
         // Test that multiple rapid notifications are handled gracefully
         let expectation = XCTestExpectation(description: "Multiple notifications handled")
@@ -210,4 +228,5 @@ final class PowerMonitorTests: XCTestCase {
         
         wait(for: [expectation], timeout: 2.0)
     }
+    #endif
 }

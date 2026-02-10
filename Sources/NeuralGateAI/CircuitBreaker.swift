@@ -1,4 +1,5 @@
 import Foundation
+import NeuralGate
 
 /// Circuit breaker state
 public enum CircuitState {
@@ -120,7 +121,7 @@ public actor CircuitBreaker {
                 let delay = min(baseRetryDelay * pow(2.0, Double(attempt - 1)), maxRetryDelay)
                 logger.log("Waiting \(String(format: "%.1f", delay))s before retry", level: .info)
                 
-                try? await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
+                try? await _Concurrency.Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
             }
         }
         

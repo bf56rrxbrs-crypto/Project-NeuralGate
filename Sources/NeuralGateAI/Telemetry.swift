@@ -1,4 +1,17 @@
 import Foundation
+import NeuralGate
+
+// Import thermal state type from PowerMonitor
+#if os(iOS) || os(macOS) || os(watchOS) || os(tvOS)
+public typealias TelemetryThermalState = ProcessInfo.ThermalState
+#else
+public enum TelemetryThermalState: Int {
+    case nominal = 0
+    case fair = 1
+    case serious = 2
+    case critical = 3
+}
+#endif
 
 /// Telemetry event types
 public enum TelemetryEvent {
@@ -31,7 +44,7 @@ public class Telemetry {
     public func recordRoutingDecision(
         mode: ExecutionMode,
         score: Double,
-        thermalState: ProcessInfo.ThermalState,
+        thermalState: TelemetryThermalState,
         timestamp: Date = Date()
     ) {
         guard isEnabled else { return }
@@ -77,7 +90,7 @@ public class Telemetry {
     
     /// Record a power state change event
     public func recordPowerStateChange(
-        thermalState: ProcessInfo.ThermalState,
+        thermalState: TelemetryThermalState,
         isLowPowerMode: Bool
     ) {
         guard isEnabled else { return }
@@ -180,7 +193,7 @@ public class Telemetry {
     
     // MARK: - Helper Methods
     
-    private func thermalStateString(_ state: ProcessInfo.ThermalState) -> String {
+    private func thermalStateString(_ state: TelemetryThermalState) -> String {
         switch state {
         case .nominal: return "nominal"
         case .fair: return "fair"

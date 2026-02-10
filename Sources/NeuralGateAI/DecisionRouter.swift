@@ -1,5 +1,9 @@
 import Foundation
+import NeuralGate
+
+#if canImport(CryptoKit)
 import CryptoKit
+#endif
 
 /// Protocol for routing decisions in the NeuralGate system
 public protocol Routing: Actor {
@@ -103,8 +107,13 @@ public actor DecisionRouter: Routing {
     
     /// Hash prompt for privacy-preserving logging
     private func hashPrompt(_ prompt: String) -> String {
+        #if canImport(CryptoKit)
         let data = Data(prompt.utf8)
         let hash = SHA256.hash(data: data)
         return hash.compactMap { String(format: "%02x", $0) }.joined().prefix(16).description
+        #else
+        // Fallback for platforms without CryptoKit
+        return String(prompt.hashValue, radix: 16).prefix(16).description
+        #endif
     }
 }

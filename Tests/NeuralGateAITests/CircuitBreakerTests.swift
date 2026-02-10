@@ -103,7 +103,7 @@ final class CircuitBreakerTests: XCTestCase {
         }
         
         // Wait for timeout
-        try? await Task.sleep(nanoseconds: 600_000_000) // 0.6 seconds
+        try? await _Concurrency.Task.sleep(nanoseconds: 600_000_000) // 0.6 seconds
         
         // Next call should transition to half-open
         var operationCalled = false
@@ -134,7 +134,7 @@ final class CircuitBreakerTests: XCTestCase {
         }
         
         // Wait for timeout
-        try? await Task.sleep(nanoseconds: 600_000_000)
+        try? await _Concurrency.Task.sleep(nanoseconds: 600_000_000)
         
         // Fail in half-open state
         _ = await breaker.execute(

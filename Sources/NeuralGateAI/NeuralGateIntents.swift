@@ -22,7 +22,7 @@ public class AskNeuralGateIntentHandler: NSObject, AskNeuralGateIntentHandling {
         let taskId = UUID().uuidString
         
         // Start async processing without blocking
-        Task { @MainActor in
+        Task {
             // Get routing decision
             let mode = await Services.router.determineBestMode(
                 for: prompt,

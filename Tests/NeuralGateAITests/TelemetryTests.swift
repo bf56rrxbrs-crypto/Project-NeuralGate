@@ -38,9 +38,11 @@ final class TelemetryTests: XCTestCase {
         
         if telemetry.isEnabled {
             XCTAssertNotNil(stats)
-            XCTAssertEqual(stats?.totalDecisions, 1)
-            XCTAssertEqual(stats?.medianComplexity, 0.45, accuracy: 0.01)
-            XCTAssertEqual(stats?.modeCounts["local"], 1)
+            if let stats = stats {
+                XCTAssertEqual(stats.totalDecisions, 1)
+                XCTAssertEqual(stats.medianComplexity, 0.45, accuracy: 0.01)
+                XCTAssertEqual(stats.modeCounts["local"], 1)
+            }
         } else {
             XCTAssertNil(stats)
         }
@@ -67,15 +69,17 @@ final class TelemetryTests: XCTestCase {
         
         if telemetry.isEnabled {
             XCTAssertNotNil(stats)
-            XCTAssertEqual(stats?.totalDecisions, 5)
-            XCTAssertEqual(stats?.modeCounts["local"], 3)
-            XCTAssertEqual(stats?.modeCounts["remote"], 2)
-            
-            // Median of [0.2, 0.3, 0.4, 0.8, 0.9] = 0.4
-            XCTAssertEqual(stats?.medianComplexity, 0.4, accuracy: 0.01)
-            
-            // Average = (0.2 + 0.3 + 0.4 + 0.8 + 0.9) / 5 = 2.6 / 5 = 0.52
-            XCTAssertEqual(stats?.averageComplexity, 0.52, accuracy: 0.01)
+            if let stats = stats {
+                XCTAssertEqual(stats.totalDecisions, 5)
+                XCTAssertEqual(stats.modeCounts["local"], 3)
+                XCTAssertEqual(stats.modeCounts["remote"], 2)
+                
+                // Median of [0.2, 0.3, 0.4, 0.8, 0.9] = 0.4
+                XCTAssertEqual(stats.medianComplexity, 0.4, accuracy: 0.01)
+                
+                // Average = (0.2 + 0.3 + 0.4 + 0.8 + 0.9) / 5 = 2.6 / 5 = 0.52
+                XCTAssertEqual(stats.averageComplexity, 0.52, accuracy: 0.01)
+            }
         }
     }
     
@@ -91,9 +95,11 @@ final class TelemetryTests: XCTestCase {
         
         if telemetry.isEnabled {
             XCTAssertNotNil(stats)
-            XCTAssertEqual(stats?.totalCalls, 1)
-            XCTAssertEqual(stats?.successRate, 1.0)
-            XCTAssertEqual(stats?.medianLatency, 0.5, accuracy: 0.01)
+            if let stats = stats {
+                XCTAssertEqual(stats.totalCalls, 1)
+                XCTAssertEqual(stats.successRate, 1.0)
+                XCTAssertEqual(stats.medianLatency, 0.5, accuracy: 0.01)
+            }
         }
     }
     
@@ -108,8 +114,10 @@ final class TelemetryTests: XCTestCase {
         
         if telemetry.isEnabled {
             XCTAssertNotNil(stats)
-            XCTAssertEqual(stats?.totalCalls, 1)
-            XCTAssertEqual(stats?.successRate, 0.0)
+            if let stats = stats {
+                XCTAssertEqual(stats.totalCalls, 1)
+                XCTAssertEqual(stats.successRate, 0.0)
+            }
         }
     }
     
@@ -130,16 +138,18 @@ final class TelemetryTests: XCTestCase {
         
         if telemetry.isEnabled {
             XCTAssertNotNil(stats)
-            XCTAssertEqual(stats?.totalCalls, 5)
-            
-            // 3 successes out of 5 = 0.6 success rate
-            XCTAssertEqual(stats?.successRate, 0.6, accuracy: 0.01)
-            
-            // Median of [0.3, 0.4, 0.5, 1.5, 2.0] = 0.5
-            XCTAssertEqual(stats?.medianLatency, 0.5, accuracy: 0.01)
-            
-            // Average = (0.5 + 0.3 + 2.0 + 0.4 + 1.5) / 5 = 4.7 / 5 = 0.94
-            XCTAssertEqual(stats?.averageLatency, 0.94, accuracy: 0.01)
+            if let stats = stats {
+                XCTAssertEqual(stats.totalCalls, 5)
+                
+                // 3 successes out of 5 = 0.6 success rate
+                XCTAssertEqual(stats.successRate, 0.6, accuracy: 0.01)
+                
+                // Median of [0.3, 0.4, 0.5, 1.5, 2.0] = 0.5
+                XCTAssertEqual(stats.medianLatency, 0.5, accuracy: 0.01)
+                
+                // Average = (0.5 + 0.3 + 2.0 + 0.4 + 1.5) / 5 = 4.7 / 5 = 0.94
+                XCTAssertEqual(stats.averageLatency, 0.94, accuracy: 0.01)
+            }
         }
     }
     
@@ -198,7 +208,9 @@ final class TelemetryTests: XCTestCase {
         
         if telemetry.isEnabled {
             // Median of odd count should be middle value: 0.5
-            XCTAssertEqual(stats?.medianComplexity, 0.5, accuracy: 0.01)
+            if let stats = stats {
+                XCTAssertEqual(stats.medianComplexity, 0.5, accuracy: 0.01)
+            }
         }
     }
     
@@ -213,7 +225,9 @@ final class TelemetryTests: XCTestCase {
         
         if telemetry.isEnabled {
             // Median of even count should be average of two middle values: (0.4 + 0.6) / 2 = 0.5
-            XCTAssertEqual(stats?.medianComplexity, 0.5, accuracy: 0.01)
+            if let stats = stats {
+                XCTAssertEqual(stats.medianComplexity, 0.5, accuracy: 0.01)
+            }
         }
     }
     
@@ -234,7 +248,9 @@ final class TelemetryTests: XCTestCase {
         if telemetry.isEnabled {
             XCTAssertNotNil(stats)
             // Should only keep last 1000 events
-            XCTAssertEqual(stats?.totalDecisions, 1000)
+            if let stats = stats {
+                XCTAssertEqual(stats.totalDecisions, 1000)
+            }
         }
     }
     
@@ -260,7 +276,9 @@ final class TelemetryTests: XCTestCase {
         
         if telemetry.isEnabled {
             XCTAssertNotNil(stats)
-            XCTAssertEqual(stats?.totalDecisions, 100)
+            if let stats = stats {
+                XCTAssertEqual(stats.totalDecisions, 100)
+            }
         }
     }
     
