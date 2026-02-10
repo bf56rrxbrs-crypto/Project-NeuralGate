@@ -71,7 +71,7 @@ If you want to contribute or customize:
 5. Record custom Siri phrases (e.g., "add to NeuralGate") to trigger them
 6. Test by saying "Hey Siri, [your custom phrase]"
 
-> **Note:** Direct in-app Siri settings inside NeuralGate are a planned feature and may not be available in your current build.
+> **Note:** Direct in-app Siri settings inside NeuralGate are not yet available. This feature is planned for a future release.
 
 **Planned In-App Settings (Future):**
 

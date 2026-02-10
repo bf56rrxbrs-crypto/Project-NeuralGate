@@ -2,7 +2,7 @@
 
 ## Summary
 
-This document outlines all the review feedback from PR #21 and the specific changes made to address each concern. All 13 review comments have been fully addressed with targeted, minimal changes to the documentation.
+This document documents all the review feedback from PR #21 and the specific changes made to address each concern. All 13 review comments have been fully addressed with targeted, minimal changes to the documentation.
 
 ## Review Comments Addressed
 
@@ -168,7 +168,7 @@ let tasks = await req.loadJSON();
 
 ### 13. ✅ Development Scope Clarification (README.md:43)
 
-**Issue**: Claimed "Develop, test, and use entirely from iPhone" but local builds need Mac/Xcode  
+**Issue**: Claimed "Develop, test, and use entirely from iPhone" but local builds need Mac/Xcode
 **Change**:
 ```diff
 - ✅ **Complete Without Mac** - Develop, test, and use entirely from iPhone
