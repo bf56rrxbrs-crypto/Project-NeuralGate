@@ -9,7 +9,7 @@ NeuralGate is a powerful AI-powered agent designed exclusively for iPhone to aut
 ### Key Features
 
 - 🤖 **Natural Language Processing**: Understand and execute tasks from natural language
-- 📱 **iPhone-First Design**: Built specifically for iOS 16+ with native integrations
+- 📱 **iPhone-First Design**: Built specifically for iOS 16.0+ with native integrations
 - ⚡ **Workflow Automation**: Pre-built and custom workflows for common tasks
 - 🎤 **Siri Integration**: Voice-activated task execution
 - 🔗 **Shortcuts Support**: Seamless integration with iOS Shortcuts app
@@ -21,7 +21,7 @@ NeuralGate is a powerful AI-powered agent designed exclusively for iPhone to aut
 [![Code Quality](https://github.com/bf56rrxbrs-crypto/Project-NeuralGate/actions/workflows/code-quality.yml/badge.svg)](https://github.com/bf56rrxbrs-crypto/Project-NeuralGate/actions/workflows/code-quality.yml)
 [![Security](https://github.com/bf56rrxbrs-crypto/Project-NeuralGate/actions/workflows/security.yml/badge.svg)](https://github.com/bf56rrxbrs-crypto/Project-NeuralGate/actions/workflows/security.yml)
 [![Swift 5.9](https://img.shields.io/badge/Swift-5.9-orange.svg)](https://swift.org)
-[![iOS 15.0+](https://img.shields.io/badge/iOS-15.0%2B-blue.svg)](https://www.apple.com/ios/)
+[![iOS 16.0+](https://img.shields.io/badge/iOS-16.0%2B-blue.svg)](https://www.apple.com/ios/)
 [![License](https://img.shields.io/badge/License-Proprietary-red.svg)](LICENSE)
 
 ## Overview
@@ -80,7 +80,7 @@ Check the [Examples](Examples/) directory for detailed usage examples.
 ## Requirements
 
 - iOS 16.0+
-- Xcode 14.0+
+- Xcode 15.0+
 - Swift 5.9+
 
 ## Architecture
@@ -117,9 +117,9 @@ dependencies: [
 
 ## Requirements
 
-- iOS 15.0+
+- iOS 16.0+
 - Swift 5.9+
-- Xcode 14.0+
+- Xcode 15.0+
 
 ## Testing
 
