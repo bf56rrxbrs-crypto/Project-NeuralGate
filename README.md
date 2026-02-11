@@ -73,6 +73,12 @@ See [DOCUMENTATION.md](DOCUMENTATION.md) for comprehensive documentation includi
 - iOS integration guide
 - Advanced features
 
+See [WORKFLOW_GOALS.md](WORKFLOW_GOALS.md) for workflow automation strategies:
+- Defining workflow goals and use cases
+- AI-powered integration patterns
+- iPhone-specific automation examples
+- Best practices and optimization strategies
+
 ## Examples
 
 Check the [Examples](Examples/) directory for detailed usage examples.
