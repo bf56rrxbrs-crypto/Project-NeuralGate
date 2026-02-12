@@ -527,6 +527,248 @@ let workflow = automationEngine.composeWorkflows(
 )
 ```
 
+## Production-Grade Robustness Features
+
+### Triple-Check System
+
+NeuralGate now includes a comprehensive Triple-Check System for production reliability:
+
+#### 1. Intelligent Routing (DecisionRouter)
+
+The `DecisionRouter` analyzes prompt complexity and system state to determine optimal execution strategy:
+
+```swift
+import NeuralGateAI
+
+// Access via Services container
+let mode = await Services.router.determineBestMode(
+    for: "Analyze sales data and generate report",
+    containsSensitiveData: false
+)
+
+// Mode will be: .local, .remote, or .hybrid based on:
+// - Prompt complexity (normalized 0-1 score)
+// - Data sensitivity
+// - Configurable threshold
+```
+
+**Complexity Calculation:**
+- Token-based analysis (50+ tokens = high complexity)
+- Keyword detection (analyze, compare, evaluate, etc.)
+- Normalized scores always in [0, 1] range
+- Deterministic and reproducible results
+
+**Configuration:**
+```swift
+// Customize complexity threshold
+let router = DecisionRouter(complexityThreshold: 0.7)  // Higher = more local processing
+```
+
+**Privacy Protection:**
+- Prompts are hashed (SHA256) for logging
+- No PII or raw content in logs
+- Privacy-first design
+
+#### 2. Power Management (PowerMonitor)
+
+Monitors device thermal state and power mode to adapt processing:
+
+```swift
+import NeuralGateAI
+
+// Access current state
+let monitor = Services.powerMonitor
+print("Thermal: \(monitor.thermalState)")
+print("Low Power Mode: \(monitor.isLowPowerMode)")
+
+// Get recommended batch size
+let batchSize = monitor.recommendedBatchSize
+// Returns: 10 (nominal), 7 (fair), 4 (serious), 2 (critical)
+// Halved if in low power mode
+```
+
+**Reactive Updates:**
+```swift
+// PowerMonitor is @MainActor and ObservableObject
+@StateObject var powerMonitor = PowerMonitor.shared
+
+var body: some View {
+    Text("Thermal: \(powerMonitor.thermalState)")
+    Text("Batch Size: \(powerMonitor.recommendedBatchSize)")
+}
+```
+
+#### 3. Circuit Breaker
+
+Protects against cascading failures with automatic fallback:
+
+```swift
+import NeuralGateAI
+
+let breaker = CircuitBreaker(
+    failureThreshold: 3,    // Open after 3 failures
+    timeout: 60.0           // Try again after 60 seconds
+)
+
+let result = await breaker.execute(
+    operation: {
+        // Attempt remote LLM call
+        try await callRemoteAPI()
+    },
+    fallback: {
+        // Use local processing on failure
+        return LocalFallbackGenerator.generateFallback(for: prompt)
+    }
+)
+```
+
+**Circuit States:**
+- **Closed**: Normal operation
+- **Open**: Failures exceeded threshold, using fallback
+- **Half-Open**: Testing if service recovered
+
+**Retry with Exponential Backoff:**
+```swift
+let result = await breaker.executeWithRetry(
+    maxAttempts: 3,
+    operation: { try await callRemoteAPI() },
+    fallback: { return localFallback() }
+)
+// Delays: 1s, 2s, 4s (exponential backoff)
+```
+
+### Telemetry and Metrics
+
+Track system behavior with privacy-preserving telemetry:
+
+```swift
+import NeuralGateAI
+
+// Record routing decisions
+Telemetry.shared.recordRoutingDecision(
+    mode: .local,
+    score: 0.45,
+    thermalState: .nominal
+)
+
+// Record remote call results
+Telemetry.shared.recordRemoteCallResult(
+    success: true,
+    latency: 0.5,
+    failureReason: nil
+)
+
+// Get statistics
+if let stats = Telemetry.shared.getRoutingStatistics() {
+    print("Total decisions: \(stats.totalDecisions)")
+    print("Median complexity: \(stats.medianComplexity)")
+    print("Mode distribution: \(stats.modeCounts)")
+}
+
+if let stats = Telemetry.shared.getRemoteCallStatistics() {
+    print("Success rate: \(stats.successRate)")
+    print("Median latency: \(stats.medianLatency)s")
+}
+```
+
+**Compile-Time Control:**
+```swift
+// Disable telemetry at compile time
+// Add -DDISABLE_TELEMETRY to Swift flags
+```
+
+### Measurable Performance Targets
+
+The robustness improvements meet the following performance targets:
+
+| Metric | Target | Measurement Method |
+|--------|--------|-------------------|
+| `determineBestMode` latency | < 50ms (median) | `Telemetry.getRoutingStatistics()` |
+| Intent provisional response | < 2s | User-facing response time |
+| Complexity calculation | Always [0, 1] | Unit tests verify bounds |
+| Circuit breaker recovery | < 60s | Configurable timeout |
+| Energy efficiency | < 3% battery/hour | Monitor with PowerMonitor |
+
+### Tuning Complexity Threshold
+
+Monitor telemetry to optimize the complexity threshold:
+
+```swift
+// Get current routing distribution
+let stats = Telemetry.shared.getRoutingStatistics()
+let localPercent = Double(stats.modeCounts["local"] ?? 0) / Double(stats.totalDecisions)
+
+// Adjust threshold based on goals:
+// - Higher threshold (0.7-0.8): More local processing, better privacy
+// - Lower threshold (0.4-0.5): More remote processing, better quality
+// - Default (0.6): Balanced approach
+
+if localPercent < 0.3 {
+    // Too much remote processing
+    router = DecisionRouter(complexityThreshold: 0.7)
+} else if localPercent > 0.8 {
+    // Too much local processing
+    router = DecisionRouter(complexityThreshold: 0.5)
+}
+```
+
+### Data Minimization Practices
+
+NeuralGate follows privacy-first principles:
+
+1. **Prompt Hashing**: All prompts hashed with SHA256 before logging
+2. **No PII Storage**: Telemetry stores only aggregated metrics
+3. **Local-First**: Sensitive data always processed locally
+4. **Opt-In Telemetry**: Can be disabled at compile time
+5. **Limited Retention**: Maximum 1000 events stored in memory
+
+### Integration Example
+
+Complete example using all robustness features:
+
+```swift
+import NeuralGateAI
+
+// 1. Check power state
+let monitor = Services.powerMonitor
+guard monitor.thermalState != .critical else {
+    print("Device too hot, deferring task")
+    return
+}
+
+// 2. Route based on complexity
+let mode = await Services.router.determineBestMode(
+    for: userPrompt,
+    containsSensitiveData: containsPII
+)
+
+// 3. Execute with circuit breaker protection
+let breaker = CircuitBreaker()
+let result = await breaker.executeWithRetry(
+    maxAttempts: 3,
+    operation: {
+        switch mode {
+        case .local:
+            return try await executeLocally(userPrompt)
+        case .remote:
+            return try await executeRemotely(userPrompt)
+        case .hybrid:
+            return try await executeHybrid(userPrompt)
+        }
+    },
+    fallback: {
+        return LocalFallbackGenerator.generateFallback(for: userPrompt)
+    }
+)
+
+// 4. Record telemetry
+Telemetry.shared.recordRoutingDecision(
+    mode: mode,
+    score: await Services.router.calculateComplexity(for: userPrompt),
+    thermalState: monitor.thermalState
+)
+```
+
 ## Conclusion
 
-Performance tuning is an iterative process. Monitor your application's performance regularly, adjust configurations based on user feedback and device capabilities, and leverage the self-improvement features to automatically optimize over time.
+Performance tuning is an iterative process. Monitor your application's performance regularly, adjust configurations based on user feedback and device capabilities, and leverage the self-improvement features to automatically optimize over time. The new robustness features provide production-grade reliability with comprehensive monitoring, adaptive resource management, and privacy-preserving telemetry.
