@@ -75,31 +75,52 @@ public class SelfImprovementEngine {
     /// Execute autonomous improvement action
     public func executeImprovement(_ opportunity: ImprovementOpportunity) async -> ImprovementResult {
         logger.log("Executing improvement for \(opportunity.area.rawValue)", level: .info)
-        
+
         let action = ImprovementAction(
             opportunity: opportunity,
             startTime: Date(),
             status: .inProgress
         )
-        
+
         improvementHistory.append(action)
-        
+
         // Simulate improvement execution
         // In a real implementation, this would trigger actual model retraining,
         // optimization routines, or configuration adjustments
-        
-        let success = true // Placeholder
-        let improvement = 0.15 // 15% improvement placeholder
-        
+
+        // Calculate potential improvement based on gap between current and target
+        let gap = opportunity.targetValue - opportunity.currentValue
+        let improvement: Double
+
+        // For metrics that should decrease (efficiency, resourceUsage), calculate as percentage reduction
+        switch opportunity.area {
+        case .efficiency, .resourceUsage:
+            // If current > target, we want to reduce. Calculate reduction percentage.
+            if opportunity.currentValue > opportunity.targetValue {
+                let reductionNeeded = opportunity.currentValue - opportunity.targetValue
+                improvement = (reductionNeeded / opportunity.currentValue) * 0.5 // 50% towards target
+            } else {
+                improvement = 0.0 // Already at or below target
+            }
+        case .accuracy, .userSatisfaction, .reliability:
+            // For metrics that should increase
+            improvement = gap > 0 ? gap * 0.5 : 0.0
+        }
+
+        // Validate that improvement is feasible
+        let success = validateImprovement(opportunity: opportunity, improvement: improvement)
+
         if success {
             // Update metrics
             updateMetrics(for: opportunity.area, improvement: improvement)
-            
+
+            let newValue = opportunity.currentValue + improvement
+
             return ImprovementResult(
                 action: action,
                 success: true,
                 actualImprovement: improvement,
-                newValue: opportunity.targetValue,
+                newValue: newValue,
                 timestamp: Date()
             )
         } else {
@@ -111,6 +132,36 @@ public class SelfImprovementEngine {
                 timestamp: Date()
             )
         }
+    }
+
+    /// Validate that an improvement is feasible and safe to apply
+    private func validateImprovement(opportunity: ImprovementOpportunity, improvement: Double) -> Bool {
+        // Ensure improvement is positive and within reasonable bounds
+        guard improvement > 0 else {
+            logger.log("Invalid improvement value: \(improvement)", level: .warning)
+            return false
+        }
+
+        // Ensure we don't exceed target value for metrics that should increase
+        switch opportunity.area {
+        case .accuracy, .userSatisfaction:
+            let newValue = opportunity.currentValue + improvement
+            if newValue > opportunity.targetValue * 1.1 {
+                logger.log("Improvement would exceed target by more than 10%", level: .warning)
+                return false
+            }
+        case .efficiency, .resourceUsage:
+            // For metrics that should decrease, improvement is reduction
+            let newValue = opportunity.currentValue * (1.0 - improvement)
+            if newValue < opportunity.targetValue * 0.9 {
+                logger.log("Improvement would exceed target by more than 10%", level: .warning)
+                return false
+            }
+        case .reliability:
+            break
+        }
+
+        return true
     }
     
     /// Update performance metrics
