@@ -329,7 +329,7 @@ enum NeuralGateError: Error {
 ### iOS Integration
 
 - **Swift Package Manager**: Easy integration
-- **Minimum iOS 15**: Modern Swift concurrency
+- **Minimum iOS 16**: Modern Swift concurrency
 - **Background Modes**: Configure for background execution
 - **App Extensions**: Support for widgets and shortcuts
 

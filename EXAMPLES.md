@@ -10,7 +10,7 @@ This directory contains comprehensive examples demonstrating the capabilities of
 import NeuralGate
 import NeuralGateAutomation
 
-let agent = NeuralGateAgent()
+let agent = NeuralGateAutomation.NeuralGateAgent()
 
 let task = Task(
     name: "Send Email",
@@ -276,14 +276,14 @@ class TaskViewModel: ObservableObject {
     @Published var suggestions: [TaskSuggestion] = []
     @Published var agentStatus: AgentStatus?
     
-    private let agent: NeuralGateAgent
+    private let agent: NeuralGateAutomation.NeuralGateAgent
     
     init() {
         let config = NeuralGateConfiguration(
             maxMemoryUsage: 50,
             batteryOptimizationLevel: 2
         )
-        self.agent = NeuralGateAgent(configuration: config)
+        self.agent = NeuralGateAutomation.NeuralGateAgent(configuration: config)
     }
     
     func initialize() async {

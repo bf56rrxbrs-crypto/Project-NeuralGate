@@ -64,6 +64,7 @@ dependencies: [
 
 ```swift
 import NeuralGate
+import NeuralGateAutomation
 
 // Initialize the agent with configuration
 let configuration = NeuralGateConfiguration(
@@ -74,7 +75,7 @@ let configuration = NeuralGateConfiguration(
     enableExplainability: true
 )
 
-let agent = NeuralGateAgent(configuration: configuration)
+let agent = NeuralGateAutomation.NeuralGateAgent(configuration: configuration)
 
 // Create and execute a task
 let task = Task(
@@ -268,9 +269,9 @@ Tests cover:
 
 ## Platform Requirements
 
-- iOS 15.0+
+- iOS 16.0+
 - Swift 5.9+
-- Xcode 14.0+
+- Xcode 15.0+
 
 ## Performance Characteristics
 
