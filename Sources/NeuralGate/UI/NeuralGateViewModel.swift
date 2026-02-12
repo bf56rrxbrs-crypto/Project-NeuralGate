@@ -8,9 +8,9 @@ import Combine
 public class NeuralGateViewModel: ObservableObject {
     
     // MARK: - Published Properties
-    
+
     @Published public var recentTasks: [Task] = []
-    @Published public var workflows: [Workflow] = []
+    @Published public var workflows: [StepWorkflow] = []
     @Published public var isProcessing: Bool = false
     @Published public var errorMessage: String?
     
@@ -82,8 +82,8 @@ public class NeuralGateViewModel: ObservableObject {
     /// Open iOS Shortcuts integration
     public func openShortcuts() {
         isProcessing = true
-        
-        Task {
+
+        Swift.Task {
             do {
                 try await agent.integrateWithShortcut("NeuralGate")
             } catch {
