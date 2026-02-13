@@ -2,6 +2,10 @@
 
 AI agent for task and workflow automation exclusively for iPhone users.
 
+## 📋 Project Status: Development Stage (~60% Complete)
+
+**⚠️ Important**: This project is in active development. Core architecture and framework are solid, but iOS integrations are still being implemented. See [COMPREHENSIVE_REVIEW.md](COMPREHENSIVE_REVIEW.md) for detailed status.
+
 ## 🎯 Overview
 
 NeuralGate is a powerful AI-powered agent designed exclusively for iPhone to automate tasks and workflows through natural language processing and deep iOS integration.
@@ -64,18 +68,23 @@ let result = try await agent.executeTask(task)
 let suggestions = agent.getTaskSuggestions()
 ```
 
-## Documentation
+## 📚 Documentation
 
-See [DOCUMENTATION.md](DOCUMENTATION.md) for comprehensive documentation including:
-- Installation instructions
-- API reference
-- Usage examples
-- iOS integration guide
-- Advanced features
+### Project Status & Planning
+- **[EXECUTIVE_SUMMARY.md](EXECUTIVE_SUMMARY.md)** - Quick overview of project status and priorities
+- **[COMPREHENSIVE_REVIEW.md](COMPREHENSIVE_REVIEW.md)** - Detailed technical analysis of current implementation
+- **[IPHONE_17_SUGGESTIONS.md](IPHONE_17_SUGGESTIONS.md)** - Actionable feature recommendations for iPhone 17 users
 
-## Examples
+### Technical Documentation
+- **[DOCUMENTATION.md](DOCUMENTATION.md)** - Comprehensive API reference and guides
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** - System design and architecture details
+- **[EXAMPLES.md](EXAMPLES.md)** - Usage examples and code samples
+- **[Examples/](Examples/)** - Working code examples
 
-Check the [Examples](Examples/) directory for detailed usage examples.
+### Development Resources
+- **[TESTING_SUMMARY.md](TESTING_SUMMARY.md)** - Test coverage and strategy
+- **[PERFORMANCE.md](PERFORMANCE.md)** - Performance benchmarks
+- **[KANBAN.md](KANBAN.md)** - Project board and task tracking
 
 ## Requirements
 
