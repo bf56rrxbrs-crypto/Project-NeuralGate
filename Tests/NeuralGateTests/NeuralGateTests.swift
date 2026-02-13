@@ -223,7 +223,7 @@ final class NeuralGateTests: XCTestCase {
     // MARK: - Error Handling Tests
     
     func testErrorDescriptions() {
-        let error1 = NeuralGateError.invalidConfiguration
+        let error1 = NeuralGateError.invalidConfiguration("Invalid memory setting")
         let error2 = NeuralGateError.taskExecutionFailed("test")
         
         XCTAssertTrue(error1.localizedDescription.contains("configuration"))
@@ -232,12 +232,15 @@ final class NeuralGateTests: XCTestCase {
     
     func testAllErrorCases() {
         let errors: [NeuralGateError] = [
-            .invalidConfiguration,
-            .resourceLimitExceeded,
+            .invalidConfiguration("test"),
+            .resourceLimitExceeded("memory"),
             .modelLoadingFailed("test"),
             .taskExecutionFailed("test error"),
             .dataPipelineError("test"),
-            .failoverRequired
+            .failoverRequired,
+            .invalidInput("empty string"),
+            .networkError("connection failed"),
+            .permissionDenied("camera")
         ]
         
         for error in errors {
