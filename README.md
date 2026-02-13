@@ -6,7 +6,7 @@
 [![Code Quality](https://github.com/bf56rrxbrs-crypto/Project-NeuralGate/actions/workflows/code-quality.yml/badge.svg)](https://github.com/bf56rrxbrs-crypto/Project-NeuralGate/actions/workflows/code-quality.yml)
 [![Security](https://github.com/bf56rrxbrs-crypto/Project-NeuralGate/actions/workflows/security.yml/badge.svg)](https://github.com/bf56rrxbrs-crypto/Project-NeuralGate/actions/workflows/security.yml)
 [![Swift 5.9](https://img.shields.io/badge/Swift-5.9-orange.svg)](https://swift.org)
-[![iOS 16.0+](https://img.shields.io/badge/iOS-16.0%2B-blue.svg)](https://www.apple.com/ios/)
+[![iOS 16.0+](https://img.shields.io/badge/iOS-16.0%2B-blue.svg)](https://developer.apple.com/ios/ios-16/)
 [![License](https://img.shields.io/badge/License-Proprietary-red.svg)](LICENSE)
 
 ## 🎯 Overview

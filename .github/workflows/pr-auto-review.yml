@@ -151,6 +151,7 @@ jobs:
       - name: Setup Swift
         uses: swift-actions/setup-swift@v2
         with:
+          # NOTE: Keep this version in sync with project requirements in README.md
           swift-version: '5.9'
           
       - name: Run SwiftLint

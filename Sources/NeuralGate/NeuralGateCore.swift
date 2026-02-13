@@ -2,13 +2,25 @@ import Foundation
 
 /// Core configuration for NeuralGate AI agent
 public struct NeuralGateConfiguration {
+    /// Maximum allowed memory usage in megabytes
+    /// Valid range: 1-1000 MB. This limit ensures the agent operates within
+    /// reasonable resource constraints on iPhone devices.
+    public static let maxMemoryLimit: Int = 1000
+    
+    /// Minimum allowed memory usage in megabytes
+    public static let minMemoryLimit: Int = 1
+    
     /// Enable debug logging
     public var debugMode: Bool
     
-    /// Maximum memory usage in MB
+    /// Maximum memory usage in MB (valid range: 1-1000)
     public var maxMemoryUsage: Int
     
     /// Battery optimization level (0-3, higher = more aggressive)
+    /// - 0: No optimization
+    /// - 1: Light optimization
+    /// - 2: Balanced (default)
+    /// - 3: Aggressive optimization
     public var batteryOptimizationLevel: Int
     
     /// Enable predictive analytics
@@ -34,8 +46,8 @@ public struct NeuralGateConfiguration {
     /// Validate configuration parameters
     /// - Throws: NeuralGateError.invalidConfiguration if parameters are invalid
     public func validate() throws {
-        guard maxMemoryUsage > 0 && maxMemoryUsage <= 1000 else {
-            throw NeuralGateError.invalidConfiguration("maxMemoryUsage must be between 1 and 1000 MB, got \(maxMemoryUsage)")
+        guard maxMemoryUsage >= Self.minMemoryLimit && maxMemoryUsage <= Self.maxMemoryLimit else {
+            throw NeuralGateError.invalidConfiguration("maxMemoryUsage must be between \(Self.minMemoryLimit) and \(Self.maxMemoryLimit) MB, got \(maxMemoryUsage)")
         }
         
         guard batteryOptimizationLevel >= 0 && batteryOptimizationLevel <= 3 else {

@@ -31,9 +31,6 @@ public class iOSIntegration {
         // to connect with iOS Shortcuts app
         print("Connecting to shortcut: \(shortcutName)")
         shortcutsConnections[shortcutName] = Date()
-        
-        // Connection successful
-        return
     }
     
     /// Run an iOS Shortcut by name
