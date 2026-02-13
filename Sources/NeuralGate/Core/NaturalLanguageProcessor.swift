@@ -26,24 +26,36 @@ public class NaturalLanguageProcessor {
     /// Parse natural language text to extract user intent
     /// - Parameter text: Natural language input
     /// - Returns: Parsed intent
+    /// - Throws: NeuralGateError if input is invalid or parsing fails
     public func parseIntent(_ text: String) async throws -> Intent {
+        // Edge case: empty or whitespace-only input
+        let trimmedText = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedText.isEmpty else {
+            throw NeuralGateError.invalidInput("Input text cannot be empty")
+        }
+        
+        // Edge case: extremely long input (>5000 characters)
+        guard trimmedText.count <= 5000 else {
+            throw NeuralGateError.invalidInput("Input text exceeds maximum length of 5000 characters")
+        }
+        
         #if canImport(NaturalLanguage)
         // Tokenize and tag the input
-        tagger.string = text
-        let tokens = tokenize(text)
+        tagger.string = trimmedText
+        let tokens = tokenize(trimmedText)
         
         // Extract action verbs and entities
-        let action = extractAction(from: tokens, text: text)
-        let entities = extractEntities(from: tokens, text: text)
+        let action = extractAction(from: tokens, text: trimmedText)
+        let entities = extractEntities(from: tokens, text: trimmedText)
         #else
         // Fallback for non-iOS platforms
-        let tokens = text.components(separatedBy: .whitespaces)
-        let action = extractAction(from: tokens, text: text)
+        let tokens = trimmedText.components(separatedBy: .whitespaces)
+        let action = extractAction(from: tokens, text: trimmedText)
         let entities: [Entity] = []
         #endif
         
         // Determine priority from context
-        let priority = determinePriority(from: text)
+        let priority = determinePriority(from: trimmedText)
         
         // Build parameters dictionary
         var parameters: [String: Any] = [:]
@@ -55,7 +67,7 @@ public class NaturalLanguageProcessor {
             action: action,
             parameters: parameters,
             priority: priority,
-            originalText: text
+            originalText: trimmedText
         )
     }
     

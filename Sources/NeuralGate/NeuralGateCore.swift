@@ -40,6 +40,10 @@ public enum NeuralGateError: Error {
     case modelLoadingFailed(String)
     case dataPipelineError(String)
     case failoverRequired
+    case invalidInput(String)
+    case timeout(String)
+    case networkError(String)
+    case unauthorized(String)
     
     public var localizedDescription: String {
         switch self {
@@ -55,6 +59,14 @@ public enum NeuralGateError: Error {
             return "Data pipeline error: \(message)"
         case .failoverRequired:
             return "Failover to backup system required"
+        case .invalidInput(let message):
+            return "Invalid input: \(message)"
+        case .timeout(let message):
+            return "Operation timed out: \(message)"
+        case .networkError(let message):
+            return "Network error: \(message)"
+        case .unauthorized(let message):
+            return "Unauthorized: \(message)"
         }
     }
 }
