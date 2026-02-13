@@ -112,7 +112,7 @@ public class WorkflowAutomationEngine {
         // Check resource constraints
         let estimatedMemory = 10 // Placeholder
         guard estimatedMemory <= configuration.maxMemoryUsage else {
-            throw NeuralGateError.resourceLimitExceeded
+            throw NeuralGateError.resourceLimitExceeded("Task requires \(estimatedMemory) MB but limit is \(configuration.maxMemoryUsage) MB")
         }
         
         let startTime = Date()

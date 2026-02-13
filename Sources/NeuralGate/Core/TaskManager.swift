@@ -15,6 +15,15 @@ public class TaskManager {
     /// - Parameter intent: User intent parsed from natural language
     /// - Returns: Executable task
     public func createTask(from intent: Intent) throws -> Task {
+        // Validate intent
+        guard !intent.action.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            throw TaskError.invalidInput("Task action cannot be empty")
+        }
+        
+        guard !intent.originalText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            throw TaskError.invalidInput("Task description cannot be empty")
+        }
+        
         // Convert intent parameters to metadata strings
         let metadata = intent.parameters.mapValues { "\($0)" }
         
@@ -35,8 +44,16 @@ public class TaskManager {
     ///   - task: Task to schedule
     ///   - date: Execution date
     public func scheduleTask(_ task: Task, for date: Date) throws {
-        guard date > Date() else {
-            throw TaskError.invalidScheduleDate
+        // Validate that date is in the future
+        let now = Date()
+        guard date > now else {
+            let secondsAgo = now.timeIntervalSince(date)
+            throw TaskError.invalidScheduleDate("Schedule date must be in the future (provided date is \(Int(secondsAgo)) seconds in the past)")
+        }
+        
+        // Check if task already exists
+        if scheduledTasks[task.id] != nil {
+            throw TaskError.taskAlreadyScheduled("Task \(task.name) is already scheduled")
         }
         
         scheduledTasks[task.id] = (task, date)
@@ -65,7 +82,24 @@ public class TaskManager {
 // MARK: - Task Error
 
 public enum TaskError: Error {
-    case invalidScheduleDate
-    case taskNotFound
-    case executionFailed
+    case invalidScheduleDate(String)
+    case taskNotFound(String)
+    case executionFailed(String)
+    case invalidInput(String)
+    case taskAlreadyScheduled(String)
+    
+    public var localizedDescription: String {
+        switch self {
+        case .invalidScheduleDate(let message):
+            return "Invalid schedule date: \(message)"
+        case .taskNotFound(let taskId):
+            return "Task not found: \(taskId)"
+        case .executionFailed(let message):
+            return "Task execution failed: \(message)"
+        case .invalidInput(let message):
+            return "Invalid input: \(message)"
+        case .taskAlreadyScheduled(let message):
+            return "Task already scheduled: \(message)"
+        }
+    }
 }

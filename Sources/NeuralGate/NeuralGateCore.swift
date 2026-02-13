@@ -30,23 +30,38 @@ public struct NeuralGateConfiguration {
         self.enablePredictiveAnalytics = enablePredictiveAnalytics
         self.enableExplainability = enableExplainability
     }
+    
+    /// Validate configuration parameters
+    /// - Throws: NeuralGateError.invalidConfiguration if parameters are invalid
+    public func validate() throws {
+        guard maxMemoryUsage > 0 && maxMemoryUsage <= 1000 else {
+            throw NeuralGateError.invalidConfiguration("maxMemoryUsage must be between 1 and 1000 MB, got \(maxMemoryUsage)")
+        }
+        
+        guard batteryOptimizationLevel >= 0 && batteryOptimizationLevel <= 3 else {
+            throw NeuralGateError.invalidConfiguration("batteryOptimizationLevel must be between 0 and 3, got \(batteryOptimizationLevel)")
+        }
+    }
 }
 
 /// Core error types for NeuralGate
 public enum NeuralGateError: Error {
-    case invalidConfiguration
-    case resourceLimitExceeded
+    case invalidConfiguration(String)
+    case resourceLimitExceeded(String)
     case taskExecutionFailed(String)
     case modelLoadingFailed(String)
     case dataPipelineError(String)
     case failoverRequired
+    case invalidInput(String)
+    case networkError(String)
+    case permissionDenied(String)
     
     public var localizedDescription: String {
         switch self {
-        case .invalidConfiguration:
-            return "Invalid configuration provided"
-        case .resourceLimitExceeded:
-            return "Resource limit exceeded"
+        case .invalidConfiguration(let details):
+            return "Invalid configuration: \(details)"
+        case .resourceLimitExceeded(let resource):
+            return "Resource limit exceeded: \(resource)"
         case .taskExecutionFailed(let message):
             return "Task execution failed: \(message)"
         case .modelLoadingFailed(let message):
@@ -55,6 +70,32 @@ public enum NeuralGateError: Error {
             return "Data pipeline error: \(message)"
         case .failoverRequired:
             return "Failover to backup system required"
+        case .invalidInput(let details):
+            return "Invalid input: \(details)"
+        case .networkError(let details):
+            return "Network error: \(details)"
+        case .permissionDenied(let permission):
+            return "Permission denied: \(permission)"
+        }
+    }
+    
+    /// Provides recovery suggestions for errors
+    public var recoverySuggestion: String? {
+        switch self {
+        case .invalidConfiguration:
+            return "Check configuration parameters and ensure all required values are valid."
+        case .resourceLimitExceeded:
+            return "Close other applications or increase resource limits in configuration."
+        case .taskExecutionFailed:
+            return "Check task parameters and try again. Contact support if issue persists."
+        case .invalidInput:
+            return "Ensure input is not empty and contains valid characters."
+        case .networkError:
+            return "Check internet connection and try again."
+        case .permissionDenied:
+            return "Grant required permissions in Settings app."
+        default:
+            return nil
         }
     }
 }
