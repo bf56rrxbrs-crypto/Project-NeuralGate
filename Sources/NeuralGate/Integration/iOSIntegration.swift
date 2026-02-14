@@ -17,14 +17,15 @@ public class iOSIntegration {
     /// Connect to an iOS Shortcut
     /// - Parameter shortcutName: Name of the shortcut
     public func connectToShortcut(_ shortcutName: String) async throws {
-        guard !shortcutName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+        let trimmedName = shortcutName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedName.isEmpty else {
             throw IntegrationError.invalidInput("Shortcut name cannot be empty")
         }
         
         // In a real implementation, this would use the Shortcuts framework
         // to connect with iOS Shortcuts app
-        print("Connecting to shortcut: \(shortcutName)")
-        shortcutsConnections[shortcutName] = Date()
+        print("Connecting to shortcut: \(trimmedName)")
+        shortcutsConnections[trimmedName] = Date()
     }
     
     /// Run an iOS Shortcut by name
@@ -36,12 +37,12 @@ public class iOSIntegration {
             throw IntegrationError.invalidInput("Shortcut name cannot be empty")
         }
         
-        guard shortcutsConnections[shortcutName] != nil else {
-            throw IntegrationError.shortcutNotConnected("Shortcut '\(shortcutName)' is not connected. Call connectToShortcut first.")
+        guard shortcutsConnections[trimmedName] != nil else {
+            throw IntegrationError.shortcutNotConnected("Shortcut '\(trimmedName)' is not connected. Call connectToShortcut first.")
         }
         
         // Shortcut execution logic
-        return "Shortcut \(shortcutName) executed"
+        return "Shortcut \(trimmedName) executed"
     }
     
     // MARK: - Siri Integration
