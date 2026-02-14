@@ -95,8 +95,6 @@ public actor CircuitBreaker {
         operation: () async throws -> T,
         fallback: () async -> T
     ) async -> T {
-        var lastError: Error?
-        
         for attempt in 1...maxAttempts {
             do {
                 let result = try await operation()
@@ -111,7 +109,6 @@ public actor CircuitBreaker {
                 
                 return result
             } catch {
-                lastError = error
                 logger.log("Retry attempt \(attempt)/\(maxAttempts) failed: \(error)", level: .warning)
                 
                 // Don't retry if this was the last attempt

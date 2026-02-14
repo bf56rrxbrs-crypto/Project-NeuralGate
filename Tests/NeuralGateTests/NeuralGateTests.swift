@@ -237,11 +237,98 @@ final class NeuralGateTests: XCTestCase {
             .modelLoadingFailed("test"),
             .taskExecutionFailed("test error"),
             .dataPipelineError("test"),
-            .failoverRequired
+            .failoverRequired,
+            .invalidInput("empty input"),
+            .timeout("operation timed out"),
+            .networkError("connection failed"),
+            .unauthorized("access denied")
         ]
         
         for error in errors {
             XCTAssertFalse(error.localizedDescription.isEmpty)
+        }
+    }
+    
+    func testInvalidInputError() {
+        let error = NeuralGateError.invalidInput("Test input error")
+        XCTAssertTrue(error.localizedDescription.contains("Invalid input"))
+        XCTAssertTrue(error.localizedDescription.contains("Test input error"))
+    }
+    
+    func testTimeoutError() {
+        let error = NeuralGateError.timeout("Test timeout")
+        XCTAssertTrue(error.localizedDescription.contains("timed out"))
+        XCTAssertTrue(error.localizedDescription.contains("Test timeout"))
+    }
+    
+    // MARK: - NLP Edge Case Tests
+    
+    @available(iOS 16.0, *)
+    func testNLPEmptyInput() async {
+        let nlp = NaturalLanguageProcessor()
+        
+        do {
+            _ = try await nlp.parseIntent("")
+            XCTFail("Should throw error for empty input")
+        } catch let error as NeuralGateError {
+            if case .invalidInput(let message) = error {
+                XCTAssertTrue(message.contains("empty"))
+            } else {
+                XCTFail("Wrong error type")
+            }
+        } catch {
+            XCTFail("Unexpected error type")
+        }
+    }
+    
+    @available(iOS 16.0, *)
+    func testNLPWhitespaceOnlyInput() async {
+        let nlp = NaturalLanguageProcessor()
+        
+        do {
+            _ = try await nlp.parseIntent("   \n\t  ")
+            XCTFail("Should throw error for whitespace-only input")
+        } catch let error as NeuralGateError {
+            if case .invalidInput(let message) = error {
+                XCTAssertTrue(message.contains("empty"))
+            } else {
+                XCTFail("Wrong error type")
+            }
+        } catch {
+            XCTFail("Unexpected error type")
+        }
+    }
+    
+    @available(iOS 16.0, *)
+    func testNLPExtremelyLongInput() async {
+        let nlp = NaturalLanguageProcessor()
+        let longInput = String(repeating: "a", count: 5001)
+        
+        do {
+            _ = try await nlp.parseIntent(longInput)
+            XCTFail("Should throw error for extremely long input")
+        } catch let error as NeuralGateError {
+            if case .invalidInput(let message) = error {
+                XCTAssertTrue(message.contains("maximum length"))
+            } else {
+                XCTFail("Wrong error type")
+            }
+        } catch {
+            XCTFail("Unexpected error type")
+        }
+    }
+    
+    @available(iOS 16.0, *)
+    func testNLPValidInputWithWhitespace() async {
+        let nlp = NaturalLanguageProcessor()
+        
+        do {
+            let intent = try await nlp.parseIntent("  send message  ")
+            XCTAssertFalse(intent.originalText.isEmpty)
+            // Should trim whitespace
+            XCTAssertEqual(intent.originalText, "send message")
+        } catch {
+            XCTFail("Should not throw error for valid input with whitespace")
         }
     }
     

@@ -167,9 +167,6 @@ final class PowerMonitorTests: XCTestCase {
     // MARK: - Notification Response Tests
     
     func testThermalStateNotificationHandling() {
-        // Record initial state
-        let initialState = powerMonitor.thermalState
-        
         // Post notification
         #if os(iOS) || os(macOS) || os(watchOS) || os(tvOS)
         NotificationCenter.default.post(name: ProcessInfo.thermalStateDidChangeNotification, object: nil)
