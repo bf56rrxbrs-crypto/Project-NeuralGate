@@ -22,7 +22,7 @@ public class AIDecisionEngine {
         // Check resource constraints
         let totalEstimatedUsage = models.reduce(0) { $0 + $1.estimatedMemoryUsage }
         guard totalEstimatedUsage <= configuration.maxMemoryUsage else {
-            throw NeuralGateError.resourceLimitExceeded
+            throw NeuralGateError.resourceLimitExceeded("Total memory usage \(totalEstimatedUsage) MB exceeds limit of \(configuration.maxMemoryUsage) MB")
         }
         
         // Get predictions from all models
@@ -107,8 +107,15 @@ public class AIDecisionEngine {
         var factors: [String: Double] = [:]
         
         factors["priority"] = Double(task.priority.weight) / 4.0
-        factors["model_agreement"] = Double(predictions.filter { $0.decision == ensembleVote(predictions: predictions) }.count) / Double(predictions.count)
-        factors["avg_confidence"] = predictions.reduce(0.0) { $0 + $1.confidence } / Double(predictions.count)
+        
+        // Prevent division by zero
+        if !predictions.isEmpty {
+            factors["model_agreement"] = Double(predictions.filter { $0.decision == ensembleVote(predictions: predictions) }.count) / Double(predictions.count)
+            factors["avg_confidence"] = predictions.reduce(0.0) { $0 + $1.confidence } / Double(predictions.count)
+        } else {
+            factors["model_agreement"] = 0.0
+            factors["avg_confidence"] = 0.0
+        }
         
         return factors
     }

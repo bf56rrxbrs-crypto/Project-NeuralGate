@@ -1,0 +1,340 @@
+name: PR Auto Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+      - develop
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  # Job 1: Basic PR Checks
+  pr-validation:
+    name: PR Validation
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: Check PR Title Format
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = context.payload.pull_request.title;
+            const validPrefixes = ['feat:', 'fix:', 'docs:', 'style:', 'refactor:', 'test:', 'chore:', 'ci:', 'perf:'];
+            
+            let feedback = '## 📋 PR Review - Title Check\n\n';
+            
+            const hasValidPrefix = validPrefixes.some(prefix => title.toLowerCase().startsWith(prefix));
+            
+            if (!hasValidPrefix) {
+              feedback += '⚠️ **Title Format**: Consider using conventional commits format:\n';
+              feedback += '- `feat:` for new features\n';
+              feedback += '- `fix:` for bug fixes\n';
+              feedback += '- `docs:` for documentation\n';
+              feedback += '- `refactor:` for code refactoring\n';
+              feedback += '- `test:` for tests\n';
+              feedback += '- `chore:` for maintenance\n';
+              feedback += '\nExample: `feat: add error handling to iOS integration`\n';
+            } else {
+              feedback += '✅ **Title Format**: Follows conventional commits format\n';
+            }
+            
+            return feedback;
+            
+      - name: Check PR Description
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = context.payload.pull_request.body || '';
+            
+            let feedback = '## 📝 PR Review - Description Check\n\n';
+            
+            if (body.length < 50) {
+              feedback += '⚠️ **Description**: PR description is too short. Please provide:\n';
+              feedback += '- What changes were made\n';
+              feedback += '- Why these changes were needed\n';
+              feedback += '- How to test the changes\n';
+              feedback += '- Any breaking changes or migration notes\n';
+            } else {
+              feedback += '✅ **Description**: PR has adequate description\n';
+            }
+            
+            // Check for common sections
+            const hasWhatChanged = /what|changes|implements?/i.test(body);
+            const hasWhyChanged = /why|purpose|motivation|issue|problem/i.test(body);
+            const hasTestInfo = /test|testing|validation|verify/i.test(body);
+            
+            if (!hasWhatChanged) {
+              feedback += '💡 **Suggestion**: Add a "What changed" section\n';
+            }
+            if (!hasWhyChanged) {
+              feedback += '💡 **Suggestion**: Add a "Why" section explaining the motivation\n';
+            }
+            if (!hasTestInfo) {
+              feedback += '💡 **Suggestion**: Add testing instructions\n';
+            }
+            
+            return feedback;
+            
+      - name: Check File Changes
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: files } = await github.rest.pulls.listFiles({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+            });
+            
+            let feedback = '## 📂 PR Review - Files Changed\n\n';
+            
+            feedback += `**Total files changed**: ${files.length}\n\n`;
+            
+            // Categorize files
+            const swiftFiles = files.filter(f => f.filename.endsWith('.swift'));
+            const testFiles = files.filter(f => f.filename.includes('Tests/') || f.filename.includes('Test.swift'));
+            const docFiles = files.filter(f => f.filename.endsWith('.md'));
+            const configFiles = files.filter(f => f.filename.match(/\.(yml|yaml|json|plist)$/));
+            
+            feedback += `- Swift source files: ${swiftFiles.length}\n`;
+            feedback += `- Test files: ${testFiles.length}\n`;
+            feedback += `- Documentation files: ${docFiles.length}\n`;
+            feedback += `- Configuration files: ${configFiles.length}\n\n`;
+            
+            // Check for tests
+            const hasSourceChanges = swiftFiles.length > testFiles.length;
+            if (hasSourceChanges && testFiles.length === 0) {
+              feedback += '⚠️ **Missing Tests**: Source code changed but no test files modified. Consider adding tests.\n';
+            }
+            
+            // Check for large PRs
+            const totalChanges = files.reduce((sum, file) => sum + file.changes, 0);
+            if (totalChanges > 500) {
+              feedback += `\n⚠️ **Large PR**: This PR has ${totalChanges} lines changed. Consider breaking it into smaller PRs for easier review.\n`;
+            }
+            
+            // Check for sensitive files
+            const sensitivePaths = ['.github/workflows/', 'Package.swift', '.gitignore'];
+            const sensitiveFiles = files.filter(f => 
+              sensitivePaths.some(path => f.filename.startsWith(path) || f.filename === path)
+            );
+            
+            if (sensitiveFiles.length > 0) {
+              feedback += '\n🔐 **Sensitive Files**: This PR modifies critical files:\n';
+              sensitiveFiles.forEach(f => {
+                feedback += `- ${f.filename}\n`;
+              });
+              feedback += 'Please ensure these changes are thoroughly reviewed.\n';
+            }
+            
+            return feedback;
+
+  # Job 2: Code Quality Analysis
+  code-analysis:
+    name: Code Quality Analysis
+    runs-on: macos-14
+    needs: pr-validation
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Swift
+        uses: swift-actions/setup-swift@v2
+        with:
+          # NOTE: Keep this version in sync with project requirements in README.md
+          swift-version: '5.9'
+          
+      - name: Run SwiftLint
+        run: |
+          brew install swiftlint
+          swiftlint lint --reporter json > swiftlint-results.json || true
+        continue-on-error: true
+        
+      - name: Analyze SwiftLint Results
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            
+            let feedback = '## 🔍 Code Quality Analysis\n\n';
+            
+            try {
+              const lintResults = JSON.parse(fs.readFileSync('swiftlint-results.json', 'utf8'));
+              
+              const errors = lintResults.filter(r => r.severity === 'error');
+              const warnings = lintResults.filter(r => r.severity === 'warning');
+              
+              feedback += `**SwiftLint Results:**\n`;
+              feedback += `- Errors: ${errors.length}\n`;
+              feedback += `- Warnings: ${warnings.length}\n\n`;
+              
+              if (errors.length > 0) {
+                feedback += '❌ **Errors found** - Please fix these issues:\n\n';
+                errors.slice(0, 5).forEach((error, i) => {
+                  feedback += `${i + 1}. **${error.rule_id}** in \`${error.file}\` (line ${error.line})\n`;
+                  feedback += `   ${error.reason}\n\n`;
+                });
+                if (errors.length > 5) {
+                  feedback += `_...and ${errors.length - 5} more errors_\n\n`;
+                }
+              }
+              
+              if (warnings.length > 0 && warnings.length <= 10) {
+                feedback += '⚠️ **Warnings**:\n\n';
+                warnings.forEach((warning, i) => {
+                  feedback += `${i + 1}. **${warning.rule_id}** in \`${warning.file}\` (line ${warning.line})\n`;
+                  feedback += `   ${warning.reason}\n\n`;
+                });
+              } else if (warnings.length > 10) {
+                feedback += `⚠️ **${warnings.length} warnings found** - see workflow logs for details\n\n`;
+              }
+              
+              if (errors.length === 0 && warnings.length === 0) {
+                feedback += '✅ **No SwiftLint issues found!**\n';
+              }
+              
+            } catch (error) {
+              feedback += '❓ Could not parse SwiftLint results\n';
+            }
+            
+            return feedback;
+
+  # Job 3: Post Combined Review
+  post-review:
+    name: Post Review Comment
+    runs-on: ubuntu-latest
+    needs: [pr-validation, code-analysis]
+    if: always()
+    
+    steps:
+      - name: Post Review Summary
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prNumber = context.payload.pull_request.number;
+            
+            let review = '# 🤖 Automated PR Review\n\n';
+            review += `Generated for PR #${prNumber} at ${new Date().toISOString()}\n\n`;
+            review += '---\n\n';
+            
+            // Add general recommendations
+            review += '## 💡 General Recommendations\n\n';
+            review += '1. ✅ Ensure all tests pass before requesting review\n';
+            review += '2. ✅ Update documentation if APIs changed\n';
+            review += '3. ✅ Add or update tests for new functionality\n';
+            review += '4. ✅ Follow Swift naming conventions and style guide\n';
+            review += '5. ✅ Consider iOS-specific best practices\n\n';
+            
+            review += '## 📚 Resources\n\n';
+            review += '- [Swift Style Guide](https://google.github.io/swift/)\n';
+            review += '- [iOS Human Interface Guidelines](https://developer.apple.com/design/human-interface-guidelines/ios)\n';
+            review += '- [Contributing Guidelines](CONTRIBUTING.md)\n\n';
+            
+            review += '---\n\n';
+            review += '*This is an automated review. A human reviewer will provide additional feedback.*\n';
+            
+            // Post as a comment
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              body: review
+            });
+            
+            console.log('Posted automated review comment');
+
+  # Job 4: Check for Common Issues
+  check-common-issues:
+    name: Check Common Issues
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: Check for TODOs and FIXMEs
+        run: |
+          echo "Checking for TODO/FIXME comments in changed files..."
+          git diff origin/${{ github.base_ref }}...HEAD -- '*.swift' | grep -E '^\+.*TODO|^\+.*FIXME' > todos.txt || true
+          
+          if [ -s todos.txt ]; then
+            echo "Found TODO/FIXME comments:"
+            cat todos.txt
+            echo "::warning::New TODO/FIXME comments found in this PR"
+          else
+            echo "No new TODO/FIXME comments found"
+          fi
+          
+      - name: Check for Debug Print Statements
+        run: |
+          echo "Checking for debug print statements..."
+          git diff origin/${{ github.base_ref }}...HEAD -- '*.swift' | grep -E '^\+.*print\(' > prints.txt || true
+          
+          if [ -s prints.txt ]; then
+            echo "Found print statements:"
+            cat prints.txt
+            echo "::warning::Consider using NeuralGateLogger instead of print statements"
+          else
+            echo "No new print statements found"
+          fi
+          
+      - name: Check for Hardcoded Values
+        run: |
+          echo "Checking for potential hardcoded values..."
+          git diff origin/${{ github.base_ref }}...HEAD -- '*.swift' | grep -E '^\+.*(http://|https://|localhost|127\.0\.0\.1)' > hardcoded.txt || true
+          
+          if [ -s hardcoded.txt ]; then
+            echo "Found potential hardcoded URLs:"
+            cat hardcoded.txt
+            echo "::warning::Consider moving URLs to configuration"
+          else
+            echo "No hardcoded URLs found"
+          fi
+
+  # Job 5: Security Check
+  security-check:
+    name: Security Check
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Check for Sensitive Data
+        run: |
+          echo "Checking for potential sensitive data..."
+          
+          # Check for common sensitive patterns
+          git diff origin/${{ github.base_ref }}...HEAD | grep -iE '(password|secret|api_key|apikey|token|credential|private_key)' | grep '^\+' > sensitive.txt || true
+          
+          if [ -s sensitive.txt ]; then
+            echo "::error::Potential sensitive data found in diff"
+            cat sensitive.txt
+            exit 1
+          else
+            echo "No obvious sensitive data patterns found"
+          fi
+          
+      - name: Post Security Notice
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              body: '🔒 **Security Alert**: Potential sensitive data detected in this PR. Please review carefully and ensure no secrets are committed.'
+            });
