@@ -30,7 +30,7 @@ public class WorkflowAutomationEngine {
             let taskStartTime = Date()
             
             // Create execution context
-            var context = ExecutionContext(currentTask: task, workflow: mutableWorkflow)
+            let context = ExecutionContext(currentTask: task, workflow: mutableWorkflow)
             
             // Get AI decision
             let decision = try await decisionEngine.makeDecision(for: task, context: context)

@@ -69,8 +69,8 @@ public class NeuralGateAgent {
         
         let context = ExecutionContext(currentTask: task)
         
-        // Get AI decision
-        let decision = try await decisionEngine.makeDecision(for: task, context: context)
+        // Get AI decision for task execution strategy
+        _ = try await decisionEngine.makeDecision(for: task, context: context)
         
         // Get predictive suggestions
         let suggestions = predictiveAnalytics.getSuggestions(context: context)

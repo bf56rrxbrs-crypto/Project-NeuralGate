@@ -1,0 +1,6 @@
+[submodule "expo"]
+	path = expo
+	url = https://bf56rrxbrs-crypto@github.com/bf56rrxbrs-crypto/expo
+[submodule "Sources/NeuralGate/Models/submodules"]
+	path = Sources/NeuralGate/Models/submodules
+	url = git@github.com:taskade/mcp.git

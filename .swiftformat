@@ -1,0 +1,97 @@
+# SwiftFormat Configuration for NeuralGate
+# https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md
+
+# Swift version
+--swiftversion 5.9
+
+# File options
+--exclude .build,.swiftpm,Pods,Carthage,DerivedData
+
+# Format options
+--indent 4
+--indentcase false
+--trimwhitespace always
+--maxwidth 120
+--wraparguments before-first
+--wrapparameters before-first
+--wrapcollections before-first
+--closingparen balanced
+--commas inline
+--decimalgrouping 3,6
+--exponentcase lowercase
+--fractiongrouping disabled
+--hexgrouping 4,8
+--hexliteralcase uppercase
+--octalgrouping 4,8
+--patternlet inline
+--ranges spaced
+--semicolons never
+--stripunusedargs closure-only
+--trimwhitespace always
+
+# Wrapping
+--funcattributes prev-line
+--typeattributes prev-line
+--varattributes prev-line
+
+# Spacing
+--header strip
+--ifdef indent
+--nospaceoperators ..<,...
+--operatorfunc spaced
+--typeblanklines remove
+--voidtype void
+
+# Rules
+--enable isEmpty
+--enable sortedImports
+--enable duplicateImports
+--enable blankLinesAtStartOfScope
+--enable blankLinesAtEndOfScope
+--enable blankLinesBetweenScopes
+--enable consecutiveBlankLines
+--enable consecutiveSpaces
+--enable elseOnSameLine
+--enable hoistPatternLet
+--enable redundantBackticks
+--enable redundantBreak
+--enable redundantExtensionACL
+--enable redundantFileprivate
+--enable redundantGet
+--enable redundantInit
+--enable redundantLet
+--enable redundantLetError
+--enable redundantNilInit
+--enable redundantObjc
+--enable redundantParens
+--enable redundantPattern
+--enable redundantRawValues
+--enable redundantReturn
+--enable redundantSelf
+--enable redundantVoidReturnType
+--enable semicolons
+--enable spaceAroundBraces
+--enable spaceAroundBrackets
+--enable spaceAroundComments
+--enable spaceAroundGenerics
+--enable spaceAroundOperators
+--enable spaceInsideBraces
+--enable spaceInsideBrackets
+--enable spaceInsideComments
+--enable spaceInsideGenerics
+--enable spaceInsideParens
+--enable strongOutlets
+--enable todos
+--enable trailingClosures
+--enable trailingCommas
+--enable trailingSpace
+--enable typeSugar
+--enable void
+--enable wrapArguments
+--enable wrapAttributes
+--enable yodaConditions
+
+# Disabled rules (optional - uncomment to disable)
+# --disable andOperator
+# --disable redundantSelf
+# --disable trailingCommas
