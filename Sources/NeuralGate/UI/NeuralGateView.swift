@@ -83,13 +83,13 @@ public struct NeuralGateView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 12) {
                     QuickActionButton(title: "Morning Routine", icon: "sunrise.fill") {
-                        Task {
+                        Swift.Task {
                             await viewModel.executeWorkflow("morning-routine")
                         }
                     }
-                    
+
                     QuickActionButton(title: "Email Digest", icon: "envelope.fill") {
-                        Task {
+                        Swift.Task {
                             await viewModel.executeWorkflow("email-digest")
                         }
                     }
@@ -128,8 +128,8 @@ public struct NeuralGateView: View {
     
     private func submitTask() {
         guard !inputText.isEmpty else { return }
-        
-        Task {
+
+        Swift.Task {
             await viewModel.processRequest(inputText)
             inputText = ""
         }
@@ -168,10 +168,10 @@ struct TaskRowView: View {
                 .foregroundColor(statusColor)
             
             VStack(alignment: .leading) {
-                Text(task.type.capitalized)
+                Text(task.name)
                     .font(.subheadline)
                     .fontWeight(.medium)
-                
+
                 Text(task.createdAt.formatted())
                     .font(.caption)
                     .foregroundColor(.secondary)
@@ -196,17 +196,17 @@ struct TaskRowView: View {
         switch task.status {
         case .completed: return "checkmark.circle.fill"
         case .failed: return "xmark.circle.fill"
-        case .running: return "arrow.clockwise"
+        case .inProgress: return "arrow.clockwise"
         case .pending: return "clock"
         case .cancelled: return "minus.circle.fill"
         }
     }
-    
+
     private var statusColor: Color {
         switch task.status {
         case .completed: return .green
         case .failed: return .red
-        case .running: return .blue
+        case .inProgress: return .blue
         case .pending: return .orange
         case .cancelled: return .gray
         }
