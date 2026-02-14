@@ -67,5 +67,22 @@ public class TaskManager {
 public enum TaskError: Error {
     case invalidScheduleDate
     case taskNotFound
-    case executionFailed
+    case executionFailed(String)
+    case invalidInput(String)
+    case timeout(String)
+    
+    public var localizedDescription: String {
+        switch self {
+        case .invalidScheduleDate:
+            return "Invalid schedule date: must be in the future"
+        case .taskNotFound:
+            return "Task not found"
+        case .executionFailed(let message):
+            return "Task execution failed: \(message)"
+        case .invalidInput(let message):
+            return "Invalid task input: \(message)"
+        case .timeout(let message):
+            return "Task timed out: \(message)"
+        }
+    }
 }

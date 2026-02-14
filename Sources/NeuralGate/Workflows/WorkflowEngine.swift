@@ -189,6 +189,20 @@ public class WorkflowEngine {
 
 public enum WorkflowError: Error {
     case workflowNotFound
-    case executionFailed
-    case invalidStep
+    case executionFailed(String)
+    case invalidStep(String)
+    case timeout(String)
+    
+    public var localizedDescription: String {
+        switch self {
+        case .workflowNotFound:
+            return "Workflow not found"
+        case .executionFailed(let message):
+            return "Workflow execution failed: \(message)"
+        case .invalidStep(let message):
+            return "Invalid workflow step: \(message)"
+        case .timeout(let message):
+            return "Workflow timed out: \(message)"
+        }
+    }
 }
