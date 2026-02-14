@@ -54,10 +54,13 @@ jobs:
       - name: Cache Swift Package Manager
         uses: actions/cache@v4
         with:
-          path: .build
-          key: ${{ runner.os }}-spm-${{ inputs.configuration }}-${{ hashFiles('**/Package.resolved') }}
+          path: |
+            .build
+            ~/Library/Developer/Xcode/DerivedData
+          key: ${{ runner.os }}-spm-${{ inputs.swift-version }}-${{ inputs.configuration }}-${{ hashFiles('**/Package.resolved') }}
           restore-keys: |
-            ${{ runner.os }}-spm-${{ inputs.configuration }}-
+            ${{ runner.os }}-spm-${{ inputs.swift-version }}-${{ inputs.configuration }}-
+            ${{ runner.os }}-spm-${{ inputs.swift-version }}-
             ${{ runner.os }}-spm-
             
       - name: Swift Version Info

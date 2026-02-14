@@ -122,4 +122,23 @@ public enum IntegrationError: Error {
     case siriNotAuthorized
     case notificationPermissionDenied
     case backgroundTaskFailed
+    case networkError(String)
+    case unauthorized(String)
+    
+    public var localizedDescription: String {
+        switch self {
+        case .shortcutNotConnected:
+            return "Shortcut not connected"
+        case .siriNotAuthorized:
+            return "Siri authorization required"
+        case .notificationPermissionDenied:
+            return "Notification permission denied"
+        case .backgroundTaskFailed:
+            return "Background task failed"
+        case .networkError(let message):
+            return "Network error: \(message)"
+        case .unauthorized(let message):
+            return "Unauthorized access: \(message)"
+        }
+    }
 }

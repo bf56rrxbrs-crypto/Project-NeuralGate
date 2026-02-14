@@ -237,12 +237,87 @@ final class NeuralGateTests: XCTestCase {
             .modelLoadingFailed("test"),
             .taskExecutionFailed("test error"),
             .dataPipelineError("test"),
-            .failoverRequired
+            .failoverRequired,
+            .invalidInput("invalid data"),
+            .timeout("operation timed out"),
+            .networkError("connection failed"),
+            .unauthorized("access denied")
         ]
         
         for error in errors {
             XCTAssertFalse(error.localizedDescription.isEmpty)
         }
+    }
+    
+    func testNewErrorTypes() {
+        // Test invalidInput error
+        let invalidInputError = NeuralGateError.invalidInput("empty string")
+        XCTAssertTrue(invalidInputError.localizedDescription.contains("Invalid input"))
+        XCTAssertTrue(invalidInputError.localizedDescription.contains("empty string"))
+        
+        // Test timeout error
+        let timeoutError = NeuralGateError.timeout("exceeded 30 seconds")
+        XCTAssertTrue(timeoutError.localizedDescription.contains("timed out"))
+        XCTAssertTrue(timeoutError.localizedDescription.contains("exceeded 30 seconds"))
+        
+        // Test networkError
+        let networkError = NeuralGateError.networkError("connection refused")
+        XCTAssertTrue(networkError.localizedDescription.contains("Network error"))
+        XCTAssertTrue(networkError.localizedDescription.contains("connection refused"))
+        
+        // Test unauthorized
+        let unauthorizedError = NeuralGateError.unauthorized("missing token")
+        XCTAssertTrue(unauthorizedError.localizedDescription.contains("Unauthorized"))
+        XCTAssertTrue(unauthorizedError.localizedDescription.contains("missing token"))
+    }
+    
+    @available(iOS 16.0, *)
+    func testTaskErrorTypes() {
+        // Test TaskError.invalidInput
+        let taskInvalidInput = TaskError.invalidInput("missing required field")
+        XCTAssertTrue(taskInvalidInput.localizedDescription.contains("Invalid task input"))
+        XCTAssertTrue(taskInvalidInput.localizedDescription.contains("missing required field"))
+        
+        // Test TaskError.timeout
+        let taskTimeout = TaskError.timeout("task took too long")
+        XCTAssertTrue(taskTimeout.localizedDescription.contains("timed out"))
+        XCTAssertTrue(taskTimeout.localizedDescription.contains("task took too long"))
+        
+        // Test TaskError.executionFailed with message
+        let taskExecutionFailed = TaskError.executionFailed("internal error")
+        XCTAssertTrue(taskExecutionFailed.localizedDescription.contains("execution failed"))
+        XCTAssertTrue(taskExecutionFailed.localizedDescription.contains("internal error"))
+    }
+    
+    @available(iOS 16.0, *)
+    func testIntegrationErrorTypes() {
+        // Test IntegrationError.networkError
+        let integrationNetworkError = IntegrationError.networkError("API unavailable")
+        XCTAssertTrue(integrationNetworkError.localizedDescription.contains("Network error"))
+        XCTAssertTrue(integrationNetworkError.localizedDescription.contains("API unavailable"))
+        
+        // Test IntegrationError.unauthorized
+        let integrationUnauthorized = IntegrationError.unauthorized("API key invalid")
+        XCTAssertTrue(integrationUnauthorized.localizedDescription.contains("Unauthorized"))
+        XCTAssertTrue(integrationUnauthorized.localizedDescription.contains("API key invalid"))
+    }
+    
+    @available(iOS 16.0, *)
+    func testWorkflowErrorTypes() {
+        // Test WorkflowError.timeout
+        let workflowTimeout = WorkflowError.timeout("workflow exceeded time limit")
+        XCTAssertTrue(workflowTimeout.localizedDescription.contains("timed out"))
+        XCTAssertTrue(workflowTimeout.localizedDescription.contains("workflow exceeded time limit"))
+        
+        // Test WorkflowError.executionFailed with message
+        let workflowExecutionFailed = WorkflowError.executionFailed("step 3 failed")
+        XCTAssertTrue(workflowExecutionFailed.localizedDescription.contains("execution failed"))
+        XCTAssertTrue(workflowExecutionFailed.localizedDescription.contains("step 3 failed"))
+        
+        // Test WorkflowError.invalidStep with message
+        let workflowInvalidStep = WorkflowError.invalidStep("unknown action")
+        XCTAssertTrue(workflowInvalidStep.localizedDescription.contains("Invalid workflow step"))
+        XCTAssertTrue(workflowInvalidStep.localizedDescription.contains("unknown action"))
     }
     
     // MARK: - Task Manager Tests
