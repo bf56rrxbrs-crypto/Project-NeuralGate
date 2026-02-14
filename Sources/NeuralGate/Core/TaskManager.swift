@@ -15,6 +15,15 @@ public class TaskManager {
     /// - Parameter intent: User intent parsed from natural language
     /// - Returns: Executable task
     public func createTask(from intent: Intent) throws -> Task {
+        // Validate intent
+        guard !intent.action.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            throw TaskError.invalidInput("Task action cannot be empty")
+        }
+        
+        guard intent.confidence > 0 && intent.confidence <= 1.0 else {
+            throw TaskError.invalidInput("Intent confidence must be between 0 and 1. Provided: \(intent.confidence)")
+        }
+        
         // Convert intent parameters to metadata strings
         let metadata = intent.parameters.mapValues { "\($0)" }
         
@@ -36,7 +45,7 @@ public class TaskManager {
     ///   - date: Execution date
     public func scheduleTask(_ task: Task, for date: Date) throws {
         guard date > Date() else {
-            throw TaskError.invalidScheduleDate
+            throw TaskError.invalidScheduleDate("Schedule date must be in the future. Provided: \(date)")
         }
         
         scheduledTasks[task.id] = (task, date)
@@ -65,7 +74,30 @@ public class TaskManager {
 // MARK: - Task Error
 
 public enum TaskError: Error {
-    case invalidScheduleDate
-    case taskNotFound
-    case executionFailed
+    case invalidScheduleDate(String)
+    case taskNotFound(String)
+    case executionFailed(String)
+    case invalidInput(String)
+    case timeout(String)
+    case networkError(String)
+    case unauthorized(String)
+    
+    public var localizedDescription: String {
+        switch self {
+        case .invalidScheduleDate(let message):
+            return "Invalid schedule date: \(message)"
+        case .taskNotFound(let message):
+            return "Task not found: \(message)"
+        case .executionFailed(let message):
+            return "Task execution failed: \(message)"
+        case .invalidInput(let message):
+            return "Invalid input: \(message)"
+        case .timeout(let message):
+            return "Task timeout: \(message)"
+        case .networkError(let message):
+            return "Network error: \(message)"
+        case .unauthorized(let message):
+            return "Unauthorized: \(message)"
+        }
+    }
 }
