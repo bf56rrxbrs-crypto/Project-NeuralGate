@@ -362,3 +362,15 @@ let productionConfig = NeuralGateConfiguration(
 - **Vertical Scaling**: Optimized for faster hardware
 - **Storage Growth**: Efficient data management as history grows
 - **Model Complexity**: Support for larger, more complex models
+
+---
+
+## Related Documentation
+
+For comprehensive information about NeuralGate, refer to:
+
+- **[WORKFLOW_GOALS.md](WORKFLOW_GOALS.md)**: Workflow automation strategies and integration patterns
+- **[DOCUMENTATION.md](DOCUMENTATION.md)**: Complete API reference and usage guide
+- **[EXAMPLES.md](EXAMPLES.md)**: Practical code examples and patterns
+- **[PERFORMANCE.md](PERFORMANCE.md)**: Performance optimization strategies
+- **[SUB_ISSUE_AI_ENHANCEMENTS.md](SUB_ISSUE_AI_ENHANCEMENTS.md)**: Planned AI enhancements and roadmap
