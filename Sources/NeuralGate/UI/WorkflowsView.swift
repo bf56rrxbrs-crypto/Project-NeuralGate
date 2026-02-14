@@ -13,7 +13,7 @@ struct WorkflowsView: View {
             List {
                 ForEach(viewModel.workflows) { workflow in
                     WorkflowRow(workflow: workflow) {
-                        Task {
+                        Swift.Task {
                             await viewModel.executeWorkflow(workflow.id)
                         }
                     }
@@ -32,7 +32,7 @@ struct WorkflowsView: View {
 }
 
 struct WorkflowRow: View {
-    let workflow: Workflow
+    let workflow: StepWorkflow
     let onExecute: () -> Void
     
     var body: some View {
