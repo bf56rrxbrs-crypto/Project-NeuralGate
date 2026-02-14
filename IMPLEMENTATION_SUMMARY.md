@@ -206,7 +206,7 @@ Total documentation: 40,000+ words
 ### Lines of Code
 
 - Source Code: ~3,000 lines
-- Test Code: ~350 lines
+- Test Code: ~1,600 lines (95+ tests)
 - Documentation: 40,000+ words
 - Total Files: 20+ Swift files
 
