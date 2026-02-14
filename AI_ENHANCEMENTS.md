@@ -2,7 +2,40 @@
 
 ## Overview
 
-NeuralGate now includes four powerful AI enhancement systems that leverage artificial intelligence to make actionable suggestions, improve available tools and features, recommend new capabilities, and enhance the AI power of the platform.
+NeuralGate includes four powerful AI enhancement systems that leverage artificial intelligence to make actionable suggestions, improve available tools and features, recommend new capabilities, and enhance the AI power of the platform.
+
+## Quick Start - Simplified API
+
+For quick access to all AI insights, use the new convenience methods:
+
+```swift
+import NeuralGate
+import NeuralGateAutomation
+
+let agent = NeuralGateAgent()
+
+// Get comprehensive AI insights in one call
+let insights = await agent.getAIInsights()
+print("Health Score: \(Int(insights.overallHealthScore * 100))%")
+print("Top Priorities:")
+for priority in insights.topPriorities.prefix(5) {
+    print("  - \(priority)")
+}
+
+// Export all reports as formatted text
+let reports = agent.exportAIReports()
+// Save or display reports
+
+// Check AI system health
+let health = agent.getAIHealthStatus()
+print(health.formattedReport)
+
+// Decide if analysis should run
+if agent.shouldRunAIAnalysis() {
+    let patterns = await agent.analyzeUsagePatterns()
+    // Process patterns
+}
+```
 
 ## The Four AI Enhancement Systems
 
@@ -459,3 +492,257 @@ For more information, see:
 - [DOCUMENTATION.md](DOCUMENTATION.md) - Complete API reference
 - [EXAMPLES.md](EXAMPLES.md) - Practical usage examples
 - [ARCHITECTURE.md](ARCHITECTURE.md) - System architecture details
+
+## New Usability Features (v2.0)
+
+### Convenience Methods
+
+NeuralGate v2.0 adds several convenience methods to make AI enhancement systems easier to use:
+
+#### 1. Comprehensive AI Insights
+
+Get all AI insights in a single call:
+
+```swift
+let insights = await agent.getAIInsights()
+
+// Access all data
+print("Capabilities: \(insights.capabilities.count)")
+print("Patterns: \(insights.patterns.count)")
+print("Gaps: \(insights.gaps.count)")
+print("Suggestions: \(insights.suggestions.count)")
+
+// Get top priorities across all systems
+for priority in insights.topPriorities {
+    print("Priority: \(priority)")
+}
+
+// Check overall health
+print("Health Score: \(Int(insights.overallHealthScore * 100))%")
+```
+
+#### 2. Export All Reports
+
+Generate a combined report from all AI systems:
+
+```swift
+let combinedReport = agent.exportAIReports()
+// Returns formatted text with all capability, model, and feature reports
+
+// Save to file
+try combinedReport.write(toFile: "ai-reports.txt", atomically: true, encoding: .utf8)
+```
+
+#### 3. AI Health Status
+
+Quick health check of all AI enhancement systems:
+
+```swift
+let health = agent.getAIHealthStatus()
+
+print(health.formattedReport)
+// Shows formatted health card with:
+// - Health status and score
+// - Success rate
+// - Total executions
+// - Patterns and gaps detected
+// - Available models
+// - Recommendation
+```
+
+#### 4. Smart Analysis Triggers
+
+Decide when to run AI analysis based on usage:
+
+```swift
+if agent.shouldRunAIAnalysis(minimumExecutions: 10) {
+    // Enough data collected, run analysis
+    let patterns = await agent.analyzeUsagePatterns()
+    let gaps = await agent.identifyUsageGaps()
+}
+```
+
+### Enhanced Capability Discovery
+
+New methods for more specific queries:
+
+```swift
+// Get capabilities in specific category
+let aiCapabilities = capabilityDiscovery.getCapabilities(in: .aiDecisionMaking)
+
+// Get opportunities by category
+let aiOpportunities = capabilityDiscovery.getOpportunities(in: .aiDecisionMaking)
+
+// Find quick wins (high impact, low complexity)
+let quickWins = capabilityDiscovery.getQuickWins()
+
+// Get strategic enhancements (high impact, high priority)
+let strategic = capabilityDiscovery.getStrategicEnhancements()
+
+// Get summary statistics
+let summary = capabilityDiscovery.getSummary()
+print(summary.formattedSummary)
+```
+
+### Enhanced Usage Pattern Analysis
+
+New methods for detailed usage insights:
+
+```swift
+// Get gaps by severity
+let criticalGaps = usageAnalyzer.getGaps(withSeverity: .critical)
+let highGaps = usageAnalyzer.getGaps(withSeverity: .high)
+
+// Get gaps by type
+let inefficiencies = usageAnalyzer.getGaps(ofType: .inefficiency)
+let errorPatterns = usageAnalyzer.getGaps(ofType: .errorPattern)
+
+// Get most frequent category
+if let topCategory = usageAnalyzer.getMostFrequentCategory() {
+    print("Most used: \(topCategory.rawValue)")
+}
+
+// Get peak usage time
+if let peakTime = usageAnalyzer.getPeakUsageTime() {
+    print("Peak activity: \(peakTime.rawValue)")
+}
+
+// Get trend analysis
+let trends = usageAnalyzer.getTrends()
+print(trends.formattedSummary)
+```
+
+### Formatted Output Methods
+
+Many data structures now include `formattedSummary` or `formattedReport` properties:
+
+```swift
+// Usage statistics
+let stats = agent.getUsageStatistics()
+print(stats.formattedSummary)
+
+// Capability summary
+let capSummary = capabilityDiscovery.getSummary()
+print(capSummary.formattedSummary)
+
+// Health status
+let health = agent.getAIHealthStatus()
+print(health.formattedReport)
+
+// Usage trends
+let trends = usageAnalyzer.getTrends()
+print(trends.formattedSummary)
+```
+
+## Complete Workflow Example
+
+Here's a complete workflow using the new usability features:
+
+```swift
+import NeuralGate
+import NeuralGateAutomation
+
+let agent = NeuralGateAgent()
+
+// Execute some tasks to generate data
+let tasks = [
+    Task(name: "Morning Email", description: "Check emails", priority: .high, category: .communication),
+    Task(name: "Daily Standup", description: "Team sync", priority: .high, category: .communication),
+    Task(name: "Code Review", description: "Review PRs", priority: .medium, category: .productivity)
+]
+
+for task in tasks {
+    _ = try await agent.executeTask(task)
+}
+
+// Check if we should run analysis
+if agent.shouldRunAIAnalysis(minimumExecutions: 3) {
+    print("Running AI Analysis...\n")
+    
+    // Get comprehensive insights
+    let insights = await agent.getAIInsights()
+    
+    // Display health status
+    let health = agent.getAIHealthStatus()
+    print(health.formattedReport)
+    
+    // Show top priorities
+    print("\n📌 Top Priorities:")
+    for (index, priority) in insights.topPriorities.prefix(5).enumerated() {
+        print("\(index + 1). \(priority)")
+    }
+    
+    // Display usage trends
+    let trends = agent.usageAnalyzer.getTrends()
+    print("\n" + trends.formattedSummary)
+    
+    // Find quick wins
+    let quickWins = agent.capabilityDiscovery.getQuickWins()
+    if !quickWins.isEmpty {
+        print("\n⚡ Quick Wins Available: \(quickWins.count)")
+        for win in quickWins.prefix(3) {
+            print("  - \(win.suggestedEnhancement)")
+        }
+    }
+    
+    // Check for critical gaps
+    let criticalGaps = agent.usageAnalyzer.getGaps(withSeverity: .critical)
+    if !criticalGaps.isEmpty {
+        print("\n⚠️  Critical Gaps: \(criticalGaps.count)")
+        for gap in criticalGaps {
+            print("  - \(gap.description)")
+        }
+    }
+    
+    // Export full report if needed
+    let fullReport = agent.exportAIReports()
+    try fullReport.write(toFile: "ai-analysis-\(Date()).txt", 
+                        atomically: true, 
+                        encoding: .utf8)
+    print("\n✅ Full report exported")
+}
+```
+
+## Migration Guide
+
+If you're using the old API, here's how to migrate to the new convenience methods:
+
+### Before (v1.0)
+```swift
+// Multiple calls to get insights
+let capabilities = await agent.analyzeCapabilities()
+let patterns = await agent.analyzeUsagePatterns()
+let gaps = await agent.identifyUsageGaps()
+let suggestions = await agent.generateFeatureSuggestions()
+let stats = agent.getUsageStatistics()
+
+// Manual priority extraction
+var priorities: [String] = []
+for cap in capabilities where cap.priority == .critical {
+    priorities.append(cap.suggestedEnhancement)
+}
+for gap in gaps where gap.severity == .critical {
+    priorities.append(gap.description)
+}
+```
+
+### After (v2.0)
+```swift
+// Single call for all insights
+let insights = await agent.getAIInsights()
+
+// Automatic priority aggregation
+let priorities = insights.topPriorities
+
+// Built-in health scoring
+let healthScore = insights.overallHealthScore
+```
+
+## Best Practices with New Features
+
+1. **Use `getAIInsights()` for dashboards**: Perfect for displaying overall AI system status
+2. **Use `exportAIReports()` for documentation**: Generate comprehensive reports for stakeholders
+3. **Use `getAIHealthStatus()` for monitoring**: Quick health checks in production
+4. **Use `shouldRunAIAnalysis()` for optimization**: Avoid unnecessary analysis before enough data
+5. **Use specific query methods for targeted insights**: More efficient than filtering full datasets
+

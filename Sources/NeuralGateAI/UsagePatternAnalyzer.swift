@@ -466,5 +466,100 @@ public class UsagePatternAnalyzer {
         public let categoryDistribution: [Task.TaskCategory: Double]
         public let detectedPatterns: Int
         public let identifiedGaps: Int
+        
+        /// Get formatted statistics text
+        public var formattedSummary: String {
+            var summary = """
+            Usage Statistics:
+            - Total Executions: \(totalExecutions)
+            - Success Rate: \(Int(successRate * 100))%
+            - Avg Execution Time: \(String(format: "%.2f", averageExecutionTime))s
+            - Detected Patterns: \(detectedPatterns)
+            - Identified Gaps: \(identifiedGaps)
+            
+            Category Distribution:
+            """
+            
+            for (category, percentage) in categoryDistribution.sorted(by: { $0.value > $1.value }) {
+                summary += "\n  - \(category.rawValue): \(Int(percentage * 100))%"
+            }
+            
+            return summary
+        }
+    }
+    
+    // MARK: - Convenience Methods
+    
+    /// Get gaps by severity
+    /// - Parameter severity: The severity level to filter by
+    /// - Returns: Array of gaps with the specified severity
+    public func getGaps(withSeverity severity: UsageGap.Severity) -> [UsageGap] {
+        return identifiedGaps.filter { $0.severity == severity }
+    }
+    
+    /// Get gaps by type
+    /// - Parameter type: The gap type to filter by
+    /// - Returns: Array of gaps of the specified type
+    public func getGaps(ofType type: UsageGap.GapType) -> [UsageGap] {
+        return identifiedGaps.filter { $0.type == type }
+    }
+    
+    /// Get most frequent task category
+    /// - Returns: The most frequently used task category, or nil if no data
+    public func getMostFrequentCategory() -> Task.TaskCategory? {
+        return self.usageData.reduce(into: [Task.TaskCategory: Int]()) { counts, record in
+            counts[record.taskCategory, default: 0] += 1
+        }.max(by: { $0.value < $1.value })?.key
+    }
+    
+    /// Get peak usage time
+    /// - Returns: The time of day with highest activity
+    public func getPeakUsageTime() -> UsageRecord.UserContext.TimeOfDay? {
+        return self.usageData.reduce(into: [UsageRecord.UserContext.TimeOfDay: Int]()) { counts, record in
+            counts[record.userContext.timeOfDay, default: 0] += 1
+        }.max(by: { $0.value < $1.value })?.key
+    }
+    
+    /// Get trends over time
+    /// - Returns: UsageTrends with trend analysis
+    public func getTrends() -> UsageTrends {
+        let recentCount = 100
+        let recentRecords = self.usageData.suffix(recentCount)
+        let olderRecords = self.usageData.dropLast(recentCount)
+        
+        let recentSuccessRate = recentRecords.isEmpty ? 0 : 
+            Double(recentRecords.filter { $0.executionSuccess }.count) / Double(recentRecords.count)
+        let olderSuccessRate = olderRecords.isEmpty ? 0 :
+            Double(olderRecords.filter { $0.executionSuccess }.count) / Double(olderRecords.count)
+        
+        let recentAvgTime = recentRecords.isEmpty ? 0 :
+            recentRecords.reduce(0.0) { $0 + $1.executionTime } / Double(recentRecords.count)
+        let olderAvgTime = olderRecords.isEmpty ? 0 :
+            olderRecords.reduce(0.0) { $0 + $1.executionTime } / Double(olderRecords.count)
+        
+        return UsageTrends(
+            successRateTrend: recentSuccessRate - olderSuccessRate,
+            executionTimeTrend: recentAvgTime - olderAvgTime,
+            isImproving: recentSuccessRate > olderSuccessRate && recentAvgTime <= olderAvgTime
+        )
+    }
+}
+
+/// Usage trends over time
+public struct UsageTrends {
+    public let successRateTrend: Double // Positive means improving
+    public let executionTimeTrend: TimeInterval // Negative means faster
+    public let isImproving: Bool
+    
+    public var formattedSummary: String {
+        let successEmoji = successRateTrend > 0 ? "📈" : successRateTrend < 0 ? "📉" : "➡️"
+        let timeEmoji = executionTimeTrend < 0 ? "⚡" : executionTimeTrend > 0 ? "🐌" : "➡️"
+        
+        return """
+        Usage Trends:
+        \(successEmoji) Success Rate: \(successRateTrend >= 0 ? "+" : "")\(String(format: "%.1f", successRateTrend * 100))%
+        \(timeEmoji) Execution Time: \(executionTimeTrend >= 0 ? "+" : "")\(String(format: "%.2f", executionTimeTrend))s
+        Overall: \(isImproving ? "✅ Improving" : "⚠️  Needs Attention")
+        """
     }
 }

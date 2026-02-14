@@ -310,4 +310,82 @@ public class CapabilityDiscoveryEngine {
         
         return report
     }
+    
+    // MARK: - Convenience Methods
+    
+    /// Get capabilities by category
+    /// - Parameter category: The category to filter by
+    /// - Returns: Array of capabilities in the specified category
+    public func getCapabilities(in category: CapabilityCategory) -> [Capability] {
+        return discoveredCapabilities.filter { $0.category == category }
+    }
+    
+    /// Get enhancement opportunities by category
+    /// - Parameter category: The category to filter by
+    /// - Returns: Array of opportunities in the specified category
+    public func getOpportunities(in category: CapabilityCategory) -> [EnhancementOpportunity] {
+        return enhancementOpportunities.filter { $0.category == category }
+    }
+    
+    /// Get quick wins - high impact, low complexity enhancements
+    /// - Returns: Array of quick win opportunities
+    public func getQuickWins() -> [EnhancementOpportunity] {
+        return enhancementOpportunities.filter { 
+            $0.estimatedImpact >= 0.7 && $0.implementationComplexity == .low 
+        }.sorted { $0.estimatedImpact > $1.estimatedImpact }
+    }
+    
+    /// Get strategic enhancements - high impact, acceptable complexity
+    /// - Returns: Array of strategic enhancement opportunities
+    public func getStrategicEnhancements() -> [EnhancementOpportunity] {
+        return enhancementOpportunities.filter {
+            $0.estimatedImpact >= 0.8 && ($0.priority == .high || $0.priority == .critical)
+        }.sorted { $0.estimatedImpact > $1.estimatedImpact }
+    }
+    
+    /// Get summary statistics
+    /// - Returns: CapabilitySummary with key metrics
+    public func getSummary() -> CapabilitySummary {
+        let avgScore = discoveredCapabilities.reduce(0.0) { $0 + $1.overallScore } / Double(discoveredCapabilities.count)
+        let criticalOpps = enhancementOpportunities.filter { $0.priority == .critical }.count
+        let highOpps = enhancementOpportunities.filter { $0.priority == .high }.count
+        let quickWins = getQuickWins().count
+        
+        return CapabilitySummary(
+            totalCapabilities: discoveredCapabilities.count,
+            averageScore: avgScore,
+            totalOpportunities: enhancementOpportunities.count,
+            criticalPriority: criticalOpps,
+            highPriority: highOpps,
+            quickWins: quickWins,
+            needingImprovement: getCapabilitiesNeedingImprovement().count
+        )
+    }
+}
+
+// MARK: - Supporting Types
+
+/// Summary statistics for capability analysis
+public struct CapabilitySummary {
+    public let totalCapabilities: Int
+    public let averageScore: Double
+    public let totalOpportunities: Int
+    public let criticalPriority: Int
+    public let highPriority: Int
+    public let quickWins: Int
+    public let needingImprovement: Int
+    
+    /// Get formatted summary text
+    public var formattedSummary: String {
+        """
+        Capability Analysis Summary:
+        - Total Capabilities: \(totalCapabilities)
+        - Average Score: \(Int(averageScore * 100))%
+        - Enhancement Opportunities: \(totalOpportunities)
+        - Critical Priority: \(criticalPriority)
+        - High Priority: \(highPriority)
+        - Quick Wins Available: \(quickWins)
+        - Needs Improvement: \(needingImprovement)
+        """
+    }
 }

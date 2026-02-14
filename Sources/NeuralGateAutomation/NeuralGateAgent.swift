@@ -212,6 +212,94 @@ public class NeuralGateAgent {
         return featureSuggestion.generateRoadmap()
     }
     
+    // MARK: - Convenience Methods
+    
+    /// Get comprehensive AI insights combining all enhancement systems
+    /// - Returns: AIInsightsSummary containing analysis from all systems
+    public func getAIInsights() async -> AIInsightsSummary {
+        logger.log("Generating comprehensive AI insights", level: .info)
+        
+        let capabilities = await analyzeCapabilities()
+        let patterns = await analyzeUsagePatterns()
+        let gaps = await identifyUsageGaps()
+        let suggestions = await generateFeatureSuggestions()
+        let stats = getUsageStatistics()
+        
+        return AIInsightsSummary(
+            capabilities: capabilities,
+            patterns: patterns,
+            gaps: gaps,
+            suggestions: suggestions,
+            usageStats: stats,
+            timestamp: Date()
+        )
+    }
+    
+    /// Export all reports as formatted text
+    /// - Returns: Combined report text from all AI enhancement systems
+    public func exportAIReports() -> String {
+        var report = """
+        ╔═══════════════════════════════════════════════════════════════╗
+        ║         NeuralGate AI Enhancement Systems Report              ║
+        ║         Generated: \(Date().formatted())                      
+        ╚═══════════════════════════════════════════════════════════════╝
+        
+        """
+        
+        report += "\n\n" + String(repeating: "=", count: 65)
+        report += "\n📊 CAPABILITY ANALYSIS\n"
+        report += String(repeating: "=", count: 65) + "\n\n"
+        report += generateCapabilityReport()
+        
+        report += "\n\n" + String(repeating: "=", count: 65)
+        report += "\n🤖 AI MODEL RECOMMENDATIONS\n"
+        report += String(repeating: "=", count: 65) + "\n\n"
+        report += generateModelReport()
+        
+        report += "\n\n" + String(repeating: "=", count: 65)
+        report += "\n💡 FEATURE SUGGESTIONS\n"
+        report += String(repeating: "=", count: 65) + "\n\n"
+        report += generateFeatureRoadmap()
+        
+        return report
+    }
+    
+    /// Check if AI enhancement analysis should run based on usage
+    /// - Parameter minimumExecutions: Minimum task executions before analysis
+    /// - Returns: True if analysis should run
+    public func shouldRunAIAnalysis(minimumExecutions: Int = 10) -> Bool {
+        let stats = getUsageStatistics()
+        return stats.totalExecutions >= minimumExecutions
+    }
+    
+    /// Get quick health check of AI enhancement systems
+    /// - Returns: AIHealthStatus with system status
+    public func getAIHealthStatus() -> AIHealthStatus {
+        let stats = getUsageStatistics()
+        let models = getAvailableModels()
+        
+        let healthScore: Double
+        if stats.totalExecutions == 0 {
+            healthScore = 1.0 // No data yet, assume healthy
+        } else {
+            // Health based on success rate and pattern detection
+            healthScore = (stats.successRate * 0.7) + (stats.detectedPatterns > 0 ? 0.3 : 0.0)
+        }
+        
+        return AIHealthStatus(
+            isHealthy: healthScore >= 0.7,
+            healthScore: healthScore,
+            totalExecutions: stats.totalExecutions,
+            successRate: stats.successRate,
+            patternsDetected: stats.detectedPatterns,
+            gapsIdentified: stats.identifiedGaps,
+            availableModels: models.count,
+            recommendation: healthScore >= 0.9 ? "Excellent" :
+                          healthScore >= 0.7 ? "Good" :
+                          healthScore >= 0.5 ? "Fair" : "Needs Attention"
+        )
+    }
+    
     // MARK: - Private Methods
     
     private func recordTaskExecution(task: Task, result: TaskExecutionResult) {
@@ -307,6 +395,87 @@ public class NeuralGateAgent {
         }
     }
 }
+
+// MARK: - AI Enhancement Support Types
+
+/// Comprehensive AI insights from all enhancement systems
+public struct AIInsightsSummary {
+    public let capabilities: [CapabilityDiscoveryEngine.EnhancementOpportunity]
+    public let patterns: [UsagePatternAnalyzer.UsagePattern]
+    public let gaps: [UsagePatternAnalyzer.UsageGap]
+    public let suggestions: [FeatureSuggestionEngine.FeatureSuggestion]
+    public let usageStats: UsagePatternAnalyzer.UsageStatistics
+    public let timestamp: Date
+    
+    /// Get top priority items across all systems
+    public var topPriorities: [String] {
+        var priorities: [String] = []
+        
+        // Add critical capabilities
+        let criticalCaps = capabilities.filter { $0.priority == .critical }.prefix(3)
+        priorities.append(contentsOf: criticalCaps.map { $0.suggestedEnhancement })
+        
+        // Add critical gaps
+        let criticalGaps = gaps.filter { $0.severity == .critical }.prefix(3)
+        priorities.append(contentsOf: criticalGaps.map { $0.description })
+        
+        // Add critical/high priority features
+        let criticalFeatures = suggestions.filter { 
+            $0.priority == .critical || $0.priority == .high 
+        }.prefix(3)
+        priorities.append(contentsOf: criticalFeatures.map { $0.name })
+        
+        return Array(priorities.prefix(10))
+    }
+    
+    /// Get overall health score based on all metrics
+    public var overallHealthScore: Double {
+        let capabilityScore = capabilities.isEmpty ? 0.8 : 
+            Double(capabilities.filter { $0.priority == .low || $0.priority == .medium }.count) / 
+            Double(capabilities.count)
+        
+        let gapScore = gaps.isEmpty ? 1.0 : 
+            1.0 - (Double(gaps.filter { $0.severity == .critical || $0.severity == .high }.count) / 
+            Double(gaps.count))
+        
+        let usageScore = usageStats.successRate
+        
+        return (capabilityScore * 0.3 + gapScore * 0.3 + usageScore * 0.4)
+    }
+}
+
+/// AI health status for quick checks
+public struct AIHealthStatus {
+    public let isHealthy: Bool
+    public let healthScore: Double
+    public let totalExecutions: Int
+    public let successRate: Double
+    public let patternsDetected: Int
+    public let gapsIdentified: Int
+    public let availableModels: Int
+    public let recommendation: String
+    
+    /// Get formatted health report
+    public var formattedReport: String {
+        """
+        ╔═══════════════════════════════════════════╗
+        ║     NeuralGate AI Health Status           ║
+        ╠═══════════════════════════════════════════╣
+        ║ Status: \(isHealthy ? "✅ Healthy" : "⚠️  Needs Attention")                  
+        ║ Health Score: \(Int(healthScore * 100))%                      
+        ║ Success Rate: \(Int(successRate * 100))%                      
+        ╠═══════════════════════════════════════════╣
+        ║ Executions: \(totalExecutions)                          
+        ║ Patterns: \(patternsDetected)                            
+        ║ Gaps: \(gapsIdentified)                                
+        ║ AI Models: \(availableModels)                           
+        ╠═══════════════════════════════════════════╣
+        ║ Recommendation: \(recommendation)              
+        ╚═══════════════════════════════════════════╝
+        """
+    }
+}
+
 
 /// Comprehensive agent status
 public struct AgentStatus {
