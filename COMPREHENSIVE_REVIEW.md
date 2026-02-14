@@ -135,7 +135,7 @@ if task.priority == .critical {
 
 **Self-Improvement Engine** - PLACEHOLDER
 ```swift
-// Line 92 in SelfImprovementEngine.swift
+// Lines 91-92 in SelfImprovementEngine.swift
 let success = true // ❌ HARDCODED
 let improvement = 0.15 // ❌ ALWAYS 15%
 ```
@@ -171,9 +171,10 @@ let improvement = 0.15 // ❌ ALWAYS 15%
 
 **Code Example**:
 ```swift
-// iOSIntegration.swift Line 147
-public func sendNotification(title: String, body: String) {
-    print("📬 Sending notification: \(title)")
+// iOSIntegration.swift Lines 68-74
+public func sendNotification(title: String, body: String, delay: TimeInterval = 0) async throws {
+    try await requestNotificationPermissions()
+    print("Notification scheduled: \(title)") // Line 73
     // Should be: UNUserNotificationCenter.current().add(...)
 }
 ```
@@ -193,14 +194,16 @@ public func sendNotification(title: String, body: String) {
 
 ## 3. Testing Infrastructure Assessment
 
-### Current Coverage: 39 Unit Tests (100% Pass Rate)
+### Current Coverage: 95 Unit Tests (100% Pass Rate)
 
 **Well-Tested**:
 - ✅ Core models (Task, Workflow, ExecutionContext)
 - ✅ Configuration management
-- ✅ AI decision voting
-- ✅ Feedback collection
-- ✅ Resource awareness
+- ✅ AI decision voting and routing
+- ✅ Feedback collection and learning
+- ✅ Resource awareness and power monitoring
+- ✅ Circuit breaker and telemetry
+- ✅ Workflow automation
 
 **NOT Tested**:
 - ❌ Natural Language Processing parsing

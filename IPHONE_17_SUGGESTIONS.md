@@ -20,7 +20,7 @@ These are **table-stakes features** that must work for the app to provide any re
 
 ### 1.1 Notifications & Alerts (CRITICAL) 🔴
 
-**Current State**: `print()` statements  
+**Current State**: `print()` statements (see iOSIntegration.swift:73)  
 **Must Implement**: Real `UserNotifications` framework
 
 #### Features to Build:
