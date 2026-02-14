@@ -31,7 +31,8 @@ public class iOSIntegration {
     /// - Parameter shortcutName: Name of the shortcut to run
     /// - Returns: Result from the shortcut
     public func runShortcut(_ shortcutName: String) async throws -> Any {
-        guard !shortcutName.isEmpty else {
+        let trimmedName = shortcutName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedName.isEmpty else {
             throw IntegrationError.invalidInput("Shortcut name cannot be empty")
         }
         
