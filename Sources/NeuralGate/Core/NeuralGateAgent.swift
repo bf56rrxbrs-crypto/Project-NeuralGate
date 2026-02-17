@@ -66,8 +66,8 @@ public class NeuralGateAgent {
     ///   - name: Name of the workflow
     ///   - steps: Array of workflow steps
     /// - Returns: Created workflow
-    public func createWorkflow(name: String, steps: [WorkflowStep]) -> StepWorkflow {
-        return workflowEngine.createWorkflow(name: name, steps: steps)
+    public func createWorkflow(name: String, steps: [WorkflowStep]) throws -> StepWorkflow {
+        return try workflowEngine.createWorkflow(name: name, steps: steps)
     }
     
     /// Get all available workflows

@@ -92,7 +92,15 @@ public class WorkflowEngine {
     ///   - name: Workflow name
     ///   - steps: Workflow steps
     /// - Returns: Created workflow
-    public func createWorkflow(name: String, steps: [WorkflowStep]) -> StepWorkflow {
+    public func createWorkflow(name: String, steps: [WorkflowStep]) throws -> StepWorkflow {
+        guard !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            throw WorkflowError.invalidInput("Workflow name cannot be empty")
+        }
+        
+        guard !steps.isEmpty else {
+            throw WorkflowError.invalidInput("Workflow must have at least one step")
+        }
+        
         let workflowId = UUID().uuidString
         let workflow = StepWorkflow(id: workflowId, name: name, steps: steps)
         workflows[workflowId] = workflow
@@ -189,6 +197,29 @@ public class WorkflowEngine {
 
 public enum WorkflowError: Error {
     case workflowNotFound
-    case executionFailed
-    case invalidStep
+    case executionFailed(String)
+    case invalidStep(String)
+    case invalidInput(String)
+    case timeout(String)
+    case networkError(String)
+    case unauthorized(String)
+    
+    public var localizedDescription: String {
+        switch self {
+        case .workflowNotFound:
+            return "Workflow not found"
+        case .executionFailed(let message):
+            return "Workflow execution failed: \(message)"
+        case .invalidStep(let message):
+            return "Invalid workflow step: \(message)"
+        case .invalidInput(let message):
+            return "Invalid input: \(message)"
+        case .timeout(let message):
+            return "Workflow timeout: \(message)"
+        case .networkError(let message):
+            return "Network error: \(message)"
+        case .unauthorized(let message):
+            return "Unauthorized: \(message)"
+        }
+    }
 }
