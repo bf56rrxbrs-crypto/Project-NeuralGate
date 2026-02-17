@@ -2,7 +2,7 @@
 import SwiftUI
 
 /// Main view for NeuralGate AI Agent interface
-@available(iOS 16.0, *)
+@available(iOS 16.0, macOS 10.15, *)
 public struct NeuralGateView: View {
     
     @StateObject private var viewModel = NeuralGateViewModel()
@@ -215,7 +215,7 @@ struct TaskRowView: View {
 
 // MARK: - Preview
 
-@available(iOS 16.0, *)
+@available(iOS 16.0, macOS 10.15, *)
 struct NeuralGateView_Previews: PreviewProvider {
     static var previews: some View {
         NeuralGateView()

@@ -3,7 +3,7 @@ import Foundation
 import Combine
 
 /// ViewModel for NeuralGate UI
-@available(iOS 16.0, *)
+@available(iOS 16.0, macOS 10.15, *)
 @MainActor
 public class NeuralGateViewModel: ObservableObject {
     

@@ -2,7 +2,7 @@
 import SwiftUI
 
 /// View for displaying and managing workflows
-@available(iOS 16.0, *)
+@available(iOS 16.0, macOS 10.15, *)
 struct WorkflowsView: View {
     
     @ObservedObject var viewModel: NeuralGateViewModel

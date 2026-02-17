@@ -1,7 +1,7 @@
 import Foundation
 
 /// Engine for executing workflows and managing workflow lifecycle
-@available(iOS 16.0, *)
+@available(iOS 16.0, macOS 10.15, *)
 public class WorkflowEngine {
     
     // MARK: - Properties

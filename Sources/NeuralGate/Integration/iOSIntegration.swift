@@ -4,7 +4,7 @@ import Intents
 #endif
 
 /// Manages iPhone-specific integrations (Shortcuts, Siri, Notifications)
-@available(iOS 16.0, *)
+@available(iOS 16.0, macOS 10.15, *)
 public class iOSIntegration {
     
     // MARK: - Properties

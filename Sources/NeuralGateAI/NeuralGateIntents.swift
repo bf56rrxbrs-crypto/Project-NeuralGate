@@ -5,7 +5,7 @@ import Intents
 
 #if canImport(Intents)
 /// NeuralGate Siri Intent handler for "Ask NeuralGate" queries
-@available(iOS 16.0, *)
+@available(iOS 16.0, macOS 10.15, *)
 public class AskNeuralGateIntentHandler: NSObject, AskNeuralGateIntentHandling {
     
     private let logger = NeuralGateLogger.shared
@@ -56,13 +56,13 @@ public class AskNeuralGateIntentHandler: NSObject, AskNeuralGateIntentHandling {
 }
 
 /// Intent definition for "Ask NeuralGate"
-@available(iOS 16.0, *)
+@available(iOS 16.0, macOS 10.15, *)
 public class AskNeuralGateIntent: INIntent {
     @NSManaged public var prompt: String?
 }
 
 /// Intent response for "Ask NeuralGate"
-@available(iOS 16.0, *)
+@available(iOS 16.0, macOS 10.15, *)
 public class AskNeuralGateIntentResponse: INIntentResponse {
     
     @NSManaged public var result: String?
@@ -81,7 +81,7 @@ public class AskNeuralGateIntentResponse: INIntentResponse {
 }
 
 /// Protocol for handling AskNeuralGate intents
-@available(iOS 16.0, *)
+@available(iOS 16.0, macOS 10.15, *)
 public protocol AskNeuralGateIntentHandling {
     func handle(intent: AskNeuralGateIntent, completion: @escaping (AskNeuralGateIntentResponse) -> Void)
     func resolvePrompt(for intent: AskNeuralGateIntent, with completion: @escaping (INStringResolutionResult) -> Void)

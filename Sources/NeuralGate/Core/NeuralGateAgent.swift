@@ -1,7 +1,7 @@
 import Foundation
 
 /// Core AI agent that manages task and workflow automation for iPhone users
-@available(iOS 16.0, *)
+@available(iOS 16.0, macOS 10.15, *)
 public class NeuralGateAgent {
     
     // MARK: - Properties
